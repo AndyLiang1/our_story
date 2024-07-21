@@ -1,16 +1,22 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import express, { Express, Request, Response } from 'express';
+import { initDb } from './db';
+import {config} from "./config/config"
 
-dotenv.config();
+import { getAllUsers } from './repositories/userRepo'; // just to test
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = config.server.port || 3000;
 
+const init = async () => {
+    await initDb();
+    app.listen(port, async() => {
+        console.log(`Server is running at http://localhost:${port}`);
+        await getAllUsers() // just to test
+    });
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello Andy and Arya!');
-});
+    app.get('/', (req: Request, res: Response) => {
+        res.send('Hello Andy and Arya!');
+    });
+};
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+init();
