@@ -56,11 +56,11 @@ export const TipTap = () => {
                     const data = fetchData(doc);
 
                 }
-                if(doc.getMap('config').get('initialContentLoaded')) {
-                    console.log("hereeee")
-                    const data = fetchData(doc);
+                // if(doc.getMap('config').get('initialContentLoaded')) {
+                //     console.log("hereeee")
+                //     const data = fetchData(doc);
 
-                }
+                // }
             }
         });
         // const data = fetchData(doc);
