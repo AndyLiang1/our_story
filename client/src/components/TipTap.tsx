@@ -39,22 +39,22 @@ export const TipTap = () => {
     });
 
     useEffect(() => {
-        // const provider = new TiptapCollabProvider({
-        //   name: 'document.name', // Unique document identifier for syncing. This is your document name.
-        //   appId: '7j9y6m10', // Your Cloud Dashboard AppID or `baseURL` for on-premises
-        //   token: 'notoken', // Your JWT token
-        //   document: doc,
-        //   // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
-        //   onSynced() {
-        //     if (!doc.getMap('config').get('initialContentLoaded') && editor) {
-        //       doc.getMap('config').set('initialContentLoaded', true)
-        //       editor.commands.setContent(`
-        //       <p>This is a radically reduced version of Tiptap. It has support for a document, with paragraphs and text. That’s it. It’s probably too much for real minimalists though.</p>
-        //       <p>The paragraph extension is not really required, but you need at least one node. Sure, that node can be something different.</p>
-        //       `)
-        //     }
-        //   },
-        // })
+        const provider = new TiptapCollabProvider({
+            name: 'test_doc', // Unique document identifier for syncing. This is your document name.
+            appId: '0k3l1rk5', // Your Cloud Dashboard AppID or `baseURL` for on-premises
+            token: 'notoken', // Your JWT token
+            document: doc
+            //   // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
+            //   onSynced() {
+            //     if (!doc.getMap('config').get('initialContentLoaded') && editor) {
+            //       doc.getMap('config').set('initialContentLoaded', true)
+            //       editor.commands.setContent(`
+            //       <p>This is a radically reduced version of Tiptap. It has support for a document, with paragraphs and text. That’s it. It’s probably too much for real minimalists though.</p>
+            //       <p>The paragraph extension is not really required, but you need at least one node. Sure, that node can be something different.</p>
+            //       `)
+            //     }
+            //   },
+        });
         const data = fetchData(doc);
     }, []);
 
@@ -67,172 +67,7 @@ export const TipTap = () => {
         // });
 
         const result: any = await axios.get(`http://localhost:3002/getData`);
-        console.log(JSON.stringify(result.data));
-        editor?.commands.setContent({
-            type: 'doc',
-            content: [
-                {
-                    type: 'table',
-                    content: [
-                        {
-                            type: 'tableRow',
-                            content: [
-                                {
-                                    type: 'tableHeader',
-                                    attrs: {
-                                        colspan: 1,
-                                        rowspan: 1
-                                    },
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: {
-                                                indent: 0,
-                                                textAlign: 'left'
-                                            },
-                                            content: [
-                                                {
-                                                    type: 'text',
-                                                    text: 'Header 1'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'tableHeader',
-                                    attrs: {
-                                        colspan: 1,
-                                        rowspan: 1
-                                    },
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: {
-                                                indent: 0,
-                                                textAlign: 'left'
-                                            },
-                                            content: [
-                                                {
-                                                    type: 'text',
-                                                    text: 'Header 2'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'tableHeader',
-                                    attrs: {
-                                        colspan: 1,
-                                        rowspan: 1
-                                    },
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: {
-                                                indent: 0,
-                                                textAlign: 'left'
-                                            },
-                                            content: [
-                                                {
-                                                    type: 'text',
-                                                    text: 'Header 3'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            type: 'tableRow',
-                            content: [
-                                {
-                                    type: 'tableCell',
-                                    attrs: {
-                                        colspan: 1,
-                                        rowspan: 1
-                                    },
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: {
-                                                indent: 0,
-                                                textAlign: 'left'
-                                            },
-                                            content: [
-                                                {
-                                                    type: 'text',
-                                                    text: 'Cell 1'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'tableCell',
-                                    attrs: {
-                                        colspan: 1,
-                                        rowspan: 1
-                                    },
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: {
-                                                indent: 0,
-                                                textAlign: 'left'
-                                            },
-                                            content: [
-                                                {
-                                                    type: 'text',
-                                                    text: 'Cell 2'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'tableCell',
-                                    attrs: {
-                                        colspan: 1,
-                                        rowspan: 1
-                                    },
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: {
-                                                indent: 0,
-                                                textAlign: 'left'
-                                            },
-                                            content: [
-                                                {
-                                                    type: 'text',
-                                                    text: 'Cell 3'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    type: 'paragraph',
-                    attrs: {
-                        indent: 0,
-                        textAlign: 'left'
-                    },
-                    content: [
-                        {
-                            type: 'text',
-                            text: 'Test'
-                        }
-                    ]
-                }
-            ]
-        });
+        editor?.commands.setContent(result.data);
 
         // const fetchResult = await fetch(
         //     `https://${process.env.REACT_APP_TIPTAP_APP_ID}.collab.tiptap.cloud/api/documents/test_doc?format=json`,
