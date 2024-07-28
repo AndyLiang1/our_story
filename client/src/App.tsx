@@ -1,4 +1,5 @@
 import React from 'react';
+import { HomePage } from './pages/HomePage';
 
 function App() {
   const handleButtonClick = async () => {
@@ -15,6 +16,7 @@ function App() {
     <div className="App">
       I love you
       <button onClick={handleButtonClick}>Hit Backend</button>
+      <HomePage />
     </div>
   );
 }
