@@ -42,20 +42,28 @@ export const TipTap = () => {
         const provider = new TiptapCollabProvider({
             name: 'test_doc', // Unique document identifier for syncing. This is your document name.
             appId: '0k3l1rk5', // Your Cloud Dashboard AppID or `baseURL` for on-premises
-            token: 'notoken', // Your JWT token
-            document: doc
-            //   // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
-            //   onSynced() {
-            //     if (!doc.getMap('config').get('initialContentLoaded') && editor) {
-            //       doc.getMap('config').set('initialContentLoaded', true)
-            //       editor.commands.setContent(`
-            //       <p>This is a radically reduced version of Tiptap. It has support for a document, with paragraphs and text. That’s it. It’s probably too much for real minimalists though.</p>
-            //       <p>The paragraph extension is not really required, but you need at least one node. Sure, that node can be something different.</p>
-            //       `)
-            //     }
-            //   },
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjIxOTA4ODAsIm5iZiI6MTcyMjE5MDg4MCwiZXhwIjoxNzIyMjc3MjgwLCJpc3MiOiJodHRwczovL2Nsb3VkLnRpcHRhcC5kZXYiLCJhdWQiOiIwazNsMXJrNSJ9.OrPvJTIhYfSOwCgNl8ZnMWVWFntNC3TaCrwkENl2QQs', // Your JWT token
+            document: doc,
+            // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
+            onSynced() {
+                console.log("Initial content loaded?: ", doc.getMap('config').get('initialContentLoaded'))
+                if (!doc.getMap('config').get('initialContentLoaded') && editor) {
+                    doc.getMap('config').set('initialContentLoaded', true);
+                //     editor.commands.setContent(`
+                //   <p>This is a radically reduced version of Tiptap. It has support for a document, with paragraphs and text. That’s it. It’s probably too much for real minimalists though.</p>
+                //   <p>The paragraph extension is not really required, but you need at least one node. Sure, that node can be something different.</p>
+                //   `);
+                    const data = fetchData(doc);
+
+                }
+                if(doc.getMap('config').get('initialContentLoaded')) {
+                    console.log("hereeee")
+                    const data = fetchData(doc);
+
+                }
+            }
         });
-        const data = fetchData(doc);
+        // const data = fetchData(doc);
     }, []);
 
     const fetchData = async (doc: any) => {
@@ -67,6 +75,7 @@ export const TipTap = () => {
         // });
 
         const result: any = await axios.get(`http://localhost:3002/getData`);
+        console.log("fixing things: ", result.data)
         editor?.commands.setContent(result.data);
 
         // const fetchResult = await fetch(
