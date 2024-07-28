@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {TipTap} from './components/TipTap';
 function App() {
   const handleButtonClick = async () => {
     try {
@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className="App">
-      I love you
+      <TipTap />
       <button onClick={handleButtonClick}>Hit Backend</button>
     </div>
   );
