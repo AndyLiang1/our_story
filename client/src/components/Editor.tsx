@@ -1,4 +1,4 @@
-import './styles.scss';
+
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -21,21 +21,21 @@ import HardBreak from '@tiptap/extension-hard-break';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import { MenuBar } from './MenuBar';
-import {useEditor} from "./useEditor"
+import { useEditor } from '../hooks/useEditor';
 
 export interface IEditorProps {
-    ydoc: any,
-    provider: any, 
+    ydoc: any;
+    provider: any;
 }
 
-const Editor = ({ ydoc, provider }:  IEditorProps) => {
+const Editor = ({ ydoc, provider }: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
 
     const editor = useEditor({
         onCreate: ({ editor: currentEditor }) => {
             provider.on('synced', () => {
                 if (currentEditor.isEmpty) {
-                    currentEditor.commands.setContent("Hwllo");
+                    currentEditor.commands.setContent('Hwllo');
                 }
             });
         },
@@ -67,11 +67,16 @@ const Editor = ({ ydoc, provider }:  IEditorProps) => {
             CollaborationCursor.configure({
                 provider: provider,
                 user: {
-                    name: "Andy Arya", 
-                    color: "#e0f6ff"
+                    name: 'Andy Arya',
+                    color: '#e0f6ff'
                 }
             })
-        ]
+        ],
+        // editorProps: {
+        //     attributes: {
+        //         class: 'editor'
+        //     }
+        // }
     });
 
     useEffect(() => {
@@ -94,9 +99,9 @@ const Editor = ({ ydoc, provider }:  IEditorProps) => {
     }, [editor?.isActive('highlight')]);
 
     return (
-        <div className="editor">
+        <div>
             <MenuBar editor={editor} />
-            <EditorContent className="editor__content" editor={editor} />
+            <EditorContent className="editor__content bg-red-500 " editor={editor} />
         </div>
     );
 };

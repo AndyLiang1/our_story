@@ -17,8 +17,10 @@ const init = async () => {
         await getAllUsers(); // just to test
     });
 
-    app.get('/', (req: Request, res: Response) => {
-        res.json({ message: 'Hello Andy and Arya!' });
+    app.get('/', async(req: Request, res: Response) => {
+        const data = await getAllUsers(); // just to test
+        res.json(data)
+        // res.json({ message: 'Hello Andy and Arya!' });
     });
 };
 
