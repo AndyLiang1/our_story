@@ -15,5 +15,8 @@ export const config = {
         port: SERVER_PORT,
         env: ENV, // unused atm 
         JWT_SECRET, // unused atm
-    } 
+    },
+    tiptapProvider: {
+        appSecret: process.env.TIPTAP_APP_SECRET
+    }
 };

@@ -3,7 +3,7 @@ import cors from 'cors';
 import { initDb } from './db';
 import { config } from './config/config';
 
-import { getAllUsers } from './repositories/userRepo'; // just to test
+import { getAllUsers } from './repositories/UserRepo'; // just to test
 
 const app: Express = express();
 app.use(cors());
@@ -17,8 +17,10 @@ const init = async () => {
         await getAllUsers(); // just to test
     });
 
-    app.get('/', (req: Request, res: Response) => {
-        res.json({ message: 'Hello Andy and Arya!' });
+    app.get('/', async (req: Request, res: Response) => {
+        const data = await getAllUsers(); // just to test
+        res.json(data);
+        // res.json({ message: 'Hello Andy and Arya!' });
     });
 };
 
