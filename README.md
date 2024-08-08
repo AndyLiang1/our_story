@@ -45,3 +45,4 @@ find ./yoyo_migrations/* -type d ! -path "*passwords*" -exec yoyo list --databas
 ```
 ./migrations.sh
 ```
+Since you don't have `make` installed, you can comment out the `make` commands in `./migrations.sh`.
