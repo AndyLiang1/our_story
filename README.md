@@ -6,6 +6,42 @@ Haiiii Andy, I'll love you forever and ever :3 <3 MWAH MWAH.
 
 ## How to run yoyo migrations
 
+These instructions are for Mac. You might need to find the equivalent commands for Windows.
+
 1. Add the db/.env file from our google [doc](https://docs.google.com/document/d/10_2NFPEd3dLNVpfieamAXaiejnnolwVJ7kio30jfKKY/edit).
 
-2. 
+2. Install dependencies (only need to do once)
+
+This step creates a python virtual environment and installs the required dependencies.
+```
+cd db
+python3 -m venv .venv 
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+3. Set up proxy to forward the server port to your local system
+
+The database is not public so we need to set up proxy.
+```
+fly proxy 5432 -a our-story-db
+```
+4. Before running any `yoyo` commands, source your .env and your venv (if you haven't done that already)
+
+The environmant variables are only available within your current shell. If you open another shell, you need to source your .env again.
+
+```
+source .env
+source .venv/bin/activate
+```
+
+5. Commands
+- To list the migration status
+```
+find ./yoyo_migrations/* -type d ! -path "*passwords*" -exec yoyo list --database $DB_CONNECTION_STRING {} \; 
+```
+
+- To run migrations
+```
+./migrations.sh
+```
