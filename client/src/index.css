@@ -35,4 +35,12 @@
         user-select: none;
         white-space: nowrap;
     }
+
+    .bg-milk-mocha {
+        background-image: url('../public/Milk_and_Mocha_Star_Gaze_5.jpg');
+        background-size: cover;
+        background-position: bottom;
+        opacity: 90%;
+        /* background-color: rgb(255, 255, 255); */
+    }
 }

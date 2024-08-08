@@ -1,5 +1,3 @@
-
-
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { EditorContent } from '@tiptap/react';
@@ -72,11 +70,11 @@ const Editor = ({ ydoc, provider }: IEditorProps) => {
                 }
             })
         ],
-        // editorProps: {
-        //     attributes: {
-        //         class: 'editor'
-        //     }
-        // }
+        editorProps: {
+            attributes: {
+                class: 'h-full w-full p-4'
+            }
+        }
     });
 
     useEffect(() => {
@@ -99,9 +97,9 @@ const Editor = ({ ydoc, provider }: IEditorProps) => {
     }, [editor?.isActive('highlight')]);
 
     return (
-        <div>
+        <div className="h-full w-full">
             <MenuBar editor={editor} />
-            <EditorContent className="editor__content bg-red-500 " editor={editor} />
+            <EditorContent className="editor__content bg-milk-mocha h-[90%] w-full " editor={editor} />
         </div>
     );
 };

@@ -15,7 +15,7 @@ export function MenuBar({ editor }: IMenuBarProps) {
         }
     };
     return (
-        <div className="menu-bar">
+        <div className="h-[10%] w-full">
             <button  onClick={() => editor.chain().focus().toggleBold().run()} disabled={!editor.can().chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>
                 bold
             </button>
@@ -28,9 +28,12 @@ export function MenuBar({ editor }: IMenuBarProps) {
             <button onClick={() => editor.chain().focus().toggleCode().run()} disabled={!editor.can().chain().focus().toggleCode().run()} className={editor.isActive('code') ? 'is-active' : ''}>
                 code
             </button>
-            <button onClick={() => editor.chain().focus().setTextAlign('left').run()} className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}>
-                left
-            </button>
+            <button
+            onClick={() => editor.chain().focus().setTextAlign('left').run()}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Left
+          </button>
             <button onClick={() => editor.chain().focus().setTextAlign('center').run()} className={editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}>
                 center
             </button>

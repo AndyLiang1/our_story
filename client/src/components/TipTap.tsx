@@ -35,8 +35,6 @@ export function TipTap({jwt}: ITipTapProps) {
     });
 
     return (
-        <>
             <Editor provider={provider} ydoc={doc} />
-        </>
     );
 }
