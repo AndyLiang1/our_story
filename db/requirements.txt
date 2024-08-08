@@ -1,0 +1,12 @@
+importlib-metadata==6.1.0
+Jinja2==3.0.0
+jinjasql==0.1.8
+MarkupSafe==2.1.2
+numpy==1.24.2
+psycopg2-binary==2.9.5
+pyarray==0.2
+pyarrow==11.0.0
+sqlparse==0.4.3
+tabulate==0.9.0
+yoyo-migrations==8.2.0
+zipp==3.15.0
