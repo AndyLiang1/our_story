@@ -13,11 +13,21 @@ These instructions are for Mac. You might need to find the equivalent commands f
 2. Install dependencies (only need to do once)
 
 This step creates a python virtual environment and installs the required dependencies.
+
+- Mac
 ```
 cd db
 python3 -m venv .venv 
 source .venv/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+```
+
+- Windows
+```
+cd db
+python3 -m venv .venv 
+.venv/Scripts/activate
+pip3 install -r requirements.txt
 ```
 
 3. Set up proxy to forward the server port to your local system
@@ -30,9 +40,16 @@ fly proxy 5432 -a our-story-db
 
 The environmant variables are only available within your current shell. If you open another shell, you need to source your .env again.
 
+- Mac
 ```
 source .env
 source .venv/bin/activate
+```
+
+- Windows
+```
+source .env
+.venv/Scripts/activate
 ```
 
 5. Commands
