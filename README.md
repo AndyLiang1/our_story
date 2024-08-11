@@ -5,9 +5,6 @@ Made by Andy and Arya with love <3
 Haiiii Andy, I'll love you forever and ever :3 <3 MWAH MWAH.
 
 ## How to run yoyo migrations
-
-These instructions are for Mac. For Windows users, you can use Gitbash. You might need to find the equivalent commands for Windows.
-
 1. Add the db/.env file from our google [doc](https://docs.google.com/document/d/10_2NFPEd3dLNVpfieamAXaiejnnolwVJ7kio30jfKKY/edit).
 
 2. Install dependencies (only need to do once)
@@ -21,6 +18,14 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip3 install -r requirements.txt
 ```
+
+- Window Powershell
+```
+cd db
+python -m venv .venv 
+.\.venv\Scripts\Activate
+pip3 install -r requirements.txt
+```
 3. Install flyctl: https://fly.io/docs/flyctl/install/
    
 4. Set up proxy to forward the server port to your local system
@@ -31,7 +36,7 @@ fly proxy 5432 -a our-story-db
 ```
 5. Before running any `yoyo` commands, source your .env and your venv (if you haven't done that already)
 
-The environmant variables are only available within your current shell. If you open another shell, you need to source your .env again.
+The environment variables are only available within your current shell. If you open another shell, you need to source your .env again.
 
 - Mac
 ```
@@ -42,7 +47,7 @@ source .venv/bin/activate
 - Windows
 ```
 source .env
-.venv/Scripts/activate
+.\.venv\Scripts\Activate
 ```
 
 5. Commands
