@@ -46,7 +46,6 @@ source .venv/bin/activate
 
 - Windows
 ```
-source .env
 .\.venv\Scripts\Activate
 ```
 
