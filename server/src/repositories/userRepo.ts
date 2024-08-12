@@ -24,7 +24,7 @@ export class UserRepo {
 
 
 export const getAllUsers = async () => {
-    const result = await pool.query('SELECT * FROM our_story.users');
+    const result = await pool.query('SELECT * FROM our_story.user');
     console.log(result.rows)
     const jwt = jsonwebtoken.sign(
         {
