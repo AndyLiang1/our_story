@@ -4,6 +4,11 @@
 
 @import url('https://fonts.googleapis.com/css?family=Handlee');
 
+html,
+body {
+  @apply m-0 p-0;
+}
+
 @layer components {
     code {
         font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
@@ -43,4 +48,7 @@
         opacity: 90%;
         /* background-color: rgb(255, 255, 255); */
     }
+
+
+    
 }

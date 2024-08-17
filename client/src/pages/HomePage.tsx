@@ -23,7 +23,7 @@ export function HomePage(props: IHomePageProps) {
         getJWT();
     }, []);
     return (
-        <div className="h-full v-full flex-wrap justify-between items-center">
+        <div className="h-screen v-screen flex-wrap justify-between items-center">
             <NavBar />
             <div className="home_page_container h-[90%] w-full flex justify-between items-center">
                 <SideBar />
