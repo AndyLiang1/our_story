@@ -1,14 +1,13 @@
 import * as React from 'react';
 
 export interface IFormErrorMessageProps {
-    name: string, 
-    form: any,
+    errorMessage: string;
 }
 
-export function FormErrorMessage ({name, form: { touched, errors }}: IFormErrorMessageProps) {
-  return (
-    <div className="h-[4rem] w-full bg-red text-red-500 text-sm mt-1 border rounded-[3rem]">
-        {errors[name]}
-    </div>
-  );
+export function FormErrorMessage({ errorMessage }: IFormErrorMessageProps) {
+    return (
+        <div className="mt-4 h-[2rem] w-[90%] rounded-[3rem]  bg-red-200 flex justify-center text-center items-center text-base text-red-600">
+            {errorMessage}
+        </div>
+    );
 }
