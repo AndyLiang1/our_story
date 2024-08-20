@@ -1,3 +1,5 @@
 .env
 .venv
 yoyo.ini
+
+server/fly_secrets.sh
