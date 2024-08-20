@@ -3,30 +3,29 @@ import { TipTap } from '../components/TipTap';
 import { SideBar } from '../components/SideBar';
 import { NavBar } from '../components/Navbar';
 import {config} from "../config/config"
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from "axios"
+import { getAllDocuments } from '../apis/documentApi';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
-    const [jwt, setJWT] = React.useState('');
-
-    // this is temporary
-    const getJWT = async () => {
-        try {
-            const response = await fetch(config.baseUrl);
-            const data = await response.json();
-            setJWT(data);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-    React.useEffect(() => {
-        getJWT();
-    }, []);
+    const [jwt, setJWT] = useState('');
+    const [documents, setDocuments] = useState({})
+    const location = useLocation()
+    const userInfo = location.state
+    
+    useEffect(() => {
+        // const documents = getAllDocuments(userInfo.authToken, userInfo.tiptapToken)
+        // setDocuments(documents)
+    }, [])
+   
     return (
         <div className="h-screen v-screen flex-wrap justify-between items-center">
             <NavBar />
             <div className="home_page_container h-[90%] w-full flex justify-between items-center">
-                <SideBar />
+                <SideBar dataList={["Story 1", "Story 2", "Story 3", "Story 4", "Story 5"]}/>
+                
                 <div className="h-full w-[85%] flex justify-between items-center">
                     <div className="h-full w-[65%]">
                         {jwt ? <TipTap jwt={jwt} /> : <div>Loading bruh</div>}
