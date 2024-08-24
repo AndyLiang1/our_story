@@ -29,8 +29,6 @@ export function CustomCalendar({ events }: ICustomCalendarProps) {
         }
 
         return eventsOnThisDay.length ? (
-            // <div className="h-[40%] w-full bg-blue-500">boochi</div>
-            // <div className="absolute z-50 h-[2000px] min-h-[2000px] w-[2000px] min-w-[2000px] bg-red-500"></div>
             <CalendarEvents events={eventsOnThisDay} />
         ) : null;
     };

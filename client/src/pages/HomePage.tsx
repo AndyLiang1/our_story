@@ -33,6 +33,7 @@ export function HomePage(props: IHomePageProps) {
                     </div>
                     <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
                         <div className="h-[45%] w-[90%] bg-red-700">
+                      
                         </div>
                         <div className="h-[45%] w-[90%] bg-white">
                             <CustomCalendar
@@ -40,7 +41,7 @@ export function HomePage(props: IHomePageProps) {
                                     {
                                         eventId: '1',
                                         eventDate: '2024-08-01',
-                                        eventTitle: 'Trattoria1'
+                                        eventTitle: 'Trattoriaaaaaaa1'
                                     },
                                     {
                                         eventId: '2',

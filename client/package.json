@@ -17,6 +17,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@tippyjs/react": "^4.2.6",
     "@tiptap/extension-bold": "^2.5.7",
     "@tiptap/extension-bullet-list": "^2.5.7",
     "@tiptap/extension-code": "^2.5.7",
