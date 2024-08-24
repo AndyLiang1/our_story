@@ -6,8 +6,9 @@
 
 html,
 body {
-  @apply m-0 p-0;
+    @apply m-0 p-0;
 }
+
 
 @layer components {
     code {
@@ -48,7 +49,75 @@ body {
         opacity: 90%;
         /* background-color: rgb(255, 255, 255); */
     }
-
-
     
+    .react-calendar {
+        @apply h-full w-full;
+    }
+
+    /* The entire first row, with the buttons and month selector */
+    .react-calendar .react-calendar__navigation {
+        @apply h-[15%] w-full bg-green-300;
+    }
+
+    /* The month selector part */
+    .react-calendar .react-calendar__navigation__label {
+        @apply h-full w-[90%];
+    }
+
+    /* The container for the week day categories and the actual days of the month */
+    .react-calendar .react-calendar__viewContainer {
+        @apply h-[85%] w-full;
+    }
+
+    /* The sub container for the week day categories and the actual days of the month */
+    .react-calendar .react-calendar__month-view {
+        @apply h-full w-full overflow-auto;
+    }
+
+    .react-calendar .react-calendar__month-view * {
+        @apply h-full w-full;
+    }
+
+    /* The container for the week day categories in the calendar: Mon, Tues... etc */
+    .react-calendar .react-calendar__month-view__weekdays {
+        @apply h-[10%] w-full; 
+    }
+
+    /* The actual week day categories in the calendar: Mon, Tues... etc */
+    .react-calendar .react-calendar__month-view__weekdays__weekday,
+    .react-calendar .react-calendar__month-view__weekdays--weekend {
+        @apply flex h-full w-[14.2857143%] justify-center text-center;
+    }
+
+    .react-calendar .react-calendar__month-view__weekdays__weekday abbr[aria-label],
+    .react-calendar .react-calendar__month-view__weekdays--weekend abbr[aria-label] {
+        @apply text-[1rem] no-underline;
+    }
+
+    /* The grid for the actual days in the calendar */
+    .react-calendar .react-calendar__month-view__days {
+        @apply h-[18%] w-full;
+    }
+
+    /* The actual days in the calendar */
+    .react-calendar .react-calendar__month-view__days__day {
+        @apply flex flex-col items-center justify-start border-2 border-black text-center text-[0.5rem];
+    }
+
+    .react-calendar .react-calendar__month-view__days__day abbr[aria-label] {
+        @apply flex h-[60%] min-h-[60%] w-full items-center justify-center text-center text-[1rem] bg-green-500;
+    }
+
+    .react-calendar .react-calendar__month-view__days__day--neighboringMonth {
+        @apply opacity-70;
+    }
+
+    .react-calendar .react-calendar__navigation__prev2-button,
+    .react-calendar .react-calendar__navigation__next2-button {
+        @apply hidden;
+    }
+
+    .react-calendar .react-calendar__tile--now {
+        @apply bg-white;
+    }
 }
