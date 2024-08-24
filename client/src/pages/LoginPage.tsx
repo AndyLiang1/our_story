@@ -17,7 +17,6 @@ export function LoginPage(props: ILoginPageProps) {
     const [formErrorMessage, setFormErrorMessage] = useState('')
 
     const handleSubmit = async (formData: LoginType) => {
-        console.log(formData);
         const loginResult: LoginBEType = await login(formData)
         await handleLogin(loginResult)
     };
