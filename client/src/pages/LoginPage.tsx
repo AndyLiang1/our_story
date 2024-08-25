@@ -17,39 +17,8 @@ export interface ILoginPageProps {}
 export function LoginPage(props: ILoginPageProps) {
     const navigate = useNavigate();
     const [formErrorMessage, setFormErrorMessage] = useState('')
-    const [isSignUp, setIsSignUp] = useState(false);
 
-    const handleSubmit = async (formData: LoginType | SignUpType) => {
-        if (isSignUp) {
-            await handleSignUp(formData as SignUpType)
-        } else {
-            await handleLogin(formData)
-        }
-
-    };
-
-    const handleSignUp = async (formData: SignUpType) => {
-        if (formData.password !== formData.confirmPassword) {
-            setFormErrorMessage("Passwords do not match.")
-            return
-        }
-        try {
-            await signUp(formData)
-            const email = formData.email
-            navigate('/confirm', { state: { email } })
-        } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: `Failed to create account: ${getErrorMessage(error)}`,
-                icon: 'error',
-                confirmButtonText: 'Try Again'
-            
-            })
-        }
-
-    }
-
-    const handleLogin = async (formData: LoginType) => {
+    const handleSubmit = async (formData: LoginType) => {
         try {
             const session = await login(formData)
             if (session && typeof session.AccessToken !== 'undefined') {
@@ -72,27 +41,22 @@ export function LoginPage(props: ILoginPageProps) {
             
             })
         }
+
     };
 
-    const loginAttributes = {
+    const LoginSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
         password: Yup.string().required('Password is required.')
     }
-
-    const LoginSchema = Yup.object().shape(loginAttributes);
-    const SignUpSchema = Yup.object().shape({
-        ...loginAttributes,
-        confirmPassword: Yup.string().required('Confirm Password is required.'),
-        familyName: Yup.string(),
-        givenName: Yup.string()
-    });
+        
+    );
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
             <div className="float-right flex h-full w-[45%] items-center justify-center">
                 <Formik
                     initialValues={{ email: '', password: '' }}
-                    validationSchema={isSignUp ? SignUpSchema : LoginSchema}
+                    validationSchema={LoginSchema}
                     onSubmit={(values, actions) => {
                         handleSubmit(values);
                         setTimeout(() => {
@@ -110,29 +74,18 @@ export function LoginPage(props: ILoginPageProps) {
                                 label="Password"
                                 component={FormInput}
                             />
-                            {isSignUp && (
-                                <>
-                                    <Field
-                                        type="password"
-                                        name="confirmPassword"
-                                        label="Confirm Password"
-                                        component={FormInput}
-                                    />
-                                    <Field name="familyName" type="text" label="Last Name" component={FormInput} />
-                                    <Field name="givenName" type="text" label="First Name" component={FormInput} />
-                                </>
-                            )}
+                            
                             {formErrorMessage && <FormErrorMessage errorMessage={formErrorMessage} />}
 
                             <FormButton
-                                displayMessage={isSignUp ? 'Sign Up' : 'Log in'}
+                                displayMessage='Log in'
                                 type="submit"
                                 disabled={props.isSubmitting}
                             ></FormButton>
                             <FormButton 
-                                displayMessage={isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
-                                disabled={!isSignUp}
-                                onClick={() => setIsSignUp(!isSignUp)}
+                                displayMessage='Need an account? Sign Up'
+                                disabled={false}
+                                onClick={() => navigate('/signup')}
                             ></FormButton>
                         </Form>
                     )}  
