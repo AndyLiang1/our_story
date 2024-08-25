@@ -1,55 +1,55 @@
 import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
 import { FormButton } from '../components/FormButton';
 import { FormErrorMessage } from '../components/FormErrorMessage';
 import { FormInput } from '../components/FormInput';
-import { login } from '../services/authService';
-import { LoginType } from '../types/UserTypes';
+import { confirmSignUp } from '../services/authService';
+import { ConfirmUserType } from '../types/UserTypes';
 import { getErrorMessage } from '../utils/errorUtils';
 
-export interface ILoginPageProps {}
+export interface IConfirmUserPageProps {}
 
-export function LoginPage(props: ILoginPageProps) {
+export function ConfirmUserPage(props: IConfirmUserPageProps) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const userEmail = location.state?.email || '';
+
     const [formErrorMessage, setFormErrorMessage] = useState('');
 
-    const handleSubmit = async (formData: LoginType) => {
+    const handleSubmit = async (formData: ConfirmUserType) => {
         try {
-            const session = await login(formData);
-            if (session && typeof session.AccessToken !== 'undefined') {
-                sessionStorage.setItem('accessToken', session.AccessToken);
-                if (sessionStorage.getItem('accessToken')) {
-                    navigate('/home');
-                } else {
-                    console.error('Session token was not set properly.');
-                }
-            } else {
-                console.error('SignIn session or AccessToken is undefined.');
-            }
+            await confirmSignUp(formData);
+            await Swal.fire({
+                title: 'Success!',
+                text: 'Account confirmed successfully!\nSign in on next page.',
+                icon: 'success',
+                confirmButtonText: 'Continue to Log In'
+            });
+            navigate('/');
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
-                text: getErrorMessage(error),
+                text: `Failed to confirm account: ${getErrorMessage(error)}`,
                 icon: 'error',
                 confirmButtonText: 'Try Again'
             });
         }
     };
 
-    const LoginSchema = Yup.object().shape({
+    const confirmUserSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
-        password: Yup.string().required('Password is required.')
+        confirmationCode: Yup.string().required('Confirmation Code is required.')
     });
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
             <div className="float-right flex h-full w-[45%] items-center justify-center">
                 <Formik
-                    initialValues={{ email: '', password: '' }}
-                    validationSchema={LoginSchema}
+                    initialValues={{ email: userEmail, confirmationCode: '' }}
+                    validationSchema={confirmUserSchema}
                     onSubmit={(values, actions) => {
                         handleSubmit(values);
                         setTimeout(() => {
@@ -59,28 +59,25 @@ export function LoginPage(props: ILoginPageProps) {
                 >
                     {(props) => (
                         <Form className="flex h-full w-[90%] flex-col items-center justify-center">
-                            <div className="text-[1.5rem] font-bold">Log in</div>
+                            <div className="text-[1.5rem] font-bold">Confirm Account</div>
+                            <div className="text-[1rem]">
+                                A confirmation code was sent to your email.
+                            </div>
                             <Field name="email" type="email" label="Email" component={FormInput} />
                             <Field
-                                type="password"
-                                name="password"
-                                label="Password"
+                                type="text"
+                                name="confirmationCode"
+                                label="Confirmation Code"
                                 component={FormInput}
                             />
-
                             {formErrorMessage && (
                                 <FormErrorMessage errorMessage={formErrorMessage} />
                             )}
 
                             <FormButton
-                                displayMessage="Log in"
+                                displayMessage="Confirm Account"
                                 type="submit"
                                 disabled={props.isSubmitting}
-                            ></FormButton>
-                            <FormButton
-                                displayMessage="Need an account? Sign Up"
-                                disabled={false}
-                                onClick={() => navigate('/signup')}
                             ></FormButton>
                         </Form>
                     )}

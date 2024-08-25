@@ -1,13 +1,9 @@
-import * as React from 'react';
-import { TipTap } from '../components/TipTap';
-import { SideBar } from '../components/SideBar';
-import { NavBar } from '../components/Navbar';
-import { config } from '../config/config';
-import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { getAllDocuments } from '../apis/documentApi';
+import { useLocation } from 'react-router-dom';
 import { CustomCalendar } from '../components/CustomCalendar';
+import { NavBar } from '../components/Navbar';
+import { SideBar } from '../components/SideBar';
+import { TipTap } from '../components/TipTap';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
@@ -32,9 +28,7 @@ export function HomePage(props: IHomePageProps) {
                         {jwt ? <TipTap jwt={jwt} /> : <div>Loading bruh</div>}
                     </div>
                     <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
-                        <div className="h-[45%] w-[90%] bg-red-700">
-                      
-                        </div>
+                        <div className="h-[45%] w-[90%] bg-red-700"></div>
                         <div className="h-[45%] w-[90%] bg-white">
                             <CustomCalendar
                                 events={[
@@ -45,7 +39,7 @@ export function HomePage(props: IHomePageProps) {
                                     },
                                     {
                                         eventId: '2',
-                                        
+
                                         eventDate: '2024-08-02',
                                         eventTitle: 'Trattoria1'
                                     },
