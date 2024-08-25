@@ -3,6 +3,19 @@ export type LoginType = {
     password: string
 }
 
+export type SignUpType = {
+    email: string, 
+    password: string
+    confirmPassword: string
+    familyName?: string
+    givenName?: string
+}
+
+export type ConfirmUserType = {
+    email: string
+    confirmationCode: string
+}
+
 export type LoginBEType = {
     firstName: string, 
     lastName: string, 
