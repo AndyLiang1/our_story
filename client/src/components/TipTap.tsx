@@ -1,18 +1,14 @@
-import * as Y from 'yjs';
 import { TiptapCollabProvider } from '@hocuspocus/provider';
-
-import { FaBold } from 'react-icons/fa';
+import * as Y from 'yjs';
 
 import { config } from '../config/config';
 import Editor from './Editor';
 
-import { useEffect, useState } from 'react';
-
 export interface ITipTapProps {
-    jwt: string
+    jwt: string;
 }
 
-export function TipTap({jwt}: ITipTapProps) {
+export function TipTap({ jwt }: ITipTapProps) {
     const doc = new Y.Doc();
     const provider = new TiptapCollabProvider({
         name: 'test_doc', // Unique document identifier for syncing. This is your document name.
@@ -34,7 +30,5 @@ export function TipTap({jwt}: ITipTapProps) {
         }
     });
 
-    return (
-            <Editor provider={provider} ydoc={doc} />
-    );
+    return <Editor provider={provider} ydoc={doc} />;
 }

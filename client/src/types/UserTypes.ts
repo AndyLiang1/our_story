@@ -1,24 +1,24 @@
 export type LoginType = {
-    email: string, 
-    password: string
-}
+    email: string;
+    password: string;
+};
 
 export type SignUpType = {
-    email: string, 
-    password: string
-    confirmPassword: string
-    familyName?: string
-    givenName?: string
-}
+    email: string;
+    password: string;
+    confirmPassword: string;
+    familyName?: string;
+    givenName?: string;
+};
 
 export type ConfirmUserType = {
-    email: string
-    confirmationCode: string
-}
+    email: string;
+    confirmationCode: string;
+};
 
 export type LoginBEType = {
-    firstName: string, 
-    lastName: string, 
-    authToken: string, 
-    tiptapToken: string
-}
+    firstName: string;
+    lastName: string;
+    authToken: string;
+    tiptapToken: string;
+};
