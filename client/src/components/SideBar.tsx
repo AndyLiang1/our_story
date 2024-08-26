@@ -41,7 +41,7 @@ interface ISideBarClosedProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function SideBarClosed({ isOpen, setIsOpen }: ISideBarClosedProps) {
+function SideBarClosed({isOpen, setIsOpen}: ISideBarClosedProps) {
     return (
         <div className="relative h-full w-[3%] bg-blue-50">
             <BiCollapseHorizontal

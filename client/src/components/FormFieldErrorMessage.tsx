@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export interface IFormFieldErrorMessageProps {
     name: string;
     form: any;

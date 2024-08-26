@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export interface IFormInputProps {
     field: any;
     form: any;

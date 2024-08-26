@@ -1,5 +1,5 @@
 export type EventMetaData = {
-    eventId: string;
-    eventTitle: string;
-    eventDate: string;
-};
+    eventId: string,
+    eventTitle: string,
+    eventDate: string, 
+}
