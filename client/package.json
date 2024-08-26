@@ -12,6 +12,7 @@
     "tailwindcss": "^3.4.7"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.637.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@hocuspocus/provider": "^2.13.5",
     "@testing-library/jest-dom": "^5.17.0",
@@ -53,6 +54,7 @@
     "react-icons": "^5.2.1",
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
+    "sweetalert2": "^11.12.4",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "yjs": "^13.6.18",

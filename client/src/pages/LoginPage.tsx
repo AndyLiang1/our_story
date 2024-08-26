@@ -5,10 +5,12 @@ import { GenericFormInput } from '../components/GenericFormInput';
 import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import * as Yup from 'yup';
 import { GenericFormButton } from '../components/GenericFormButton';
-import { login } from '../apis/userApi';
-import { LoginType, LoginBEType } from '../types/UserTypes';
+import { login, signUp } from '../services/authService';
+import { LoginType, LoginBEType, SignUpType } from '../types/UserTypes';
 import { APPErrorType } from '../types/ApiTypes';
 import { useState } from 'react';
+import Swal from 'sweetalert2'
+import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ILoginPageProps {}
 
@@ -17,22 +19,37 @@ export function LoginPage(props: ILoginPageProps) {
     const [formErrorMessage, setFormErrorMessage] = useState('')
 
     const handleSubmit = async (formData: LoginType) => {
-        const loginResult: LoginBEType = await login(formData)
-        await handleLogin(loginResult)
-    };
-
-    const handleLogin = async (loginDataFromBE: LoginBEType | APPErrorType) => {
-        if ((loginDataFromBE as APPErrorType).errorMessage) {
-            setFormErrorMessage((loginDataFromBE as APPErrorType).errorMessage)
-        } else {
-            navigate('/home', {state : {userInfo: loginDataFromBE}});
+        try {
+            const session = await login(formData)
+            if (session && typeof session.AccessToken !== 'undefined') {
+                sessionStorage.setItem('accessToken', session.AccessToken);
+                if (sessionStorage.getItem('accessToken')) {
+                    navigate('/home');
+                } else {
+                    console.error('Session token was not set properly.');
+                }
+            } else {
+                console.error('SignIn session or AccessToken is undefined.');
+            }
+            
+        } catch(error) {
+            Swal.fire({
+                title: 'Error!',
+                text: getErrorMessage(error),
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            
+            })
         }
+
     };
 
     const LoginSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
         password: Yup.string().required('Password is required.')
-    });
+    }
+        
+    );
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -57,17 +74,25 @@ export function LoginPage(props: ILoginPageProps) {
                                 label="Password"
                                 component={GenericFormInput}
                             />
+                            
                             {formErrorMessage && <GenericFormErrorMessage errorMessage={formErrorMessage} />}
 
                             <GenericFormButton
-                                displayMessage="Log in"
+                                displayMessage='Log in'
                                 type="submit"
                                 disabled={props.isSubmitting}
                             ></GenericFormButton>
+                            <GenericFormButton 
+                                displayMessage='Need an account? Sign Up'
+                                disabled={false}
+                                onClick={() => navigate('/signup')}
+                            ></GenericFormButton>
                         </Form>
-                    )}
+                    )}  
                 </Formik>
             </div>
+            
+            
         </div>
     );
 }
