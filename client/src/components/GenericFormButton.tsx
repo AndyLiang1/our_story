@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export interface IFormButtonProps {
+export interface IGenericFormButtonProps {
     displayMessage: string;
     onClick?: any;
     onSubmit?: any;
@@ -8,7 +8,7 @@ export interface IFormButtonProps {
     disabled: boolean;
 }
 
-export function FormButton({ displayMessage, onClick, onSubmit, type }: IFormButtonProps) {
+export function GenericFormButton({ displayMessage, onClick, onSubmit, type }: IGenericFormButtonProps) {
     return (
         <button
             onClick={onClick}

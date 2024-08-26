@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
-import { FormInput } from '../components/FormInput';
-import { FormErrorMessage } from '../components/FormErrorMessage';
+import { GenericFormInput } from '../components/GenericFormInput';
+import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import * as Yup from 'yup';
-import { FormButton } from '../components/FormButton';
+import { GenericFormButton } from '../components/GenericFormButton';
 import { login } from '../apis/userApi';
 import { LoginType, LoginBEType } from '../types/UserTypes';
 import { APPErrorType } from '../types/ApiTypes';
@@ -50,20 +50,20 @@ export function LoginPage(props: ILoginPageProps) {
                     {(props) => (
                         <Form className="flex h-full w-[90%] flex-col items-center justify-center">
                             <div className="text-[1.5rem] font-bold">Log in</div>
-                            <Field name="email" type="email" label="Email" component={FormInput} />
+                            <Field name="email" type="email" label="Email" component={GenericFormInput} />
                             <Field
                                 type="password"
                                 name="password"
                                 label="Password"
-                                component={FormInput}
+                                component={GenericFormInput}
                             />
-                            {formErrorMessage && <FormErrorMessage errorMessage={formErrorMessage} />}
+                            {formErrorMessage && <GenericFormErrorMessage errorMessage={formErrorMessage} />}
 
-                            <FormButton
+                            <GenericFormButton
                                 displayMessage="Log in"
                                 type="submit"
                                 disabled={props.isSubmitting}
-                            ></FormButton>
+                            ></GenericFormButton>
                         </Form>
                     )}
                 </Formik>
