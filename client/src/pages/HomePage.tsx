@@ -16,10 +16,12 @@ export function HomePage(props: IHomePageProps) {
         // const documents = getAllDocuments(userInfo.authToken, userInfo.tiptapToken)
         // setDocuments(documents)
     }, []);
+    console.log(location.state)
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
             <NavBar />
+            <h1>Hello {location.state?.firstName}</h1>
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
                 <SideBar dataList={['Story 1', 'Story 2', 'Story 3', 'Story 4', 'Story 5']} />
 

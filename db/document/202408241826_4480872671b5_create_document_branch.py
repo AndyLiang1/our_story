@@ -24,7 +24,7 @@ def upgrade() -> None:
     op.create_table(
         TABLE,
         sa.Column(
-            "document_id", 
+            "documentId", 
             sa.Text, 
             primary_key=True,
             server_default=sa.text("concat('doc-', gen_random_uuid())"),
@@ -33,15 +33,13 @@ def upgrade() -> None:
         sa.Column("content", sa.Text),
         sa.Column("owners", sa.ARRAY(sa.Text)),
         sa.Column(
-            "created_at_utc", 
+            "createdAt", 
             sa.TIMESTAMP(timezone=False),
-            server_default=sa.func.now(),
-            default=None
+            server_default=sa.func.now()
         ),
         sa.Column(
-            "updated_at_utc", 
+            "updatedAt", 
             sa.TIMESTAMP(timezone=False),
-            default=None
         ),
         schema=DB_SCHEMA
     )

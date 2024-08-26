@@ -24,25 +24,23 @@ def upgrade() -> None:
     op.create_table(
         TABLE,
         sa.Column(
-            "user_id", 
+            "userId", 
             sa.Text, 
             primary_key=True,
             server_default=sa.text("concat('user-', gen_random_uuid())"),
         ),
-        sa.Column("cognito_id", sa.Text, nullable=False),
+        sa.Column("cognitoId", sa.Text, nullable=False),
         sa.Column("email", sa.Text, nullable=False),
-        sa.Column("first_name", sa.Text),
-        sa.Column("last_name", sa.Text),
+        sa.Column("firstName", sa.Text),
+        sa.Column("lastName", sa.Text),
         sa.Column(
-            "created_at_utc", 
+            "createdAt", 
             sa.TIMESTAMP(timezone=False),
-            server_default=sa.func.now(),
-            default=None
+            server_default=sa.func.now()
         ),
         sa.Column(
-            "updated_at_utc", 
+            "updatedAt", 
             sa.TIMESTAMP(timezone=False),
-            default=None
         ),
         schema=DB_SCHEMA
     )

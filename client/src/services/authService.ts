@@ -87,3 +87,4 @@ export const confirmSignUp = async (formData: ConfirmUserType) => {
         throw error;
     }
 };
+

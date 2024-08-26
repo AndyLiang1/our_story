@@ -22,3 +22,11 @@ export type LoginBEType = {
     authToken: string;
     tiptapToken: string;
 };
+
+export type User = {
+    userId: string
+    cognitoId: string
+    email: string
+    firstName: string
+    lastName: string
+}

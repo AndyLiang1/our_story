@@ -1,8 +1,8 @@
 export const config = {
     baseUrl:
         process.env.REACT_APP_NODE_ENV == 'production'
-            ? 'https://ourstory-api.fly.dev/'
-            : 'http://localhost:3002/',
+            ? 'https://ourstory-api.fly.dev'
+            : 'http://localhost:3002',
     tiptapProvider: {
         appId: process.env.REACT_APP_APP_ID
     },

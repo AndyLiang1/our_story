@@ -9,6 +9,7 @@ import { FormInput } from '../components/FormInput';
 import { confirmSignUp } from '../services/authService';
 import { ConfirmUserType } from '../types/UserTypes';
 import { getErrorMessage } from '../utils/errorUtils';
+import { addUser } from '../apis/userApi';
 
 export interface IConfirmUserPageProps {}
 
@@ -22,6 +23,12 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
     const handleSubmit = async (formData: ConfirmUserType) => {
         try {
             await confirmSignUp(formData);
+            const user = await addUser(
+                location.state?.email,
+                location.state?.cognitoId,
+                location.state?.givenName,
+                location.state?.familyName
+            )
             await Swal.fire({
                 title: 'Success!',
                 text: 'Account confirmed successfully!\nSign in on next page.',
