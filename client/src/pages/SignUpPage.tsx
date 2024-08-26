@@ -1,44 +1,41 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
-import { FormInput } from '../components/FormInput';
-import { FormErrorMessage } from '../components/FormErrorMessage';
+import { GenericFormInput } from '../components/GenericFormInput';
+import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import * as Yup from 'yup';
-import { FormButton } from '../components/FormButton';
+import { GenericFormButton } from '../components/GenericFormButton';
 import { login, signUp } from '../services/authService';
 import { LoginType, LoginBEType, SignUpType } from '../types/UserTypes';
 import { APPErrorType } from '../types/ApiTypes';
 import { useState } from 'react';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ISignUpPageProps {}
 
 export function SignUpPage(props: ISignUpPageProps) {
     const navigate = useNavigate();
-    const [formErrorMessage, setFormErrorMessage] = useState('')
+    const [formErrorMessage, setFormErrorMessage] = useState('');
 
     const handleSubmit = async (formData: SignUpType) => {
         if (formData.password !== formData.confirmPassword) {
-            setFormErrorMessage("Passwords do not match.")
-            return
+            setFormErrorMessage('Passwords do not match.');
+            return;
         }
         try {
-            await signUp(formData)
-            const email = formData.email
-            navigate('/confirm', { state: { email } })
+            await signUp(formData);
+            const email = formData.email;
+            navigate('/confirm', { state: { email } });
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
                 text: `Failed to create account: ${getErrorMessage(error)}`,
                 icon: 'error',
                 confirmButtonText: 'Try Again'
-            
-            })
+            });
         }
-
     };
-
 
     const SignUpSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
@@ -54,7 +51,7 @@ export function SignUpPage(props: ISignUpPageProps) {
         confirmPassword: '',
         familyName: '',
         givenName: ''
-    }
+    };
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -72,40 +69,55 @@ export function SignUpPage(props: ISignUpPageProps) {
                     {(props) => (
                         <Form className="flex h-full w-[90%] flex-col items-center justify-center">
                             <div className="text-[1.5rem] font-bold">Log in</div>
-                            <Field name="email" type="email" label="Email" component={FormInput} />
+                            <Field
+                                name="email"
+                                type="email"
+                                label="Email"
+                                component={GenericFormInput}
+                            />
                             <Field
                                 type="password"
                                 name="password"
                                 label="Password"
-                                component={FormInput}
+                                component={GenericFormInput}
                             />
                             <Field
                                 type="password"
                                 name="confirmPassword"
                                 label="Confirm Password"
-                                component={FormInput}
+                                component={GenericFormInput}
                             />
-                            <Field name="familyName" type="text" label="Last Name" component={FormInput} />
-                            <Field name="givenName" type="text" label="First Name" component={FormInput} />
-                                
-                            {formErrorMessage && <FormErrorMessage errorMessage={formErrorMessage} />}
+                            <Field
+                                name="familyName"
+                                type="text"
+                                label="Last Name"
+                                component={GenericFormInput}
+                            />
+                            <Field
+                                name="givenName"
+                                type="text"
+                                label="First Name"
+                                component={GenericFormInput}
+                            />
 
-                            <FormButton
-                                displayMessage='Sign Up'
+                            {formErrorMessage && (
+                                <GenericFormErrorMessage errorMessage={formErrorMessage} />
+                            )}
+
+                            <GenericFormButton
+                                displayMessage="Sign Up"
                                 type="submit"
                                 disabled={props.isSubmitting}
-                            ></FormButton>
-                            <FormButton 
-                                displayMessage='Already have an account? Sign In'
+                            ></GenericFormButton>
+                            <GenericFormButton
+                                displayMessage="Already have an account? Sign In"
                                 disabled={false}
                                 onClick={() => navigate('/login')}
-                            ></FormButton>
+                            ></GenericFormButton>
                         </Form>
-                    )}  
+                    )}
                 </Formik>
             </div>
-            
-            
         </div>
     );
 }

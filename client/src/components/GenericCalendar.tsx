@@ -2,18 +2,18 @@ import * as React from 'react';
 
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import { CalendarEvents } from './CalendarEvents';
+import { GenericCalendarEvents } from './GenericCalendarEvents';
 import { EventMetaData } from '../types/DocumentTypes';
 
 type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-export interface ICustomCalendarProps {
+export interface IGenericCalendarProps {
     events: EventMetaData[];
 }
 
-export function CustomCalendar({ events }: ICustomCalendarProps) {
+export function GenericCalendar({ events }: IGenericCalendarProps) {
     const [value, onChange] = useState<Value>(new Date());
 
     const addEventsToCalendarDay = ({ date, view }: any) => {
@@ -22,15 +22,13 @@ export function CustomCalendar({ events }: ICustomCalendarProps) {
         let eventsOnThisDay = [];
 
         for (let event of events) {
-            if (event.eventDate > calendarDate) break;
-            if (event.eventDate === calendarDate) {
+            if (event.date > calendarDate) break;
+            if (event.date === calendarDate) {
                 eventsOnThisDay.push(event);
             }
         }
 
-        return eventsOnThisDay.length ? (
-            <CalendarEvents events={eventsOnThisDay} />
-        ) : null;
+        return eventsOnThisDay.length ? <GenericCalendarEvents events={eventsOnThisDay} /> : null;
     };
 
     return <Calendar onChange={onChange} value={value} tileContent={addEventsToCalendarDay} />;

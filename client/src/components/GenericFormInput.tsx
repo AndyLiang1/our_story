@@ -6,7 +6,7 @@ export interface IFormInputProps {
     label: string;
 }
 
-export function FormInput({ field, form: { touched, errors }, label, ...props }: IFormInputProps) {
+export function GenericFormInput({ field, form: { touched, errors }, label, ...props }: IFormInputProps) {
     return (
         <div
             className={
