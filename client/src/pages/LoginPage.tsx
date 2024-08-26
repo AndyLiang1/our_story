@@ -1,24 +1,26 @@
-import { Field, Form, Formik } from 'formik';
-import { useState } from 'react';
+import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { Formik, Form, Field } from 'formik';
+import { FormInput } from '../components/FormInput';
+import { FormErrorMessage } from '../components/FormErrorMessage';
 import * as Yup from 'yup';
 import { FormButton } from '../components/FormButton';
-import { FormErrorMessage } from '../components/FormErrorMessage';
-import { FormInput } from '../components/FormInput';
-import { login } from '../services/authService';
-import { LoginType } from '../types/UserTypes';
+import { login, signUp } from '../services/authService';
+import { LoginType, LoginBEType, SignUpType } from '../types/UserTypes';
+import { APPErrorType } from '../types/ApiTypes';
+import { useState } from 'react';
+import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ILoginPageProps {}
 
 export function LoginPage(props: ILoginPageProps) {
     const navigate = useNavigate();
-    const [formErrorMessage, setFormErrorMessage] = useState('');
+    const [formErrorMessage, setFormErrorMessage] = useState('')
 
     const handleSubmit = async (formData: LoginType) => {
         try {
-            const session = await login(formData);
+            const session = await login(formData)
             if (session && typeof session.AccessToken !== 'undefined') {
                 sessionStorage.setItem('accessToken', session.AccessToken);
                 if (sessionStorage.getItem('accessToken')) {
@@ -29,20 +31,25 @@ export function LoginPage(props: ILoginPageProps) {
             } else {
                 console.error('SignIn session or AccessToken is undefined.');
             }
-        } catch (error) {
+            
+        } catch(error) {
             Swal.fire({
                 title: 'Error!',
                 text: getErrorMessage(error),
                 icon: 'error',
                 confirmButtonText: 'Try Again'
-            });
+            
+            })
         }
+
     };
 
     const LoginSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
         password: Yup.string().required('Password is required.')
-    });
+    }
+        
+    );
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -67,25 +74,25 @@ export function LoginPage(props: ILoginPageProps) {
                                 label="Password"
                                 component={FormInput}
                             />
-
-                            {formErrorMessage && (
-                                <FormErrorMessage errorMessage={formErrorMessage} />
-                            )}
+                            
+                            {formErrorMessage && <FormErrorMessage errorMessage={formErrorMessage} />}
 
                             <FormButton
-                                displayMessage="Log in"
+                                displayMessage='Log in'
                                 type="submit"
                                 disabled={props.isSubmitting}
                             ></FormButton>
-                            <FormButton
-                                displayMessage="Need an account? Sign Up"
+                            <FormButton 
+                                displayMessage='Need an account? Sign Up'
                                 disabled={false}
                                 onClick={() => navigate('/signup')}
                             ></FormButton>
                         </Form>
-                    )}
+                    )}  
                 </Formik>
             </div>
+            
+            
         </div>
     );
 }

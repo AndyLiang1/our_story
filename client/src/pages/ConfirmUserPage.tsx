@@ -1,13 +1,14 @@
-import { Field, Form, Formik } from 'formik';
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import { FormButton } from '../components/FormButton';
-import { FormErrorMessage } from '../components/FormErrorMessage';
+import { Formik, Form, Field } from 'formik';
 import { FormInput } from '../components/FormInput';
-import { confirmSignUp } from '../services/authService';
+import { FormErrorMessage } from '../components/FormErrorMessage';
+import { FormButton } from '../components/FormButton';
+import { useState } from 'react';
 import { ConfirmUserType } from '../types/UserTypes';
+import Swal from 'sweetalert2'
+import { confirmSignUp } from '../services/authService';
+import { title } from 'process';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getErrorMessage } from '../utils/errorUtils';
 
 export interface IConfirmUserPageProps {}
@@ -15,19 +16,20 @@ export interface IConfirmUserPageProps {}
 export function ConfirmUserPage(props: IConfirmUserPageProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const userEmail = location.state?.email || '';
+    const userEmail = location.state?.email || ''
 
-    const [formErrorMessage, setFormErrorMessage] = useState('');
+    const [formErrorMessage, setFormErrorMessage] = useState('')
 
     const handleSubmit = async (formData: ConfirmUserType) => {
         try {
             await confirmSignUp(formData);
             await Swal.fire({
                 title: 'Success!',
-                text: 'Account confirmed successfully!\nSign in on next page.',
+                text: "Account confirmed successfully!\nSign in on next page.",
                 icon: 'success',
                 confirmButtonText: 'Continue to Log In'
-            });
+            
+            })
             navigate('/');
         } catch (error) {
             Swal.fire({
@@ -35,9 +37,10 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
                 text: `Failed to confirm account: ${getErrorMessage(error)}`,
                 icon: 'error',
                 confirmButtonText: 'Try Again'
-            });
+            
+            })
         }
-    };
+    }
 
     const confirmUserSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
@@ -60,9 +63,7 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
                     {(props) => (
                         <Form className="flex h-full w-[90%] flex-col items-center justify-center">
                             <div className="text-[1.5rem] font-bold">Confirm Account</div>
-                            <div className="text-[1rem]">
-                                A confirmation code was sent to your email.
-                            </div>
+                            <div className="text-[1rem]">A confirmation code was sent to your email.</div>
                             <Field name="email" type="email" label="Email" component={FormInput} />
                             <Field
                                 type="text"
@@ -70,19 +71,17 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
                                 label="Confirmation Code"
                                 component={FormInput}
                             />
-                            {formErrorMessage && (
-                                <FormErrorMessage errorMessage={formErrorMessage} />
-                            )}
+                            {formErrorMessage && <FormErrorMessage errorMessage={formErrorMessage} />}
 
                             <FormButton
-                                displayMessage="Confirm Account"
+                                displayMessage='Confirm Account'
                                 type="submit"
                                 disabled={props.isSubmitting}
                             ></FormButton>
                         </Form>
-                    )}
+                    )}  
                 </Formik>
             </div>
-        </div>
-    );
+        </div> 
+    )
 }

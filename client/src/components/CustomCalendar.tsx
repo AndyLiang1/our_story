@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import * as React from 'react';
+
+import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import { EventMetaData } from '../types/DocumentTypes';
 import { CalendarEvents } from './CalendarEvents';
+import { EventMetaData } from '../types/DocumentTypes';
 
 type ValuePiece = Date | null;
 
@@ -26,7 +28,9 @@ export function CustomCalendar({ events }: ICustomCalendarProps) {
             }
         }
 
-        return eventsOnThisDay.length ? <CalendarEvents events={eventsOnThisDay} /> : null;
+        return eventsOnThisDay.length ? (
+            <CalendarEvents events={eventsOnThisDay} />
+        ) : null;
     };
 
     return <Calendar onChange={onChange} value={value} tileContent={addEventsToCalendarDay} />;

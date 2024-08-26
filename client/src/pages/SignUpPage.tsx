@@ -1,39 +1,44 @@
-import { Field, Form, Formik } from 'formik';
-import { useState } from 'react';
+import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { Formik, Form, Field } from 'formik';
+import { FormInput } from '../components/FormInput';
+import { FormErrorMessage } from '../components/FormErrorMessage';
 import * as Yup from 'yup';
 import { FormButton } from '../components/FormButton';
-import { FormErrorMessage } from '../components/FormErrorMessage';
-import { FormInput } from '../components/FormInput';
-import { signUp } from '../services/authService';
-import { SignUpType } from '../types/UserTypes';
+import { login, signUp } from '../services/authService';
+import { LoginType, LoginBEType, SignUpType } from '../types/UserTypes';
+import { APPErrorType } from '../types/ApiTypes';
+import { useState } from 'react';
+import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ISignUpPageProps {}
 
 export function SignUpPage(props: ISignUpPageProps) {
     const navigate = useNavigate();
-    const [formErrorMessage, setFormErrorMessage] = useState('');
+    const [formErrorMessage, setFormErrorMessage] = useState('')
 
     const handleSubmit = async (formData: SignUpType) => {
         if (formData.password !== formData.confirmPassword) {
-            setFormErrorMessage('Passwords do not match.');
-            return;
+            setFormErrorMessage("Passwords do not match.")
+            return
         }
         try {
-            await signUp(formData);
-            const email = formData.email;
-            navigate('/confirm', { state: { email } });
+            await signUp(formData)
+            const email = formData.email
+            navigate('/confirm', { state: { email } })
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
                 text: `Failed to create account: ${getErrorMessage(error)}`,
                 icon: 'error',
                 confirmButtonText: 'Try Again'
-            });
+            
+            })
         }
+
     };
+
 
     const SignUpSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
@@ -49,7 +54,7 @@ export function SignUpPage(props: ISignUpPageProps) {
         confirmPassword: '',
         familyName: '',
         givenName: ''
-    };
+    }
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -80,37 +85,27 @@ export function SignUpPage(props: ISignUpPageProps) {
                                 label="Confirm Password"
                                 component={FormInput}
                             />
-                            <Field
-                                name="familyName"
-                                type="text"
-                                label="Last Name"
-                                component={FormInput}
-                            />
-                            <Field
-                                name="givenName"
-                                type="text"
-                                label="First Name"
-                                component={FormInput}
-                            />
-
-                            {formErrorMessage && (
-                                <FormErrorMessage errorMessage={formErrorMessage} />
-                            )}
+                            <Field name="familyName" type="text" label="Last Name" component={FormInput} />
+                            <Field name="givenName" type="text" label="First Name" component={FormInput} />
+                                
+                            {formErrorMessage && <FormErrorMessage errorMessage={formErrorMessage} />}
 
                             <FormButton
-                                displayMessage="Sign Up"
+                                displayMessage='Sign Up'
                                 type="submit"
                                 disabled={props.isSubmitting}
                             ></FormButton>
-                            <FormButton
-                                displayMessage="Already have an account? Sign In"
+                            <FormButton 
+                                displayMessage='Already have an account? Sign In'
                                 disabled={false}
                                 onClick={() => navigate('/login')}
                             ></FormButton>
                         </Form>
-                    )}
+                    )}  
                 </Formik>
             </div>
+            
+            
         </div>
     );
 }
