@@ -1,13 +1,15 @@
-import { Field, Form, Formik } from 'formik';
-import { useState } from 'react';
+import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { Formik, Form, Field } from 'formik';
+import { GenericFormInput } from '../components/GenericFormInput';
+import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import * as Yup from 'yup';
-import { FormButton } from '../components/FormButton';
-import { FormErrorMessage } from '../components/FormErrorMessage';
-import { FormInput } from '../components/FormInput';
-import { login } from '../services/authService';
-import { LoginType } from '../types/UserTypes';
+import { GenericFormButton } from '../components/GenericFormButton';
+import { login, signUp } from '../services/authService';
+import { LoginType, LoginBEType, SignUpType } from '../types/UserTypes';
+import { APPErrorType } from '../types/ApiTypes';
+import { useState } from 'react';
+import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
 import { getUserByEmail } from '../apis/userApi';
 
@@ -15,11 +17,11 @@ export interface ILoginPageProps {}
 
 export function LoginPage(props: ILoginPageProps) {
     const navigate = useNavigate();
-    const [formErrorMessage, setFormErrorMessage] = useState('');
+    const [formErrorMessage, setFormErrorMessage] = useState('')
 
     const handleSubmit = async (formData: LoginType) => {
         try {
-            const session = await login(formData);
+            const session = await login(formData)
             if (session && typeof session.AccessToken !== 'undefined') {
                 sessionStorage.setItem('accessToken', session.AccessToken);
                 if (sessionStorage.getItem('accessToken')) {
@@ -31,20 +33,25 @@ export function LoginPage(props: ILoginPageProps) {
             } else {
                 console.error('SignIn session or AccessToken is undefined.');
             }
-        } catch (error) {
+            
+        } catch(error) {
             Swal.fire({
                 title: 'Error!',
                 text: getErrorMessage(error),
                 icon: 'error',
                 confirmButtonText: 'Try Again'
-            });
+            
+            })
         }
+
     };
 
     const LoginSchema = Yup.object().shape({
         email: Yup.string().email('Please enter a valid email.').required('Email is required.'),
         password: Yup.string().required('Password is required.')
-    });
+    }
+        
+    );
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -62,32 +69,32 @@ export function LoginPage(props: ILoginPageProps) {
                     {(props) => (
                         <Form className="flex h-full w-[90%] flex-col items-center justify-center">
                             <div className="text-[1.5rem] font-bold">Log in</div>
-                            <Field name="email" type="email" label="Email" component={FormInput} />
+                            <Field name="email" type="email" label="Email" component={GenericFormInput} />
                             <Field
                                 type="password"
                                 name="password"
                                 label="Password"
-                                component={FormInput}
+                                component={GenericFormInput}
                             />
+                            
+                            {formErrorMessage && <GenericFormErrorMessage errorMessage={formErrorMessage} />}
 
-                            {formErrorMessage && (
-                                <FormErrorMessage errorMessage={formErrorMessage} />
-                            )}
-
-                            <FormButton
-                                displayMessage="Log in"
+                            <GenericFormButton
+                                displayMessage='Log in'
                                 type="submit"
                                 disabled={props.isSubmitting}
-                            ></FormButton>
-                            <FormButton
-                                displayMessage="Need an account? Sign Up"
+                            ></GenericFormButton>
+                            <GenericFormButton 
+                                displayMessage='Need an account? Sign Up'
                                 disabled={false}
                                 onClick={() => navigate('/signup')}
-                            ></FormButton>
+                            ></GenericFormButton>
                         </Form>
-                    )}
+                    )}  
                 </Formik>
             </div>
+            
+            
         </div>
     );
 }

@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { CustomCalendar } from '../components/CustomCalendar';
-import { NavBar } from '../components/Navbar';
-import { SideBar } from '../components/SideBar';
+import * as React from 'react';
 import { TipTap } from '../components/TipTap';
+import { SideBar } from '../components/SideBar';
+import { NavBar } from '../components/Navbar';
+import { config } from '../config/config';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { getAllDocuments } from '../apis/documentApi';
+import { GenericCalendar } from '../components/GenericCalendar';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
@@ -16,14 +20,46 @@ export function HomePage(props: IHomePageProps) {
         // const documents = getAllDocuments(userInfo.authToken, userInfo.tiptapToken)
         // setDocuments(documents)
     }, []);
-    console.log(location.state)
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
             <NavBar />
             <h1>Hello {location.state?.firstName}</h1>
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
-                <SideBar dataList={['Story 1', 'Story 2', 'Story 3', 'Story 4', 'Story 5']} />
+                <SideBar
+                    dataList={[
+                        {
+                            id: '1',
+                            date: '2024-08-01',
+                            name: 'Trattoriaaaaaaa1'
+                        },
+                        {
+                            id: '2',
+                            date: '2024-08-02',
+                            name: 'Trattoria1'
+                        },
+                        {
+                            id: '3',
+                            date: '2024-08-02',
+                            name: 'Trattoria2'
+                        },
+                        {
+                            id: '4',
+                            date: '2024-08-03',
+                            name: 'Trattoria1'
+                        },
+                        {
+                            id: '5',
+                            date: '2024-08-03',
+                            name: 'Trattoria2'
+                        },
+                        {
+                            id: '6',
+                            date: '2024-08-03',
+                            name: 'Trattoria3'
+                        }
+                    ]}
+                />
 
                 <div className="flex h-full w-[85%] items-center justify-between">
                     <div className="h-full w-[65%]">
@@ -32,38 +68,37 @@ export function HomePage(props: IHomePageProps) {
                     <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
                         <div className="h-[45%] w-[90%] bg-red-700"></div>
                         <div className="h-[45%] w-[90%] bg-white">
-                            <CustomCalendar
+                            <GenericCalendar
                                 events={[
                                     {
-                                        eventId: '1',
-                                        eventDate: '2024-08-01',
-                                        eventTitle: 'Trattoriaaaaaaa1'
+                                        id: '1',
+                                        date: '2024-08-01',
+                                        name: 'Trattoriaaaaaaa1'
                                     },
                                     {
-                                        eventId: '2',
-
-                                        eventDate: '2024-08-02',
-                                        eventTitle: 'Trattoria1'
+                                        id: '2',
+                                        date: '2024-08-02',
+                                        name: 'Trattoria1'
                                     },
                                     {
-                                        eventId: '3',
-                                        eventDate: '2024-08-02',
-                                        eventTitle: 'Trattoria2'
+                                        id: '3',
+                                        date: '2024-08-02',
+                                        name: 'Trattoria2'
                                     },
                                     {
-                                        eventId: '4',
-                                        eventDate: '2024-08-03',
-                                        eventTitle: 'Trattoria1'
+                                        id: '4',
+                                        date: '2024-08-03',
+                                        name: 'Trattoria1'
                                     },
                                     {
-                                        eventId: '5',
-                                        eventDate: '2024-08-03',
-                                        eventTitle: 'Trattoria2'
+                                        id: '5',
+                                        date: '2024-08-03',
+                                        name: 'Trattoria2'
                                     },
                                     {
-                                        eventId: '6',
-                                        eventDate: '2024-08-03',
-                                        eventTitle: 'Trattoria3'
+                                        id: '6',
+                                        date: '2024-08-03',
+                                        name: 'Trattoria3'
                                     }
                                 ]}
                             />

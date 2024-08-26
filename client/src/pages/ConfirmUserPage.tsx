@@ -1,13 +1,14 @@
-import { Field, Form, Formik } from 'formik';
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import { FormButton } from '../components/FormButton';
-import { FormErrorMessage } from '../components/FormErrorMessage';
-import { FormInput } from '../components/FormInput';
-import { confirmSignUp } from '../services/authService';
+import { Formik, Form, Field } from 'formik';
+import { GenericFormInput } from '../components/GenericFormInput';
+import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
+import { GenericFormButton } from '../components/GenericFormButton';
+import { useState } from 'react';
 import { ConfirmUserType } from '../types/UserTypes';
+import Swal from 'sweetalert2';
+import { confirmSignUp } from '../services/authService';
+import { title } from 'process';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getErrorMessage } from '../utils/errorUtils';
 import { addUser } from '../apis/userApi';
 
@@ -70,22 +71,27 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
                             <div className="text-[1rem]">
                                 A confirmation code was sent to your email.
                             </div>
-                            <Field name="email" type="email" label="Email" component={FormInput} />
+                            <Field
+                                name="email"
+                                type="email"
+                                label="Email"
+                                component={GenericFormInput}
+                            />
                             <Field
                                 type="text"
                                 name="confirmationCode"
                                 label="Confirmation Code"
-                                component={FormInput}
+                                component={GenericFormInput}
                             />
                             {formErrorMessage && (
-                                <FormErrorMessage errorMessage={formErrorMessage} />
+                                <GenericFormErrorMessage errorMessage={formErrorMessage} />
                             )}
 
-                            <FormButton
+                            <GenericFormButton
                                 displayMessage="Confirm Account"
                                 type="submit"
                                 disabled={props.isSubmitting}
-                            ></FormButton>
+                            ></GenericFormButton>
                         </Form>
                     )}
                 </Formik>
