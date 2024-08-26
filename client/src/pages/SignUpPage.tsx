@@ -24,9 +24,14 @@ export function SignUpPage(props: ISignUpPageProps) {
             return;
         }
         try {
-            await signUp(formData);
-            const email = formData.email;
-            navigate('/confirm', { state: { email } });
+            const cognitoResponse = await signUp(formData);
+            const userState = {
+                cognitoId: cognitoResponse.UserSub,
+                email: formData.email,
+                familyName: formData.familyName,
+                givenName: formData.givenName
+            }
+            navigate('/confirm', { state: { ...userState } });
         } catch (error) {
             Swal.fire({
                 title: 'Error!',

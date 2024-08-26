@@ -79,4 +79,5 @@ export const confirmSignUp = async (formData: ConfirmUserType) => {
         console.error("Error confirming sign up: ", error);
         throw error;
     }
-}
+};
+

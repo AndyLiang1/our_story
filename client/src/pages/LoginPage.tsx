@@ -11,6 +11,7 @@ import { APPErrorType } from '../types/ApiTypes';
 import { useState } from 'react';
 import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
+import { getUserByEmail } from '../apis/userApi';
 
 export interface ILoginPageProps {}
 
@@ -24,7 +25,8 @@ export function LoginPage(props: ILoginPageProps) {
             if (session && typeof session.AccessToken !== 'undefined') {
                 sessionStorage.setItem('accessToken', session.AccessToken);
                 if (sessionStorage.getItem('accessToken')) {
-                    navigate('/home');
+                   const user = await getUserByEmail(formData.email)
+                    navigate('/home', {state: user?.data});
                 } else {
                     console.error('Session token was not set properly.');
                 }

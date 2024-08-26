@@ -24,6 +24,7 @@ export function HomePage(props: IHomePageProps) {
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
             <NavBar />
+            <h1>Hello {location.state?.firstName}</h1>
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
                 <SideBar
                     dataList={[
