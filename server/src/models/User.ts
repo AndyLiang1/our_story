@@ -31,6 +31,15 @@ User.init(
         },
         updatedAt: {
             type: DataTypes.DATE
+        },
+        fullName: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                return `${this.getDataValue('firstName')} ${this.getDataValue('lastName')}`;
+            },
+            set(value) {
+                throw new Error('Do not try to set the `fullName` value!');
+            },
         }
     },
     {
@@ -41,3 +50,4 @@ User.init(
         timestamps: true
     }
 )
+

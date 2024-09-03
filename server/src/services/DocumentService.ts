@@ -1,32 +1,65 @@
 import { DocumentRepo } from '../repositories/DocumentRepo';
+import { DocumentData, DocumentOwnerData } from '../types/DocumentTypes';
+import { Document } from '../models/Document'
+import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
+
 export class DocumentService {
-    repo: any;
+    documentRepo: DocumentRepo;
+    documentOwnerRepo: DocumentOwnersRepo
+
     constructor() {
-        this.repo = new DocumentRepo();
+        this.documentRepo = new DocumentRepo();
+        this.documentOwnerRepo = new DocumentOwnersRepo()
     }
 
-    async getAllDocuments() {
-        const data = this.repo.getAllDocuments();
+    async getDocumentsOwnedByUser(userId: string) {
+        const docs = await this.documentRepo.getDocumentsOwnedByUser(userId)
+        return docs
+    }
+
+    async getDocument(documentId: string) {
+        const data = await this.documentRepo.getDocument(documentId);
         return data;
     }
 
-    async getDocument() {
-        const data = this.repo.getDocument();
-        return data;
+    async createDocument(documentData: DocumentData) {
+        const doc: Document = await this.documentRepo.createDocument(documentData);
+        const docId = doc.getDataValue('documentId')
+
+        const owner = await this.documentOwnerRepo.creatDocumentOwner({
+            documentId: docId,
+            userId: documentData.createdByUserId
+        }) 
+        return doc
     }
 
-    async createDocument() {
-        const data = this.repo.createDocument();
-        return data;
+    async updateDocument(documentId: string, documentData: DocumentData) {
+        try {
+            const data = await this.documentRepo.updateDocument(documentId, documentData);
+            return data;
+        } catch (error) {
+            console.error(`Failed to update: ${error}`)
+        }
+
     }
 
-    async updateDocument() {
-        const data = this.repo.updateDocument();
-        return data;
+    async deleteDocument(documentId: string) {
+        await this.documentRepo.deleteDocument(documentId);
     }
 
-    async deleteDocument() {
-        const data = this.repo.deleteDocument();
-        return data;
+    async addOwners(documentId: string, owners: string[]) {
+        var result = []
+        for (var userId of owners) {
+            const data = await this.documentOwnerRepo.creatDocumentOwner({
+                documentId,
+                userId
+            })
+            result.push(data)
+        }
+        return result
+    }
+
+    async deleteOwner(data: DocumentOwnerData) {
+        await this.documentOwnerRepo.deleteDocumentOwner(data)
     }
 }

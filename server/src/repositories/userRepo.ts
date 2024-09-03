@@ -3,6 +3,7 @@ import jsonwebtoken from "jsonwebtoken"
 import {config} from "../config/config"
 import { UserData } from '../types/UserTypes';
 import { User } from '../models/User';
+import { Document } from '../models/Document';
 
 export class UserRepo {
     constructor() {
@@ -27,22 +28,21 @@ export class UserRepo {
         })
         return user
     }
+
+    async getUsersOwningDocument(documentId: string) {
+        const users = await User.findAll({
+            include: [{
+                model: Document,
+                required: true,
+                where: {
+                    documentId
+                },
+                through: {
+                    attributes: []
+                },
+                attributes: []
+            }],
+        })
+        return users
+    }
 }
-
-
-
-
-
-
-
-// export const getAllUsers = async () => {
-//     const result = await pool.query('SELECT * FROM our_story.user');
-//     console.log(result.rows)
-//     const jwt = jsonwebtoken.sign(
-//         {
-//             allowedDocumentNames: ['test_doc']
-//         },
-//         `${config.tiptapProvider.appSecret}`
-//     );
-//     return jwt;
-// };

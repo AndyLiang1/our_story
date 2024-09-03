@@ -32,4 +32,9 @@ export class UserService {
             throw error;
         } 
     }
+
+    async getUsersOwningDocument(documentId: string) {
+        const users = await this.repo.getUsersOwningDocument(documentId)
+        return users
+    }
 }
