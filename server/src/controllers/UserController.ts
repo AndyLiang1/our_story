@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import {services} from "../services/services"
 import { UserData } from '../types/UserTypes';
+import { JwtVerifier } from '../middleware/JwtVerifier';
 
 export class UserController {
     router: Router
@@ -12,7 +13,7 @@ export class UserController {
         // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
         this.router.post('/', this.createUser.bind(this))
         this.router.get('/', this.getAllUsers.bind(this))
-        this.router.get('/email/:email', this.getUserByEmail.bind(this))
+        this.router.get('/email/:email', JwtVerifier.verifyJwt, this.getUserByEmail.bind(this))
     }
 
     initRoutes(apiRouter: Router) {

@@ -21,14 +21,15 @@ export const addUser = async (
     return user
 }
 
-export const getUserByEmail = async (email: string) => {
-    try {
-        const user = await axios.get(
-            `${config.baseUrl}/api/user/email/${encodeURIComponent(email)}`,
-        )
-        return user
-    } catch (err) {
-        console.error(`Unable to retrieve user with email ${email}: ${getErrorMessage(err)}`)
-    }
+export const getUserByEmail = async (email: string, idToken: string) => {
+    const user = await axios.get(
+        `${config.baseUrl}/api/user/email/${encodeURIComponent(email)}`,
+        {
+            headers: {
+                "Authorization": `Bearer ${idToken}`
+            }
+        }
+    )
+    return user
 
 }
