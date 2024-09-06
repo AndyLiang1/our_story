@@ -17,6 +17,8 @@ export class DocumentController {
         this.router.delete('/:documentId', this.deleteDocument.bind(this));
 
         this.router.get('/:documentId/owners', this.getDocumentOwners.bind(this))
+        this.router.put('/:documentId/owners', this.addDocumentOwners.bind(this))
+        this.router.delete('/:documentId/owners/:userId', this.deleteDocumentOwner.bind(this))
     }
 
     initRoutes(apiRouter: Router) {
@@ -138,5 +140,48 @@ export class DocumentController {
             console.error(error)
         }
         
+    }
+
+    async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { documentId } = req.params
+            const owners = req.body.owners
+            if (documentId) {
+                const docOwners = await services.documentService.addOwners(documentId, owners)
+                res.status(200).json(docOwners)
+            } else {
+                res.status(400).json({
+                    message: "documentId must be provided."
+                })
+            }
+        } catch (error) {
+            res.status(500).json({
+                message: "Unable to add owners. Internal server error."
+            })
+            console.error(error)
+        }
+    }
+
+    async deleteDocumentOwner(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { documentId, userId } = req.params
+            if (documentId && userId) {
+                await services.documentService.deleteOwner({
+                    documentId, userId
+                })
+                res.status(200).json({
+                    message: `Owner with userId ${userId} is removed from document successfully.`
+                })
+            } else {
+                res.status(400).json({
+                    message: "Both documentId and userId must be provided."
+                })
+            }
+        } catch (error) {
+            res.status(500).json({
+                message: "Unable to delete owner. Internal server error."
+            })
+            console.error(error)
+        }
     }
 }
