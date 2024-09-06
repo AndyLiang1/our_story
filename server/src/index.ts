@@ -5,6 +5,7 @@ import { config } from './config/config';
 
 import { UserController } from './controllers/UserController';
 import { UserRepo } from './repositories/UserRepo';
+import { DocumentController } from './controllers/DocumentController';
 
 const app: Express = express();
 app.use(cors());
@@ -29,6 +30,7 @@ const init = async () => {
     //     // res.json({ message: 'Hello Andy and Arya!' });
     // });
     new UserController().initRoutes(app)
+    new DocumentController().initRoutes(app)
 };
 
 init();
