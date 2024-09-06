@@ -26,6 +26,9 @@ Document.init(
                 key: 'userId'
             }
         },
+        images: {
+            type: DataTypes.ARRAY(DataTypes.TEXT),
+        },
         createdAt: {
             type: DataTypes.DATE
         },

@@ -38,7 +38,7 @@ def upgrade() -> None:
             nullable=False
         ),
         sa.Column(
-            "userId",
+            USER_ID_COL,
             sa.Text,
             primary_key=True,
             nullable=False
