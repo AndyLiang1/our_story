@@ -21,15 +21,27 @@ export const addUser = async (
     return user
 }
 
-export const getUserByEmail = async (email: string, idToken: string) => {
+export const getUserByEmail = async (email: string, collabToken: string) => {
     const user = await axios.get(
         `${config.baseUrl}/api/user/email/${encodeURIComponent(email)}`,
         {
             headers: {
-                "Authorization": `Bearer ${idToken}`
+                "Authorization": `Bearer ${collabToken}`
             }
         }
     )
     return user
 
 }
+
+export const getCollabToken = async(idToken: string) => {
+    const res = await axios.get(
+        `${config.baseUrl}/api/auth/getCollabToken`,
+        {
+            headers: {
+                "Authorization": `Bearer ${idToken}`
+            }
+        }
+    )
+    return res.data.token
+}   

@@ -1,12 +1,15 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify"
 import { config } from "../config/config"
 import { NextFunction, Request, Response} from "express"
+import { UserService } from "../services/UserService";
+import { services } from "../services/services";
+import jsonwebtoken from 'jsonwebtoken'
+import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import { jwtDecode } from "jwt-decode";
 
-// export const JwtVerifier = CognitoJwtVerifier.create({
-//     userPoolId: config.awsCognito.userPoolId as string,
-//     tokenUse: "id",
-//     clientId: config.awsCognito.clientId,
-// })
+export interface CustomRequest extends Request {
+    collabToken: string | JwtPayload
+}
 
 export class JwtVerifier {
     private static verifier = CognitoJwtVerifier.create({
@@ -14,8 +17,9 @@ export class JwtVerifier {
         tokenUse: "id",
         clientId: config.awsCognito.clientId as string,
     })
+    private static tiptapSecret = config.tiptapProvider.appSecret as string
 
-    static async verifyJwt(req: Request, res: Response, next: NextFunction) {
+    static async verifyAwsCognitoJwt(req: Request, res: Response, next: NextFunction) {
         try {
             const token = req.header('Authorization')?.replace('Bearer ', '');
             if (!token) {
@@ -23,6 +27,55 @@ export class JwtVerifier {
             }
             await JwtVerifier.verifier.verify(token)
             console.log("Verified.")
+        } catch (err) {
+            console.error(err)
+            return res.status(403).json({
+                message: "Not authorized."
+            })
+        }
+        next()
+    }
+
+    static async generateTipTapCollabToken(req: Request, res: Response, next: NextFunction) {
+        try {
+            const token = req.header('Authorization')?.replace('Bearer ', '');
+            if (!token) {
+                throw new Error("No token found.")
+            }
+            var data: any = jwtDecode(token)
+            const user = await services.userService.getUserByEmail(data.email)
+            const userId = user?.getDataValue('userId')
+            const docs = await services
+                .documentService
+                .getDocumentsOwnedByUser(userId)
+            const allowDocumentNames = docs.map(doc => doc.getDataValue("documentId"))
+            data = {
+                ...data,
+                allowDocumentNames,
+                userId
+            }
+            const jwt = jsonwebtoken.sign(data, JwtVerifier.tiptapSecret)
+            return res.status(200).json({
+                token: jwt
+            })
+        } catch (err) {
+            console.error(err)
+            return res.status(403).json({
+                message: "Not authorized."
+            })
+        }
+    }
+
+    static async verifyCollabToken(req: Request, res: Response, next: NextFunction) {
+        try {
+            const token = req.header('Authorization')?.replace('Bearer ', '');
+            if (!token) {
+                throw new Error("No token found.")
+            }
+            const decoded = jwt.verify(token, JwtVerifier.tiptapSecret);
+            (req as CustomRequest).collabToken = decoded
+            console.log("Verified.")
+            
         } catch (err) {
             console.error(err)
             return res.status(403).json({

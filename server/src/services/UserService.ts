@@ -1,14 +1,15 @@
+import { User } from '../models/User';
 import { UserRepo } from '../repositories/UserRepo';
 import { UserData } from '../types/UserTypes';
 export class UserService {
-    repo: any;
+    userRepo: UserRepo;
     constructor() {
-        this.repo = new UserRepo();
+        this.userRepo = new UserRepo();
     }
 
     async createUser(userData: UserData) {
         try {
-            const user = await this.repo.addUser(userData)
+            const user = await this.userRepo.addUser(userData)
             return user
         } catch (error) {
             throw error;
@@ -17,16 +18,16 @@ export class UserService {
 
     async getAllUsers() {
         try {
-            const users = await this.repo.getAllUsers()
+            const users = await this.userRepo.getAllUsers()
             return users
         } catch (error) {
             throw error;
         }
     }
 
-    async getUserByEmail(email: string) {
+    async getUserByEmail(email: string): Promise<User | null> {
         try {
-            const user = await this.repo.getUserByEmail(email)
+            const user = await this.userRepo.getUserByEmail(email)
             return user
         } catch (error) {
             throw error;
@@ -34,7 +35,7 @@ export class UserService {
     }
 
     async getUsersOwningDocument(documentId: string) {
-        const users = await this.repo.getUsersOwningDocument(documentId)
+        const users = await this.userRepo.getUsersOwningDocument(documentId)
         return users
     }
 }

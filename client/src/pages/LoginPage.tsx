@@ -11,7 +11,7 @@ import { APPErrorType } from '../types/ApiTypes';
 import { useState } from 'react';
 import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
-import { getUserByEmail } from '../apis/userApi';
+import { getCollabToken, getUserByEmail } from '../apis/userApi';
 import { parseJwt } from '../utils/authUtils';
 
 export interface ILoginPageProps {}
@@ -27,10 +27,13 @@ export function LoginPage(props: ILoginPageProps) {
                 sessionStorage.setItem('accessToken', session.AccessToken);
                 if (sessionStorage.getItem('accessToken')) {
                     var idToken = sessionStorage.idToken.toString()
-                    const user = await getUserByEmail(formData.email, idToken)
+                    const collabToken = await getCollabToken(idToken)
+                    const user = await getUserByEmail(formData.email, collabToken)
                     console.log ("Amazon Cognito ID token encoded: " + sessionStorage.idToken.toString());
                     console.log ("Amazon Cognito ID token decoded: ");
                     console.log ( parseJwt(idToken) );
+                    console.log ("Collab token decoded: ");
+                    console.log(parseJwt(collabToken))
                     navigate('/home', {state: user?.data});
                 } else {
                     console.error('Session token was not set properly.');

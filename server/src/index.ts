@@ -6,6 +6,7 @@ import { config } from './config/config';
 import { UserController } from './controllers/UserController';
 import { UserRepo } from './repositories/UserRepo';
 import { DocumentController } from './controllers/DocumentController';
+import { JwtVerifier } from './middleware/JwtVerifier';
 
 const app: Express = express();
 app.use(cors());
@@ -29,6 +30,11 @@ const init = async () => {
     //     res.json(data);
     //     // res.json({ message: 'Hello Andy and Arya!' });
     // });
+    app.get(
+        "/api/auth/getCollabToken", 
+        JwtVerifier.verifyAwsCognitoJwt, 
+        JwtVerifier.generateTipTapCollabToken
+    )
     new UserController().initRoutes(app)
     new DocumentController().initRoutes(app)
 };
