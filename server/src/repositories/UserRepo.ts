@@ -20,6 +20,11 @@ export class UserRepo {
         return users
     }
 
+    async getUserById(userId: string) {
+        const user = await User.findByPk(userId)
+        return user
+    }
+
     async getUserByEmail(email: string) {
         const user = await User.findOne({
             where: {

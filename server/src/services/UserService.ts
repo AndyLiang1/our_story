@@ -8,30 +8,24 @@ export class UserService {
     }
 
     async createUser(userData: UserData) {
-        try {
-            const user = await this.userRepo.addUser(userData)
-            return user
-        } catch (error) {
-            throw error;
-        }
+        const user = await this.userRepo.addUser(userData)
+        return user
+
     }
 
     async getAllUsers() {
-        try {
-            const users = await this.userRepo.getAllUsers()
-            return users
-        } catch (error) {
-            throw error;
-        }
+        const users = await this.userRepo.getAllUsers()
+        return users
+    }
+
+    async getUserById(userId: string) {
+        const user = await this.userRepo.getUserById(userId)
+        return user
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
-        try {
-            const user = await this.userRepo.getUserByEmail(email)
-            return user
-        } catch (error) {
-            throw error;
-        } 
+        const user = await this.userRepo.getUserByEmail(email)
+        return user
     }
 
     async getUsersOwningDocument(documentId: string) {

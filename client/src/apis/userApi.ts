@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {config} from "../config/config"
 import { getErrorMessage } from '../utils/errorUtils';
+import { COLLAB_TOKEN_KEY } from '../constant/constant';
 
 export const addUser = async (
     email: string, 
@@ -8,6 +9,7 @@ export const addUser = async (
     givenName: string, 
     familyName: string
 ) => {
+    // TODO: Should we add some auth for this endpoint?
     const user = await axios.post(
         `${config.baseUrl}/api/user`, 
         {
@@ -21,17 +23,28 @@ export const addUser = async (
     return user
 }
 
-export const getUserByEmail = async (email: string, collabToken: string) => {
-    const user = await axios.get(
+export const getUserByEmail = async (email: string) => {
+    const res = await axios.get(
         `${config.baseUrl}/api/user/email/${encodeURIComponent(email)}`,
         {
             headers: {
-                "Authorization": `Bearer ${collabToken}`
+                "Authorization": `Bearer ${sessionStorage.getItem(COLLAB_TOKEN_KEY)}`
             }
         }
     )
-    return user
+    return res.data
+}
 
+export const getUserById = async(userId: string) => {
+    const res = await axios.get(
+        `${config.baseUrl}/api/user/${userId}`,
+        {
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem(COLLAB_TOKEN_KEY)}`
+            }
+        }
+    )
+    return res.data
 }
 
 export const getCollabToken = async(idToken: string) => {

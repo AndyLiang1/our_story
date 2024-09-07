@@ -2,6 +2,7 @@ import axios from 'axios'
 import {config} from "../config/config"
 import { ConfirmUserType, LoginType, SignUpType } from '../types/UserTypes'
 import { CognitoIdentityProviderClient, ConfirmSignUpCommand, ConfirmSignUpCommandInput, InitiateAuthCommand, InitiateAuthCommandInput, NotAuthorizedException, SignUpCommand, SignUpCommandInput } from "@aws-sdk/client-cognito-identity-provider"
+import { ACCESS_TOKEN_KEY, ID_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../constant/constant'
 
 const cognitoClient = new CognitoIdentityProviderClient({
     region: config.cognito.region
@@ -21,9 +22,9 @@ export const login = async (formData: LoginType) => {
         const command = new InitiateAuthCommand(params);
         const { AuthenticationResult } = await cognitoClient.send(command);
         if (AuthenticationResult) {
-            sessionStorage.setItem("idToken", AuthenticationResult.IdToken || '');
-            sessionStorage.setItem("accessToken", AuthenticationResult.AccessToken || '');
-            sessionStorage.setItem("refreshToken", AuthenticationResult.RefreshToken || '');
+            sessionStorage.setItem(ID_TOKEN_KEY, AuthenticationResult.IdToken || '');
+            sessionStorage.setItem(ACCESS_TOKEN_KEY, AuthenticationResult.AccessToken || '');
+            sessionStorage.setItem(REFRESH_TOKEN_KEY, AuthenticationResult.RefreshToken || '');
             return AuthenticationResult;
         }
     } catch (error) {

@@ -11,8 +11,9 @@ import { APPErrorType } from '../types/ApiTypes';
 import { useState } from 'react';
 import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
-import { getCollabToken, getUserByEmail } from '../apis/userApi';
+import { getCollabToken, getUserByEmail, getUserById } from '../apis/userApi';
 import { parseJwt } from '../utils/authUtils';
+import { ACCESS_TOKEN_KEY, COLLAB_TOKEN_KEY } from '../constant/constant';
 
 export interface ILoginPageProps {}
 
@@ -24,17 +25,14 @@ export function LoginPage(props: ILoginPageProps) {
         try {
             const session = await login(formData)
             if (session && typeof session.AccessToken !== 'undefined') {
-                sessionStorage.setItem('accessToken', session.AccessToken);
-                if (sessionStorage.getItem('accessToken')) {
+                sessionStorage.setItem(ACCESS_TOKEN_KEY, session.AccessToken);
+                if (sessionStorage.getItem(ACCESS_TOKEN_KEY)) {
                     var idToken = sessionStorage.idToken.toString()
                     const collabToken = await getCollabToken(idToken)
-                    const user = await getUserByEmail(formData.email, collabToken)
-                    console.log ("Amazon Cognito ID token encoded: " + sessionStorage.idToken.toString());
-                    console.log ("Amazon Cognito ID token decoded: ");
-                    console.log ( parseJwt(idToken) );
-                    console.log ("Collab token decoded: ");
-                    console.log(parseJwt(collabToken))
-                    navigate('/home', {state: user?.data});
+                    sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken)
+                    const userId = parseJwt(collabToken).userId
+                    const user = await getUserById(userId)
+                    navigate('/home', {state: user});
                 } else {
                     console.error('Session token was not set properly.');
                 }
