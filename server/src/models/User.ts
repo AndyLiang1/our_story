@@ -1,7 +1,6 @@
-import { config } from "../config/config";
-import sequelize from "../db";
-import { DataTypes, Model  } from "sequelize";
-import { sql } from '@sequelize/core';
+import { DataTypes, Model } from 'sequelize';
+import { config } from '../config/config';
+import sequelize from '../db';
 
 export class User extends Model {}
 
@@ -21,7 +20,7 @@ User.init(
             allowNull: false
         },
         firstName: {
-            type: DataTypes.TEXT,
+            type: DataTypes.TEXT
         },
         lastName: {
             type: DataTypes.TEXT
@@ -39,7 +38,7 @@ User.init(
             },
             set(value) {
                 throw new Error('Do not try to set the `fullName` value!');
-            },
+            }
         }
     },
     {
@@ -49,5 +48,4 @@ User.init(
         schema: config.postgres.dbSchema,
         timestamps: true
     }
-)
-
+);

@@ -1,14 +1,13 @@
-import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
-import { initDb } from './db';
+import express, { Express } from 'express';
 import { config } from './config/config';
+import { initDb } from './db';
 
-import { UserController } from './controllers/UserController';
-import { UserRepo } from './repositories/UserRepo';
+import 'express-async-errors';
 import { DocumentController } from './controllers/DocumentController';
+import { UserController } from './controllers/UserController';
+import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
-import { errorHandler } from './middleware/ErrorHandler';
-import "express-async-errors";
 
 const app: Express = express();
 app.use(cors());
@@ -27,14 +26,10 @@ const init = async () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
-    app.get(
-        "/api/auth/getCollabToken", 
-        JwtVerifier.verifyAwsCognitoJwt, 
-        JwtVerifier.generateTipTapCollabToken
-    )
-    new UserController().initRoutes(app)
-    new DocumentController().initRoutes(app)
-    app.use(errorHandler)
+    app.get('/api/auth/getCollabToken', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
+    new UserController().initRoutes(app);
+    new DocumentController().initRoutes(app);
+    app.use(errorHandler);
 };
 
 init();

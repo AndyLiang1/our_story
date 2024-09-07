@@ -1,7 +1,7 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "../db";
-import { config } from "../config/config";
-import { User } from "./User";
+import { DataTypes, Model } from 'sequelize';
+import { config } from '../config/config';
+import sequelize from '../db';
+import { User } from './User';
 
 export class Document extends Model {}
 
@@ -13,10 +13,10 @@ Document.init(
             defaultValue: sequelize.literal("concat('doc-', gen_random_uuid())")
         },
         title: {
-            type: DataTypes.TEXT,
+            type: DataTypes.TEXT
         },
         content: {
-            type: DataTypes.TEXT,
+            type: DataTypes.TEXT
         },
         createdByUserId: {
             type: DataTypes.TEXT,
@@ -27,7 +27,7 @@ Document.init(
             }
         },
         images: {
-            type: DataTypes.ARRAY(DataTypes.TEXT),
+            type: DataTypes.ARRAY(DataTypes.TEXT)
         },
         createdAt: {
             type: DataTypes.DATE
@@ -43,4 +43,4 @@ Document.init(
         schema: config.postgres.dbSchema,
         timestamps: true
     }
-)
+);

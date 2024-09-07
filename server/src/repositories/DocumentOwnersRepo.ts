@@ -1,6 +1,5 @@
-import { DocumentOwners } from "../models/DocumentOwners";
-import { DocumentOwnerData } from "../types/DocumentTypes";
-
+import { DocumentOwners } from '../models/DocumentOwners';
+import { DocumentOwnerData } from '../types/DocumentTypes';
 
 export class DocumentOwnersRepo {
     constructor() {}
@@ -9,8 +8,8 @@ export class DocumentOwnersRepo {
         const docOwner = await DocumentOwners.create({
             documentId: data.documentId,
             userId: data.userId
-        })
-        return docOwner
+        });
+        return docOwner;
     }
 
     async getDocumentsByUserId(userId: string) {
@@ -19,8 +18,8 @@ export class DocumentOwnersRepo {
                 userId
             },
             attributes: ['documentId']
-        })
-        return docIds
+        });
+        return docIds;
     }
 
     async getOwnersByDocumentId(documentId: string) {
@@ -29,8 +28,8 @@ export class DocumentOwnersRepo {
                 documentId
             },
             attributes: ['userId']
-        })
-        return owners
+        });
+        return owners;
     }
 
     async deleteDocumentOwner(data: DocumentOwnerData) {
@@ -39,6 +38,6 @@ export class DocumentOwnersRepo {
                 documentId: data.documentId,
                 userId: data.userId
             }
-        })
+        });
     }
 }

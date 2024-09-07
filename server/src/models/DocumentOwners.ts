@@ -1,8 +1,8 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "../db";
-import { config } from "../config/config";
-import { Document } from "./Document";
-import { User } from "./User";
+import { DataTypes, Model } from 'sequelize';
+import { config } from '../config/config';
+import sequelize from '../db';
+import { Document } from './Document';
+import { User } from './User';
 
 export class DocumentOwners extends Model {}
 
@@ -25,7 +25,7 @@ DocumentOwners.init(
                 model: User,
                 key: 'userId'
             }
-        },
+        }
     },
     {
         sequelize,
@@ -34,13 +34,13 @@ DocumentOwners.init(
         schema: config.postgres.dbSchema,
         timestamps: false
     }
-)
+);
 
-Document.belongsToMany(User, { 
+Document.belongsToMany(User, {
     through: DocumentOwners,
-    foreignKey: "documentId"
-})
-User.belongsToMany(Document, { 
+    foreignKey: 'documentId'
+});
+User.belongsToMany(Document, {
     through: DocumentOwners,
-    foreignKey: "userId" 
-})
+    foreignKey: 'userId'
+});

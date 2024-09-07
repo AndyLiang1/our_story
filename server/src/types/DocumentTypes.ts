@@ -1,10 +1,10 @@
 export type DocumentData = {
-    title: string
-    content: string
-    createdByUserId: string
-}
+    title: string;
+    content: string;
+    createdByUserId: string;
+};
 
 export type DocumentOwnerData = {
-    documentId: string
-    userId: string
-}
+    documentId: string;
+    userId: string;
+};
