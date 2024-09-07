@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { Tooltip } from './Tooltip';
 import { EventMetaData } from '../types/DocumentTypes';
+import { Tooltip } from './Tooltip';
 
 export interface IGenericCalendarEventsProps {
     events: EventMetaData[];

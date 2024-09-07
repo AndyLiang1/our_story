@@ -1,13 +1,9 @@
-import * as React from 'react';
-import { TipTap } from '../components/TipTap';
-import { SideBar } from '../components/SideBar';
-import { NavBar } from '../components/Navbar';
-import { config } from '../config/config';
-import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { getAllDocuments } from '../apis/documentApi';
+import { useLocation } from 'react-router-dom';
 import { GenericCalendar } from '../components/GenericCalendar';
+import { NavBar } from '../components/Navbar';
+import { SideBar } from '../components/SideBar';
+import { TipTap } from '../components/TipTap';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {

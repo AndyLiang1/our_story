@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { EventMetaData } from '../types/DocumentTypes';
 import { HasName } from '../types/GenericTypes';
 
 export interface IGenericSearchBarProps<T extends HasName> {

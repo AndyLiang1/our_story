@@ -1,3 +1,3 @@
 export type APPErrorType = {
-    errorMessage: string
-}
+    errorMessage: string;
+};

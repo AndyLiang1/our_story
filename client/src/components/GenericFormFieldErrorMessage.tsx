@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export interface IGenericFormFieldErrorMessageProps {
     name: string;
     form: any;
