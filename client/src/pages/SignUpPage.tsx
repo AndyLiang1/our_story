@@ -1,15 +1,13 @@
-import * as React from 'react';
+import { Field, Form, Formik } from 'formik';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
-import { GenericFormInput } from '../components/GenericFormInput';
-import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
+import Swal from 'sweetalert2';
 import * as Yup from 'yup';
 import { GenericFormButton } from '../components/GenericFormButton';
-import { login, signUp } from '../services/authService';
-import { LoginType, LoginBEType, SignUpType } from '../types/UserTypes';
-import { APPErrorType } from '../types/ApiTypes';
-import { useState } from 'react';
-import Swal from 'sweetalert2';
+import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
+import { GenericFormInput } from '../components/GenericFormInput';
+import { signUp } from '../services/authService';
+import { SignUpType } from '../types/UserTypes';
 import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ISignUpPageProps {}
@@ -30,7 +28,7 @@ export function SignUpPage(props: ISignUpPageProps) {
                 email: formData.email,
                 familyName: formData.familyName,
                 givenName: formData.givenName
-            }
+            };
             navigate('/confirm', { state: { ...userState } });
         } catch (error) {
             Swal.fire({

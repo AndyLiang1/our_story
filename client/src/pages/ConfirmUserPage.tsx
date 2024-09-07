@@ -1,16 +1,15 @@
-import * as Yup from 'yup';
-import { Formik, Form, Field } from 'formik';
-import { GenericFormInput } from '../components/GenericFormInput';
-import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
-import { GenericFormButton } from '../components/GenericFormButton';
+import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
-import { ConfirmUserType } from '../types/UserTypes';
-import Swal from 'sweetalert2';
-import { confirmSignUp } from '../services/authService';
-import { title } from 'process';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getErrorMessage } from '../utils/errorUtils';
+import Swal from 'sweetalert2';
+import * as Yup from 'yup';
 import { addUser } from '../apis/userApi';
+import { GenericFormButton } from '../components/GenericFormButton';
+import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
+import { GenericFormInput } from '../components/GenericFormInput';
+import { confirmSignUp } from '../services/authService';
+import { ConfirmUserType } from '../types/UserTypes';
+import { getErrorMessage } from '../utils/errorUtils';
 
 export interface IConfirmUserPageProps {}
 
@@ -29,7 +28,7 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
                 location.state?.cognitoId,
                 location.state?.givenName,
                 location.state?.familyName
-            )
+            );
             await Swal.fire({
                 title: 'Success!',
                 text: 'Account confirmed successfully!\nSign in on next page.',

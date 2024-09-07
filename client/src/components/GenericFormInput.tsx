@@ -1,12 +1,15 @@
-import * as React from 'react';
-
 export interface IFormInputProps {
     field: any;
     form: any;
     label: string;
 }
 
-export function GenericFormInput({ field, form: { touched, errors }, label, ...props }: IFormInputProps) {
+export function GenericFormInput({
+    field,
+    form: { touched, errors },
+    label,
+    ...props
+}: IFormInputProps) {
     return (
         <div
             className={

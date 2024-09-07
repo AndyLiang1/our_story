@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export interface IGenericFormButtonProps {
     displayMessage: string;
     onClick?: any;
@@ -8,7 +6,12 @@ export interface IGenericFormButtonProps {
     disabled: boolean;
 }
 
-export function GenericFormButton({ displayMessage, onClick, onSubmit, type }: IGenericFormButtonProps) {
+export function GenericFormButton({
+    displayMessage,
+    onClick,
+    onSubmit,
+    type
+}: IGenericFormButtonProps) {
     return (
         <button
             onClick={onClick}

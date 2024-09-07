@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BiCollapseHorizontal } from 'react-icons/bi';
-import { GenericSearchBar } from './GenericSearchBar';
 import { EventMetaData } from '../types/DocumentTypes';
+import { GenericSearchBar } from './GenericSearchBar';
 
 export interface ISideBarProps {
     dataList: EventMetaData[];

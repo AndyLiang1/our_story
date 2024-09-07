@@ -1,25 +1,24 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { EditorContent } from '@tiptap/react';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
-import Highlight from '@tiptap/extension-highlight';
 import Bold from '@tiptap/extension-bold';
-import Italic from '@tiptap/extension-italic';
-import Strike from '@tiptap/extension-strike';
-import Heading from '@tiptap/extension-heading';
-import TextAlign from '@tiptap/extension-text-align';
 import BulletList from '@tiptap/extension-bullet-list';
-import OrderedList from '@tiptap/extension-ordered-list';
-import ListItem from '@tiptap/extension-list-item';
 import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block';
-import HardBreak from '@tiptap/extension-hard-break';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
-import { MenuBar } from './MenuBar';
+import Document from '@tiptap/extension-document';
+import HardBreak from '@tiptap/extension-hard-break';
+import Heading from '@tiptap/extension-heading';
+import Highlight from '@tiptap/extension-highlight';
+import Italic from '@tiptap/extension-italic';
+import ListItem from '@tiptap/extension-list-item';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Paragraph from '@tiptap/extension-paragraph';
+import Strike from '@tiptap/extension-strike';
+import Text from '@tiptap/extension-text';
+import TextAlign from '@tiptap/extension-text-align';
+import { EditorContent } from '@tiptap/react';
+import { useEffect, useState } from 'react';
 import { useEditor } from '../hooks/useEditor';
+import { MenuBar } from './MenuBar';
 
 export interface IEditorProps {
     ydoc: any;
@@ -99,7 +98,10 @@ const Editor = ({ ydoc, provider }: IEditorProps) => {
     return (
         <div className="h-full w-full">
             <MenuBar editor={editor} />
-            <EditorContent className="editor__content bg-milk-mocha h-[90%] w-full " editor={editor} />
+            <EditorContent
+                className="editor__content bg-milk-mocha h-[90%] w-full "
+                editor={editor}
+            />
         </div>
     );
 };

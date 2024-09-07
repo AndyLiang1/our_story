@@ -1,9 +1,7 @@
-import * as React from 'react';
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Calendar from 'react-calendar';
-import { GenericCalendarEvents } from './GenericCalendarEvents';
 import { EventMetaData } from '../types/DocumentTypes';
+import { GenericCalendarEvents } from './GenericCalendarEvents';
 
 type ValuePiece = Date | null;
 
