@@ -1,11 +1,13 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import { services } from '../services/services';
 import { DocumentData } from '../types/DocumentTypes';
+import { JwtVerifier } from '../middleware/JwtVerifier';
 
 export class DocumentController {
     router: Router;
     constructor() {
         this.router = express.Router();
+        this.router.use(JwtVerifier.verifyCollabToken)
         // the this.login.bind(this) is basically saying
         // when I hit /api/users in a get request, I am going
         // to call the login function
@@ -26,23 +28,15 @@ export class DocumentController {
     }
 
     async getDocuments(req: Request, res: Response, next: NextFunction) {
-        try {
-            const userId = req.query.userId
-            if (userId) {
-                const docs = await services.documentService.getDocumentsOwnedByUser(userId as string)
-                res.status(200).json(docs)
-            } else {
-                res.status(400).json({
-                    message: "userId must be provided."
-                })
-            }
-        } catch (error) {
-            res.status(500).json({
-                message: "Unable to get documents. Internal server error."
+        const userId = req.query.userId
+        if (userId) {
+            const docs = await services.documentService.getDocumentsOwnedByUser(userId as string)
+            res.status(200).json(docs)
+        } else {
+            res.status(400).json({
+                message: "userId must be provided."
             })
-            console.error(error)
         }
-        
     }
 
     async getDocument(req: Request, res: Response, next: NextFunction) {
@@ -70,15 +64,8 @@ export class DocumentController {
             content: reqBody.content,
             createdByUserId: reqBody.createdByUserId
         }
-        try {
-            const doc = await services.documentService.createDocument(documentData)
-            res.status(201).json(doc)
-        } catch (error) {
-            res.status(500).json({
-                message: `Unable to create document.`
-            })
-            console.error(error)
-        }
+        const doc = await services.documentService.createDocument(documentData)
+        res.status(201).json(doc)
     }
 
     async updateDocument(req: Request, res: Response, next: NextFunction) {
@@ -91,16 +78,8 @@ export class DocumentController {
         }
 
         if (documentId) {
-            try {
-                const doc = await services.documentService.updateDocument(documentId, documentData)
-                res.status(200).json(doc)
-            } catch (error) {
-                res.status(304).json({
-                    message: `Unable to update document.`
-                })
-                console.error(error)
-            }
-            
+            const doc = await services.documentService.updateDocument(documentId, documentData)
+            res.status(200).json(doc)
         } else {
             res.status(400).json({
                 message: "documentId must be provided."
@@ -123,65 +102,43 @@ export class DocumentController {
     }
 
     async getDocumentOwners(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { documentId } = req.params
-            if (documentId) {
-                const users = await services.userService.getUsersOwningDocument(documentId)
-                res.status(200).json(users)
-            } else {
-                res.status(400).json({
-                    message: "documentId must be provided."
-                })
-            }
-        } catch (error) {
-            res.status(500).json({
-                message: "Unable to get document's owners. Internal server error."
+        const { documentId } = req.params
+        if (documentId) {
+            const users = await services.userService.getUsersOwningDocument(documentId)
+            res.status(200).json(users)
+        } else {
+            res.status(400).json({
+                message: "documentId must be provided."
             })
-            console.error(error)
         }
-        
     }
 
     async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { documentId } = req.params
-            const owners = req.body.owners
-            if (documentId) {
-                const docOwners = await services.documentService.addOwners(documentId, owners)
-                res.status(200).json(docOwners)
-            } else {
-                res.status(400).json({
-                    message: "documentId must be provided."
-                })
-            }
-        } catch (error) {
-            res.status(500).json({
-                message: "Unable to add owners. Internal server error."
+        const { documentId } = req.params
+        const owners = req.body.owners
+        if (documentId) {
+            const docOwners = await services.documentService.addOwners(documentId, owners)
+            res.status(200).json(docOwners)
+        } else {
+            res.status(400).json({
+                message: "documentId must be provided."
             })
-            console.error(error)
         }
     }
 
     async deleteDocumentOwner(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { documentId, userId } = req.params
-            if (documentId && userId) {
-                await services.documentService.deleteOwner({
-                    documentId, userId
-                })
-                res.status(200).json({
-                    message: `Owner with userId ${userId} is removed from document successfully.`
-                })
-            } else {
-                res.status(400).json({
-                    message: "Both documentId and userId must be provided."
-                })
-            }
-        } catch (error) {
-            res.status(500).json({
-                message: "Unable to delete owner. Internal server error."
+        const { documentId, userId } = req.params
+        if (documentId && userId) {
+            await services.documentService.deleteOwner({
+                documentId, userId
             })
-            console.error(error)
+            res.status(200).json({
+                message: `Owner with userId ${userId} is removed from document successfully.`
+            })
+        } else {
+            res.status(400).json({
+                message: "Both documentId and userId must be provided."
+            })
         }
     }
 }

@@ -1,40 +1,35 @@
+import { User } from '../models/User';
 import { UserRepo } from '../repositories/UserRepo';
 import { UserData } from '../types/UserTypes';
 export class UserService {
-    repo: any;
+    userRepo: UserRepo;
     constructor() {
-        this.repo = new UserRepo();
+        this.userRepo = new UserRepo();
     }
 
     async createUser(userData: UserData) {
-        try {
-            const user = await this.repo.addUser(userData)
-            return user
-        } catch (error) {
-            throw error;
-        }
+        const user = await this.userRepo.addUser(userData)
+        return user
+
     }
 
     async getAllUsers() {
-        try {
-            const users = await this.repo.getAllUsers()
-            return users
-        } catch (error) {
-            throw error;
-        }
+        const users = await this.userRepo.getAllUsers()
+        return users
     }
 
-    async getUserByEmail(email: string) {
-        try {
-            const user = await this.repo.getUserByEmail(email)
-            return user
-        } catch (error) {
-            throw error;
-        } 
+    async getUserById(userId: string) {
+        const user = await this.userRepo.getUserById(userId)
+        return user
+    }
+
+    async getUserByEmail(email: string): Promise<User | null> {
+        const user = await this.userRepo.getUserByEmail(email)
+        return user
     }
 
     async getUsersOwningDocument(documentId: string) {
-        const users = await this.repo.getUsersOwningDocument(documentId)
+        const users = await this.userRepo.getUsersOwningDocument(documentId)
         return users
     }
 }

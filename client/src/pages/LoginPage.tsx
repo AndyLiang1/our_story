@@ -11,7 +11,9 @@ import { APPErrorType } from '../types/ApiTypes';
 import { useState } from 'react';
 import Swal from 'sweetalert2'
 import { getErrorMessage } from '../utils/errorUtils';
-import { getUserByEmail } from '../apis/userApi';
+import { getCollabToken, getUserByEmail, getUserById } from '../apis/userApi';
+import { parseJwt } from '../utils/authUtils';
+import { ACCESS_TOKEN_KEY, COLLAB_TOKEN_KEY } from '../constant/constant';
 
 export interface ILoginPageProps {}
 
@@ -23,10 +25,14 @@ export function LoginPage(props: ILoginPageProps) {
         try {
             const session = await login(formData)
             if (session && typeof session.AccessToken !== 'undefined') {
-                sessionStorage.setItem('accessToken', session.AccessToken);
-                if (sessionStorage.getItem('accessToken')) {
-                   const user = await getUserByEmail(formData.email)
-                    navigate('/home', {state: user?.data});
+                sessionStorage.setItem(ACCESS_TOKEN_KEY, session.AccessToken);
+                if (sessionStorage.getItem(ACCESS_TOKEN_KEY)) {
+                    var idToken = sessionStorage.idToken.toString()
+                    const collabToken = await getCollabToken(idToken)
+                    sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken)
+                    const userId = parseJwt(collabToken).userId
+                    const user = await getUserById(userId)
+                    navigate('/home', {state: user});
                 } else {
                     console.error('Session token was not set properly.');
                 }
@@ -35,6 +41,7 @@ export function LoginPage(props: ILoginPageProps) {
             }
             
         } catch(error) {
+            console.error(`Unable to retrieve user with email ${formData.email}: ${getErrorMessage(error)}`)
             Swal.fire({
                 title: 'Error!',
                 text: getErrorMessage(error),

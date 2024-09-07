@@ -6,6 +6,9 @@ import { config } from './config/config';
 import { UserController } from './controllers/UserController';
 import { UserRepo } from './repositories/UserRepo';
 import { DocumentController } from './controllers/DocumentController';
+import { JwtVerifier } from './middleware/JwtVerifier';
+import { errorHandler } from './middleware/ErrorHandler';
+import "express-async-errors";
 
 const app: Express = express();
 app.use(cors());
@@ -24,13 +27,14 @@ const init = async () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
-    // app.get('/', async (req: Request, res: Response) => {
-    //     const data = await getAllUsers(); // just to test
-    //     res.json(data);
-    //     // res.json({ message: 'Hello Andy and Arya!' });
-    // });
+    app.get(
+        "/api/auth/getCollabToken", 
+        JwtVerifier.verifyAwsCognitoJwt, 
+        JwtVerifier.generateTipTapCollabToken
+    )
     new UserController().initRoutes(app)
     new DocumentController().initRoutes(app)
+    app.use(errorHandler)
 };
 
 init();
