@@ -1,20 +1,20 @@
+import { Document } from '../models/Document';
+import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { DocumentData, DocumentOwnerData } from '../types/DocumentTypes';
-import { Document } from '../models/Document'
-import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 
 export class DocumentService {
     documentRepo: DocumentRepo;
-    documentOwnerRepo: DocumentOwnersRepo
+    documentOwnerRepo: DocumentOwnersRepo;
 
     constructor() {
         this.documentRepo = new DocumentRepo();
-        this.documentOwnerRepo = new DocumentOwnersRepo()
+        this.documentOwnerRepo = new DocumentOwnersRepo();
     }
 
     async getDocumentsOwnedByUser(userId: string) {
-        const docs = await this.documentRepo.getDocumentsOwnedByUser(userId)
-        return docs
+        const docs = await this.documentRepo.getDocumentsOwnedByUser(userId);
+        return docs;
     }
 
     async getDocument(documentId: string) {
@@ -24,13 +24,13 @@ export class DocumentService {
 
     async createDocument(documentData: DocumentData) {
         const doc: Document = await this.documentRepo.createDocument(documentData);
-        const docId = doc.getDataValue('documentId')
+        const docId = doc.getDataValue('documentId');
 
         const owner = await this.documentOwnerRepo.creatDocumentOwner({
             documentId: docId,
             userId: documentData.createdByUserId
-        }) 
-        return doc
+        });
+        return doc;
     }
 
     async updateDocument(documentId: string, documentData: DocumentData) {
@@ -38,9 +38,8 @@ export class DocumentService {
             const data = await this.documentRepo.updateDocument(documentId, documentData);
             return data;
         } catch (error) {
-            console.error(`Failed to update: ${error}`)
+            console.error(`Failed to update: ${error}`);
         }
-
     }
 
     async deleteDocument(documentId: string) {
@@ -48,18 +47,18 @@ export class DocumentService {
     }
 
     async addOwners(documentId: string, owners: string[]) {
-        var result = []
+        var result = [];
         for (var userId of owners) {
             const data = await this.documentOwnerRepo.creatDocumentOwner({
                 documentId,
                 userId
-            })
-            result.push(data)
+            });
+            result.push(data);
         }
-        return result
+        return result;
     }
 
     async deleteOwner(data: DocumentOwnerData) {
-        await this.documentOwnerRepo.deleteDocumentOwner(data)
+        await this.documentOwnerRepo.deleteDocumentOwner(data);
     }
 }
