@@ -8,7 +8,6 @@ export const addUser = async (
     givenName: string,
     familyName: string
 ) => {
-    // TODO: Should we add some auth for this endpoint?
     const user = await axios.post(`${config.baseUrl}/api/user`, {
         cognitoId,
         email,

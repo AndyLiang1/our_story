@@ -12,6 +12,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@aws-sdk/client-cognito-identity-provider": "^3.645.0",
         "@sequelize/core": "^7.0.0-alpha.37",
         "aws-jwt-verify": "^4.0.1",
         "cors": "^2.8.5",
