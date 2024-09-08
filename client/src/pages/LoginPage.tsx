@@ -25,7 +25,7 @@ export function LoginPage(props: ILoginPageProps) {
             if (session && typeof session.AccessToken !== 'undefined') {
                 sessionStorage.setItem(ACCESS_TOKEN_KEY, session.AccessToken);
                 if (sessionStorage.getItem(ACCESS_TOKEN_KEY)) {
-                    const idToken = sessionStorage[`${ID_TOKEN_KEY}`].toString();
+                    const idToken = sessionStorage[ID_TOKEN_KEY].toString();
                     const collabToken = await getCollabToken(idToken);
                     sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken);
                     const userId = parseJwt(collabToken).userId;

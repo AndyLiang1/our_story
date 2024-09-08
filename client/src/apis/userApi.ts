@@ -8,8 +8,6 @@ export const addUser = async (
     givenName: string,
     familyName: string
 ) => {
-    // TODO: Should we add some auth for this endpoint? Are you worried that someone random is going to spam 
-    // post reqs to our BE with fake cognitoIds and fill up our table? 
     const user = await axios.post(`${config.baseUrl}/api/user`, {
         cognitoId,
         email,
