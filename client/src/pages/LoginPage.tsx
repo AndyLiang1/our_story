@@ -7,7 +7,7 @@ import { getCollabToken, getUserById } from '../apis/userApi';
 import { GenericFormButton } from '../components/GenericFormButton';
 import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import { GenericFormInput } from '../components/GenericFormInput';
-import { ACCESS_TOKEN_KEY, COLLAB_TOKEN_KEY } from '../constant/constant';
+import { ACCESS_TOKEN_KEY, COLLAB_TOKEN_KEY, ID_TOKEN_KEY } from '../constant/constant';
 import { login } from '../services/authService';
 import { LoginType } from '../types/UserTypes';
 import { parseJwt } from '../utils/authUtils';
@@ -25,7 +25,7 @@ export function LoginPage(props: ILoginPageProps) {
             if (session && typeof session.AccessToken !== 'undefined') {
                 sessionStorage.setItem(ACCESS_TOKEN_KEY, session.AccessToken);
                 if (sessionStorage.getItem(ACCESS_TOKEN_KEY)) {
-                    var idToken = sessionStorage.idToken.toString();
+                    const idToken = sessionStorage[`${ID_TOKEN_KEY}`].toString();
                     const collabToken = await getCollabToken(idToken);
                     sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken);
                     const userId = parseJwt(collabToken).userId;
