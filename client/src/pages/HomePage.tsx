@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { GenericCalendar } from '../components/GenericCalendar';
 import { NavBar } from '../components/Navbar';
 import { SideBar } from '../components/SideBar';
 import { TipTap } from '../components/TipTap';
+
+import { ImageCarousel } from '../components/ImageCarousel';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
@@ -16,6 +18,10 @@ export function HomePage(props: IHomePageProps) {
         // const documents = getAllDocuments(userInfo.authToken, userInfo.tiptapToken)
         // setDocuments(documents)
     }, []);
+
+    
+
+    
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -62,7 +68,16 @@ export function HomePage(props: IHomePageProps) {
                         {jwt ? <TipTap jwt={jwt} /> : <div>Loading bruh</div>}
                     </div>
                     <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
-                        <div className="h-[45%] w-[90%] bg-red-700"></div>
+                        <div className="h-[45%] w-[90%] bg-red-700">
+                        <ImageCarousel images={[
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
+                        ]} height="h-full" width = "w-full" />
+                           
+                        </div>
                         <div className="h-[45%] w-[90%] bg-white">
                             <GenericCalendar
                                 events={[

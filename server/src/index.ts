@@ -6,6 +6,7 @@ import { initDb } from './db';
 import 'express-async-errors';
 import { DocumentController } from './controllers/DocumentController';
 import { UserController } from './controllers/UserController';
+import { ImageController } from './controllers/ImageController';
 import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
 
@@ -29,6 +30,7 @@ const init = async () => {
     app.get('/api/auth/getCollabToken', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
     new UserController().initRoutes(app);
     new DocumentController().initRoutes(app);
+    new ImageController().initRoutes(app);
     app.use(errorHandler);
 };
 
