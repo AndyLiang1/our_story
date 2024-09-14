@@ -15,8 +15,8 @@ Document.init(
         title: {
             type: DataTypes.TEXT
         },
-        content: {
-            type: DataTypes.TEXT
+        documentContent: {
+            type: DataTypes.JSONB,
         },
         createdByUserId: {
             type: DataTypes.TEXT,

@@ -1,6 +1,6 @@
 export type DocumentData = {
     title: string;
-    content: string;
+    documentContent: string;
     createdByUserId: string;
 };
 
