@@ -61,7 +61,7 @@ export class DocumentController {
         const reqBody = req.body;
         const documentData: DocumentData = {
             title: reqBody.title,
-            content: reqBody.content,
+            documentContent: reqBody.documentContent,
             createdByUserId: reqBody.createdByUserId
         };
         const doc = await services.documentService.createDocument(documentData);
@@ -73,7 +73,7 @@ export class DocumentController {
         const reqBody = req.body;
         const documentData: DocumentData = {
             title: reqBody.title,
-            content: reqBody.content,
+            documentContent: reqBody.documentContent,
             createdByUserId: reqBody.createdByUserId
         };
 
