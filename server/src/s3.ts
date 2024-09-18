@@ -7,5 +7,3 @@ export const s3 = new aws.S3({
     secretAccessKey: config.awsS3.secretAccessKey
 })
 
-console.log(s3)
-
