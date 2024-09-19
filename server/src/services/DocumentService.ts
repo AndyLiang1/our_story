@@ -1,7 +1,7 @@
 import { Document } from '../models/Document';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
-import { DocumentCreationAttributes, DocumentData, DocumentOwnerData } from '../types/DocumentTypes';
+import { DocumentCreationAttributes, DocumentData, DocumentOwnerData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import {services} from "./services"
 export class DocumentService {
     documentRepo: DocumentRepo;
@@ -49,7 +49,7 @@ export class DocumentService {
         return doc;
     }
 
-    async updateDocument(documentId: string, documentData: DocumentCreationAttributes) {
+    async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
         try {
             const data = await this.documentRepo.updateDocument(documentId, documentData);
             return data;

@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
-import { DocumentCreationAttributes } from '../types/DocumentTypes';
+import { DocumentCreationAttributes, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 
 export class DocumentController {
     router: Router;
@@ -77,10 +77,10 @@ export class DocumentController {
     async updateDocument(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
         const reqBody = req.body;
-        const documentData: DocumentCreationAttributes = {
-            title: reqBody.title,
-            documentContent: reqBody.documentContent,
-            createdByUserId: reqBody.createdByUserId
+        const documentData: PartialDocumentUpdateAttributes = {
+            title: reqBody?.title,
+            documentContent: reqBody?.documentContent,
+            hasUpdatedInTipTap: reqBody?.hasUpdatedInTipTap
         };
 
         if (documentId) {
