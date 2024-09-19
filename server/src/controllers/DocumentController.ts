@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
-import { DocumentData } from '../types/DocumentTypes';
+import { DocumentCreationAttributes } from '../types/DocumentTypes';
 
 export class DocumentController {
     router: Router;
@@ -58,10 +58,16 @@ export class DocumentController {
     }
 
     async createDocument(req: Request, res: Response, next: NextFunction) {
+        const defaultDocumentContent = {
+            type: "doc",
+            content: [
+              
+            ]
+        }
         const reqBody = req.body;
-        const documentData: DocumentData = {
+        const documentData: DocumentCreationAttributes = {
             title: reqBody.title,
-            documentContent: reqBody.documentContent,
+            documentContent: defaultDocumentContent,
             createdByUserId: reqBody.createdByUserId
         };
         const doc = await services.documentService.createDocument(documentData);
@@ -71,7 +77,7 @@ export class DocumentController {
     async updateDocument(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
         const reqBody = req.body;
-        const documentData: DocumentData = {
+        const documentData: DocumentCreationAttributes = {
             title: reqBody.title,
             documentContent: reqBody.documentContent,
             createdByUserId: reqBody.createdByUserId

@@ -15,7 +15,7 @@ export class JwtVerifier {
         tokenUse: 'id',
         clientId: config.awsCognito.clientId as string
     });
-    private static tiptapSecret = config.tiptapProvider.appSecret as string;
+    private static tiptapSecret = config.tiptap.appSecret as string;
 
     static async verifyAwsCognitoJwt(req: Request, res: Response, next: NextFunction) {
         try {

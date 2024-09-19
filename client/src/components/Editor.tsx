@@ -27,6 +27,7 @@ export interface IEditorProps {
 
 const Editor = ({ ydoc, provider }: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
+    let updatedHasChangedFlag = false
 
     const editor = useEditor({
         onCreate: ({ editor: currentEditor }) => {
@@ -35,6 +36,12 @@ const Editor = ({ ydoc, provider }: IEditorProps) => {
                     currentEditor.commands.setContent('Hwllo');
                 }
             });
+        },
+        onUpdate: () => {
+            if(!updatedHasChangedFlag) {
+                updatedHasChangedFlag = true
+                // call update to BE 
+            }
         },
         extensions: [
             Document,

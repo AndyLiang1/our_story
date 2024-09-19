@@ -9,6 +9,7 @@ import { UserController } from './controllers/UserController';
 import { ImageController } from './controllers/ImageController';
 import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
+import { syncDocuments } from './scheduled-jobs/syncDocuments';
 
 const app: Express = express();
 app.use(cors());
@@ -27,11 +28,15 @@ const init = async () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
+
+
     app.get('/api/auth/getCollabToken', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
     new UserController().initRoutes(app);
     new DocumentController().initRoutes(app);
     new ImageController().initRoutes(app);
     app.use(errorHandler);
+
+    syncDocuments()
 };
 
 init();
