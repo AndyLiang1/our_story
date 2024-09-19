@@ -29,6 +29,10 @@ Document.init(
         images: {
             type: DataTypes.ARRAY(DataTypes.TEXT)
         },
+        hasUpdatedInTipTap: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         createdAt: {
             type: DataTypes.DATE
         },
