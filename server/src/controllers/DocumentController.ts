@@ -61,10 +61,7 @@ export class DocumentController {
         const defaultDocumentContent = {
             type: "doc",
             content: [
-              {
-                text: "Hello my precious Ariya",
-                type: "text"
-              }
+              
             ]
         }
         const reqBody = req.body;
