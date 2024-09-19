@@ -27,7 +27,7 @@ export function TipTap({ jwt }: ITipTapProps) {
         },
         onAuthenticationFailed() {
             console.log('Auth failed.');
-        }
+        },        
     });
 
     return <Editor provider={provider} ydoc={doc} />;

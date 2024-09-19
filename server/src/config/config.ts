@@ -17,7 +17,9 @@ export const config = {
         env: ENV, // unused atm
         JWT_SECRET // unused atm
     },
-    tiptapProvider: {
+    tiptap: {
+        restApiUrl: `https://${process.env.TIPTAP_APP_ID}.collab.tiptap.cloud/api/documents`,
+        apiSecret: process.env.TIPTAP_API_SECRET,
         appSecret: process.env.TIPTAP_APP_SECRET
     },
     awsCognito: {
