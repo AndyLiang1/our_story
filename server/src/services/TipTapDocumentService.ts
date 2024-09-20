@@ -17,7 +17,7 @@ export class TipTapDocumentService {
     async getDocument(documentId: string) {
         const { data } = await axios.get(`${config.tiptap.restApiUrl}/${documentId}?format=json`, {
             headers: {
-                Authorization: `${config.tiptap.apiSecret}` // Add your Bearer token here
+                Authorization: `${config.tiptap.apiSecret}`
             }
         });
         return data;
@@ -26,7 +26,7 @@ export class TipTapDocumentService {
     async deleteDocument(documentId: string) {
         await axios.delete(`${config.tiptap.restApiUrl}/${documentId}?format=json`, {
             headers: {
-                Authorization: `${config.tiptap.apiSecret}` // Add your Bearer token here
+                Authorization: `${config.tiptap.apiSecret}`
             }
         });
     }
