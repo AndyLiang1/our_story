@@ -1,6 +1,7 @@
+import { Op } from '@sequelize/core';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
-import { DocumentCreationAttributes, DocumentData, PartialDocumentQueryParams } from '../types/DocumentTypes';
+import { DocumentCreationAttributes, DocumentData } from '../types/DocumentTypes';
 
 export class DocumentRepo {
     constructor() {}
@@ -9,10 +10,10 @@ export class DocumentRepo {
     //     const docs = await Document.findAll({
     //         include: [
     //             {
-    //                 model: User, 
+    //                 model: User,
     //                 required: true,
     //                 where: {
-    //                     userId, 
+    //                     userId,
     //                     hasUpdated
     //                 }
     //             }
@@ -20,23 +21,33 @@ export class DocumentRepo {
     //     })
     // }
 
-    async getDocumentsOwnedByUser(userId: string) {
+    async getDocumentsOwnedByUser(userId: string, startDate: string, endDate: string) {
+        console.log(new Date(startDate));
+        const whereObject =
+            !startDate && !endDate
+                ? {}
+                : {
+                      createdAt: {
+                          [Op.gte]: new Date(startDate),
+                          [Op.lte]: new Date(endDate)
+                      }
+                  };
         const docs = await Document.findAll({
             include: [
                 {
                     model: User,
                     required: true,
-                    where: {
-                        userId
-                    },
+                    where: { userId },
                     through: {
                         attributes: []
                     },
                     attributes: []
                 }
-            ]
+            ],
+            where: whereObject,
+            order: [['createdAt', 'DESC']]
         });
-        return docs;
+        return docs as unknown as DocumentData[];
     }
 
     async getDocument(documentId: string) {
