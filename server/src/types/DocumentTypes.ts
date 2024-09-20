@@ -12,11 +12,18 @@ export interface DocumentCreationAttributes  {
     createdByUserId: string;
 };
 
+interface DocumentUpdateAttributes {
+    title: string;
+    documentContent: DocumentContent;
+    hasUpdatedInTipTap: boolean;
+}
+export type PartialDocumentUpdateAttributes = Partial<DocumentUpdateAttributes>
+
 
 
 type DocumentContent = {
     type: string;
-    content: any; // Depending on the structure of the content, you can type it more strictly
+    content: any;
 }
 
 export type DocumentOwnerData = {
@@ -26,7 +33,7 @@ export type DocumentOwnerData = {
 
 interface DocumentQueryParams {
     userId: string; 
-    hasUpdated: boolean;
+    hasUpdatedInTipTap: boolean;
 }
 
 export type PartialDocumentQueryParams = Partial<DocumentQueryParams>

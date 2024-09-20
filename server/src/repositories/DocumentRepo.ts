@@ -1,6 +1,7 @@
 import { Op } from '@sequelize/core';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
+import { DocumentCreationAttributes, DocumentData, PartialDocumentQueryParams, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import { DocumentCreationAttributes, DocumentData } from '../types/DocumentTypes';
 
 export class DocumentRepo {
@@ -60,7 +61,7 @@ export class DocumentRepo {
         return doc;
     }
 
-    async updateDocument(documentId: string, documentData: DocumentCreationAttributes) {
+    async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
         const doc = await Document.findByPk(documentId);
         if (doc === null) {
             throw Error(`Document with ID ${documentId} does not exist.`);
