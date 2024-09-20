@@ -28,9 +28,11 @@ export class DocumentController {
     }
 
     async getDocuments(req: Request, res: Response, next: NextFunction) {
-        const userId = req.query.userId;
+        const userId = req.query.userId as string;
+        const startDate = req.query.startDate as string;
+        const endDate = req.query.endDate as string;
         if (userId) {
-            const docs = await services.documentService.getDocumentsOwnedByUser(userId as string);
+            const docs = await services.documentService.getDocumentsOwnedByUser(userId, startDate, endDate);
             res.status(200).json(docs);
         } else {
             res.status(400).json({

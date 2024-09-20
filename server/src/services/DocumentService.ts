@@ -12,8 +12,8 @@ export class DocumentService {
         this.documentOwnerRepo = new DocumentOwnersRepo();
     }
 
-    async getDocumentsOwnedByUser(userId: string) {
-        const docs = await this.documentRepo.getDocumentsOwnedByUser(userId);
+    async getDocumentsOwnedByUser(userId: string, startDate: string = '', endDate: string = '') {
+        const docs = await this.documentRepo.getDocumentsOwnedByUser(userId, startDate, endDate);
         return docs;
     }
 
