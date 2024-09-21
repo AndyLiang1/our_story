@@ -28,11 +28,12 @@ export class DocumentController {
     }
 
     async getDocuments(req: Request, res: Response, next: NextFunction) {
-        const userId = req.query.userId as string;
-        const startDate = req.query.startDate as string;
-        const endDate = req.query.endDate as string;
+        const userId = req.query.userId ? (req.query.userId as string) : null;
+        const startDate = req.query.startDate ? (req.query.startDate as string) : null;
+        const endDate = req.query.endDate ? (req.query.endDate as string) : null;
+
         if (userId) {
-            const docs = await services.documentService.getDocumentsOwnedByUser(userId, startDate, endDate);
+            const docs = await services.documentService.getDocuments(userId, startDate, endDate, null);
             res.status(200).json(docs);
         } else {
             res.status(400).json({
@@ -61,11 +62,9 @@ export class DocumentController {
 
     async createDocument(req: Request, res: Response, next: NextFunction) {
         const defaultDocumentContent = {
-            type: "doc",
-            content: [
-              
-            ]
-        }
+            type: 'doc',
+            content: []
+        };
         const reqBody = req.body;
         const documentData: DocumentCreationAttributes = {
             title: reqBody.title,
