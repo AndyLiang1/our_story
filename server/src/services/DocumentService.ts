@@ -37,16 +37,15 @@ export class DocumentService {
     }
 
     async createDocument(documentData: DocumentCreationAttributes) {
-        const doc: Document = await this.documentRepo.createDocument(documentData);
-        const docId = doc.getDataValue('documentId');
+        const newDocId: string = await this.documentRepo.createDocument(documentData);
 
         const owner = await this.documentOwnerRepo.creatDocumentOwner({
-            documentId: docId,
+            documentId: newDocId,
             userId: documentData.createdByUserId
         });
 
-        await services.tiptapDocumentService.createDocument(docId, documentData)
-        return doc;
+        await services.tiptapDocumentService.createDocument(newDocId, documentData)
+        return newDocId;
     }
 
     async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
@@ -70,6 +69,8 @@ export class DocumentService {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId)
             this.updateDocument(docThatNeedsUpdated.documentId, docFromTipTap.content)
         }
+
+        return docsThatNeedUpdating.length
     }
 
     async addOwners(documentId: string, owners: string[]) {

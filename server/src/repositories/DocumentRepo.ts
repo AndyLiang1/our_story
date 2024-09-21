@@ -44,7 +44,7 @@ export class DocumentRepo {
 
     async createDocument(documentData: DocumentCreationAttributes) {
         const doc = await Document.create({ ...documentData });
-        return doc;
+        return doc.getDataValue('documentId');
     }
 
     async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
