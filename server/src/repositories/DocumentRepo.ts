@@ -6,45 +6,32 @@ import { DocumentCreationAttributes, DocumentData, PartialDocumentQueryParams, P
 export class DocumentRepo {
     constructor() {}
 
-    // async getDocuments(queryParams: PartialDocumentQueryParams) {
-    //     const docs = await Document.findAll({
-    //         include: [
-    //             {
-    //                 model: User,
-    //                 required: true,
-    //                 where: {
-    //                     userId,
-    //                     hasUpdated
-    //                 }
-    //             }
-    //         ]
-    //     })
-    // }
+ 
+    async getDocuments(userId: string | null, startDate: string | null, endDate: string | null, hasUpdated: boolean | null) {
+        let whereObjectForDocuments: any = {}
+        let whereObjectForUsers: any = {}
+        if (startDate != null && endDate != null) {
+            whereObjectForDocuments.createdAt = {
+                [Op.gte]: new Date(startDate), 
+                [Op.lte]: new Date(endDate)    
+            };
+        }
+        if(userId != null) whereObjectForUsers.userId = userId
+        if(hasUpdated != null) whereObjectForDocuments.hasUpdated = hasUpdated
 
-    async getDocumentsOwnedByUser(userId: string, startDate: string, endDate: string) {
-        console.log(new Date(startDate));
-        const whereObject =
-            !startDate && !endDate
-                ? {}
-                : {
-                      createdAt: {
-                          [Op.gte]: new Date(startDate),
-                          [Op.lte]: new Date(endDate)
-                      }
-                  };
         const docs = await Document.findAll({
             include: [
                 {
                     model: User,
                     required: true,
-                    where: { userId },
+                    where: whereObjectForUsers,
                     through: {
                         attributes: []
                     },
                     attributes: []
                 }
             ],
-            where: whereObject,
+            where: whereObjectForDocuments,
             order: [['createdAt', 'DESC']]
         });
         return docs as unknown as DocumentData[];

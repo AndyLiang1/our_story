@@ -12,8 +12,8 @@ export class DocumentService {
         this.documentOwnerRepo = new DocumentOwnersRepo();
     }
 
-    async getDocumentsOwnedByUser(userId: string, startDate: string = '', endDate: string = '') {
-        const docs = await this.documentRepo.getDocumentsOwnedByUser(userId, startDate, endDate);
+    async getDocuments(userId: string | null = null, startDate: string | null= null, endDate: string | null= null, hasUpdated: boolean | null = null) {
+        const docs = await this.documentRepo.getDocuments(userId, startDate, endDate, hasUpdated);
         return docs;
     }
 
@@ -64,7 +64,12 @@ export class DocumentService {
     }
 
     async syncDocuments() {
+        const docsThatNeedUpdating = await this.documentRepo.getDocuments(null, null, null, true)
 
+        for(const docThatNeedsUpdated of docsThatNeedUpdating) {
+            const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId)
+            this.updateDocument(docThatNeedsUpdated.documentId, docFromTipTap.content)
+        }
     }
 
     async addOwners(documentId: string, owners: string[]) {

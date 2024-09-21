@@ -43,7 +43,7 @@ export class JwtVerifier {
             var data: any = jwtDecode(token);
             const user = await services.userService.getUserByEmail(data.email);
             const userId = user?.getDataValue('userId');
-            const docs = await services.documentService.getDocumentsOwnedByUser(userId);
+            const docs = await services.documentService.getDocuments(userId);
             const allowDocumentNames = docs.map((doc) => doc.documentId);
             data = {
                 ...data,
