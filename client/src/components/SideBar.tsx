@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiCollapseHorizontal } from 'react-icons/bi';
 import { EventMetaData } from '../types/DocumentTypes';
 import { GenericSearchBar } from './GenericSearchBar';
@@ -26,6 +26,10 @@ interface ISideBarOpenProps {
 
 function SideBarOpen({ dataList, isOpen, setIsOpen }: ISideBarOpenProps) {
     const [filteredDataList, setFilteredDataList] = useState<EventMetaData[]>(dataList);
+
+    useEffect(() => {
+        setFilteredDataList(dataList)
+    }, [dataList])
 
     return (
         <div className="relative h-full w-[15%] flex-col items-center justify-center bg-blue-50 text-center">

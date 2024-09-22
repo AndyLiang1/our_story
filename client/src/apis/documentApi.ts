@@ -1,23 +1,22 @@
 import axios from 'axios';
 import { config } from '../config/config';
-import { DocumentCreationAttributes } from '../types/DocumentTypes';
-export const getAllDocuments = async (userInfoAuthToken: string, userInfoTipTapToken: string, userId: string, startDate: string | null, endDate: string | null) => {
-    let documentBaseUrl = `${config.baseUrl}/documents?userId=${userId}`
+import { DocumentCreationAttributes } from "../types/DocumentTypes";
+export const getAllDocuments = async (userId: string, collabToken: string, startDate: string | null, endDate: string | null) => {
+    let documentUrl = `${config.baseUrl}/api/documents?userId=${userId}`
 
-    if(startDate != null && endDate != null) documentBaseUrl += `&startDate=${startDate}&endDate=${endDate}`
-
-    const { data } = await axios.get(documentBaseUrl, {
+    if(startDate != null && endDate != null) documentUrl += `&startDate=${startDate}&endDate=${endDate}`
+    const { data } = await axios.get(documentUrl, {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('our_story_collabToken')}`
+            'Authorization': `Bearer ${collabToken}`
         }
     });
     return data;
 };
 
-export const createDocument = async(documentData: DocumentCreationAttributes) => {
-    await axios.post(`${config.baseUrl}/documents`, documentData, {
+export const createDocument = async( collabToken: string, documentData: DocumentCreationAttributes) => {
+    await axios.post(`${config.baseUrl}/api/documents`, documentData, {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('our_story_collabToken')}`
+            'Authorization': `Bearer ${collabToken}`
         }
     })
 }

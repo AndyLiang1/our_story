@@ -23,9 +23,10 @@ import { MenuBar } from './MenuBar';
 export interface IEditorProps {
     ydoc: any;
     provider: any;
+    styles: string;
 }
 
-const Editor = ({ ydoc, provider }: IEditorProps) => {
+const Editor = ({ ydoc, provider, styles }: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
     let updatedHasChangedFlag = false
 
@@ -103,7 +104,7 @@ const Editor = ({ ydoc, provider }: IEditorProps) => {
     }, [editor?.isActive('highlight')]);
 
     return (
-        <div className="h-full w-full">
+        <div className={styles}>
             <MenuBar editor={editor} />
             <EditorContent
                 className="editor__content bg-milk-mocha h-[90%] w-full "

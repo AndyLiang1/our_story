@@ -1,118 +1,87 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { GenericCalendar } from '../components/GenericCalendar';
 import { NavBar } from '../components/Navbar';
 import { SideBar } from '../components/SideBar';
 import { TipTap } from '../components/TipTap';
 
+import { getAllDocuments } from '../apis/documentApi';
 import { ImageCarousel } from '../components/ImageCarousel';
+import { DocumentData } from '../types/DocumentTypes';
+import { User } from '../types/UserTypes';
+import { CreateDocumentForm } from '../components/CreateDocumentForm';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
-    const [jwt, setJWT] = useState('');
-    const [documents, setDocuments] = useState({});
-    const location = useLocation();
-    const userInfo = location.state;
+    const [documents, setDocuments] = useState([]);
+    const [user, setUser] = useState<User>(useLocation().state);
+    const [showForm, setShowForm] = useState<boolean>(false)
+
 
     useEffect(() => {
-        // const documents = getAllDocuments(userInfo.authToken, userInfo.tiptapToken)
-        // setDocuments(documents)
+        const collabToken = sessionStorage.getItem('our_story_collabToken');
+        if (collabToken) {
+            const userWithCollabToken = {
+                ...user,
+                collabToken: collabToken
+            };
+            setUser(userWithCollabToken);
+        }
     }, []);
 
-    
-
-    
+    useEffect(() => {
+        const fetchData = async () => {
+            if (user.collabToken) {
+                const documents = await getAllDocuments(user.userId, user.collabToken, null, null);
+                setDocuments(documents);
+            }
+        };
+        fetchData();
+    }, [user]);
 
     return (
-        <div className="v-screen h-screen flex-wrap items-center justify-between">
+        <div className="v-screen h-screen flex-wrap items-center justify-between relative">
+            {showForm && user && <CreateDocumentForm user={user}/>}
             <NavBar />
-            <h1>Hello {location.state?.firstName}</h1>
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
                 <SideBar
-                    dataList={[
-                        {
-                            id: '1',
-                            date: '2024-08-01',
-                            name: 'Trattoriaaaaaaa1'
-                        },
-                        {
-                            id: '2',
-                            date: '2024-08-02',
-                            name: 'Trattoria1'
-                        },
-                        {
-                            id: '3',
-                            date: '2024-08-02',
-                            name: 'Trattoria2'
-                        },
-                        {
-                            id: '4',
-                            date: '2024-08-03',
-                            name: 'Trattoria1'
-                        },
-                        {
-                            id: '5',
-                            date: '2024-08-03',
-                            name: 'Trattoria2'
-                        },
-                        {
-                            id: '6',
-                            date: '2024-08-03',
-                            name: 'Trattoria3'
-                        }
-                    ]}
+                    dataList={documents.map((doc: DocumentData) => {
+                        return { id: doc.documentId, name: doc.title, date: doc.date };
+                    })}
                 />
 
                 <div className="flex h-full w-[85%] items-center justify-between">
-                    <div className="h-full w-[65%]">
-                        {jwt ? <TipTap jwt={jwt} /> : <div>Loading bruh</div>}
+                    <div className="flex h-full w-[65%] items-center justify-center bg-blue-300 text-center padding-2">
+                        {user.collabToken && documents.length ? (
+                            <TipTap
+                                documentId={documents[0]}
+                                collabToken={user.collabToken}
+                                styles="h-full w-full"
+                            />
+                        ) : user.collabToken && documents.length === 0 ? (
+                            <button onClick = {() => setShowForm(true)}>Create new </button>
+                        ) : (
+                            <div>Loading bruh</div>
+                        )}
                     </div>
+
                     <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
                         <div className="h-[45%] w-[90%] bg-red-700">
-                        <ImageCarousel images={[
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s",
-                        ]} height="h-full" width = "w-full" />
-                           
-                        </div>
-                        <div className="h-[45%] w-[90%] bg-white">
-                            <GenericCalendar
-                                events={[
-                                    {
-                                        id: '1',
-                                        date: '2024-08-01',
-                                        name: 'Trattoriaaaaaaa1'
-                                    },
-                                    {
-                                        id: '2',
-                                        date: '2024-08-02',
-                                        name: 'Trattoria1'
-                                    },
-                                    {
-                                        id: '3',
-                                        date: '2024-08-02',
-                                        name: 'Trattoria2'
-                                    },
-                                    {
-                                        id: '4',
-                                        date: '2024-08-03',
-                                        name: 'Trattoria1'
-                                    },
-                                    {
-                                        id: '5',
-                                        date: '2024-08-03',
-                                        name: 'Trattoria2'
-                                    },
-                                    {
-                                        id: '6',
-                                        date: '2024-08-03',
-                                        name: 'Trattoria3'
-                                    }
+                            <ImageCarousel
+                                images={[
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
+                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s'
                                 ]}
+                                height="h-full"
+                                width="w-full"
                             />
+                        </div>
+
+                        <div className="h-[45%] w-[90%] bg-white">
+                            <GenericCalendar events={documents} />
                         </div>
                     </div>
                 </div>
