@@ -1,14 +1,18 @@
+import { Transaction } from 'sequelize';
 import { DocumentOwners } from '../models/DocumentOwners';
 import { DocumentOwnerData } from '../types/DocumentTypes';
 
 export class DocumentOwnersRepo {
     constructor() {}
 
-    async creatDocumentOwner(data: DocumentOwnerData) {
-        const docOwner = await DocumentOwners.create({
-            documentId: data.documentId,
-            userId: data.userId
-        });
+    async creatDocumentOwner(data: DocumentOwnerData, transaction?: Transaction) {
+        const docOwner = await DocumentOwners.create(
+            {
+                documentId: data.documentId,
+                userId: data.userId
+            },
+            { transaction }
+        );
         return docOwner;
     }
 

@@ -2,6 +2,7 @@ import { Op } from '@sequelize/core';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
 import { DocumentCreationAttributes, DocumentData, PartialDocumentQueryParams, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
+import { Transaction } from 'sequelize';
 
 export class DocumentRepo {
     constructor() {}
@@ -42,8 +43,13 @@ export class DocumentRepo {
         return doc as unknown as DocumentData | null;
     }
 
-    async createDocument(documentData: DocumentCreationAttributes) {
-        const doc = await Document.create({ ...documentData });
+    async createDocument(
+        documentData: DocumentCreationAttributes, transaction?: Transaction
+    ) {
+        const doc = await Document.create(
+            { ...documentData },
+            { transaction }
+        );
         return doc.getDataValue('documentId');
     }
 
@@ -58,11 +64,12 @@ export class DocumentRepo {
         return doc;
     }
 
-    async deleteDocument(documentId: string) {
+    async deleteDocument(documentId: string, transaction?: Transaction) {
         await Document.destroy({
             where: {
                 documentId
-            }
+            },
+            transaction
         });
     }
 }

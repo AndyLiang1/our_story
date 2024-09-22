@@ -10,6 +10,7 @@ export interface DocumentCreationAttributes  {
     title: string;
     documentContent: DocumentContent;
     createdByUserId: string;
+    eventDate: string;          // YYYY-MM-DD
 };
 
 interface DocumentUpdateAttributes {

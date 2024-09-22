@@ -33,6 +33,10 @@ Document.init(
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
+        eventDate: {
+            type: DataTypes.DATEONLY,
+            defaultValue: sequelize.literal('CURRENT_DATE') 
+        },
         createdAt: {
             type: DataTypes.DATE
         },

@@ -1,3 +1,4 @@
+import sequelize from '../db';
 import { Document } from '../models/Document';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
@@ -37,29 +38,36 @@ export class DocumentService {
     }
 
     async createDocument(documentData: DocumentCreationAttributes) {
-        const newDocId: string = await this.documentRepo.createDocument(documentData);
+        return await sequelize.transaction(async t => {
+            const newDocId: string = await this.documentRepo
+                .createDocument(documentData, t);
 
-        const owner = await this.documentOwnerRepo.creatDocumentOwner({
-            documentId: newDocId,
-            userId: documentData.createdByUserId
-        });
-
-        await services.tiptapDocumentService.createDocument(newDocId, documentData)
-        return newDocId;
+            const owner = await this.documentOwnerRepo
+                .creatDocumentOwner(
+                    {
+                        documentId: newDocId,
+                        userId: documentData.createdByUserId
+                    },
+                    t
+                );
+    
+            await services.tiptapDocumentService.createDocument(newDocId, documentData)
+            return newDocId;
+        })
+        
     }
 
     async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
-        try {
-            const data = await this.documentRepo.updateDocument(documentId, documentData);
-            return data;
-        } catch (error) {
-            console.error(`Failed to update: ${error}`);
-        }
+        const data = await this.documentRepo.updateDocument(documentId, documentData);
+        return data;
+        
     }
 
     async deleteDocument(documentId: string) {
-        await this.documentRepo.deleteDocument(documentId);
-        await services.tiptapDocumentService.deleteDocument(documentId);
+        await sequelize.transaction(async t => {
+            await this.documentRepo.deleteDocument(documentId, t);
+            await services.tiptapDocumentService.deleteDocument(documentId);
+        })
     }
 
     async syncDocuments() {
@@ -67,7 +75,9 @@ export class DocumentService {
 
         for(const docThatNeedsUpdated of docsThatNeedUpdating) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId)
-            this.updateDocument(docThatNeedsUpdated.documentId, docFromTipTap.content)
+            this.updateDocument(docThatNeedsUpdated.documentId, {
+                documentContent: docFromTipTap.content
+            })
         }
 
         return docsThatNeedUpdating.length
