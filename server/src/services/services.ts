@@ -1,6 +1,6 @@
 import { DocumentService } from './DocumentService';
+import { TipTapDocumentService } from './TipTapDocumentService';
 import { UserService } from './UserService';
-import {TipTapDocumentService} from "./TipTapDocumentService"
 
 const userService = new UserService();
 const documentService = new DocumentService();

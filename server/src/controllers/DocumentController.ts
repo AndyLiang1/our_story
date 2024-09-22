@@ -69,7 +69,8 @@ export class DocumentController {
         const documentData: DocumentCreationAttributes = {
             title: reqBody.title,
             documentContent: defaultDocumentContent,
-            createdByUserId: reqBody.createdByUserId
+            createdByUserId: reqBody.createdByUserId,
+            eventDate: reqBody.eventDate
         };
         const doc = await services.documentService.createDocument(documentData);
         res.status(201).json(doc);

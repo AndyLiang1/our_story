@@ -1,30 +1,29 @@
-// Schema of document from a get 
-export interface DocumentData extends DocumentCreationAttributes  {
+// Schema of document from a get
+export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
     images: string[];
     createdAt: string;
     updatedAt: string;
 }
 
-export interface DocumentCreationAttributes  {
+export interface DocumentCreationAttributes {
     title: string;
     documentContent: DocumentContent;
     createdByUserId: string;
-};
+    eventDate: string; // YYYY-MM-DD
+}
 
 interface DocumentUpdateAttributes {
     title: string;
     documentContent: DocumentContent;
     hasUpdatedInTipTap: boolean;
 }
-export type PartialDocumentUpdateAttributes = Partial<DocumentUpdateAttributes>
-
-
+export type PartialDocumentUpdateAttributes = Partial<DocumentUpdateAttributes>;
 
 type DocumentContent = {
     type: string;
     content: any;
-}
+};
 
 export type DocumentOwnerData = {
     documentId: string;
@@ -32,8 +31,8 @@ export type DocumentOwnerData = {
 };
 
 interface DocumentQueryParams {
-    userId: string; 
+    userId: string;
     hasUpdatedInTipTap: boolean;
 }
 
-export type PartialDocumentQueryParams = Partial<DocumentQueryParams>
+export type PartialDocumentQueryParams = Partial<DocumentQueryParams>;

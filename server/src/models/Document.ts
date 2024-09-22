@@ -16,7 +16,7 @@ Document.init(
             type: DataTypes.TEXT
         },
         documentContent: {
-            type: DataTypes.JSONB,
+            type: DataTypes.JSONB
         },
         createdByUserId: {
             type: DataTypes.TEXT,
@@ -32,6 +32,10 @@ Document.init(
         hasUpdatedInTipTap: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        eventDate: {
+            type: DataTypes.DATEONLY,
+            defaultValue: sequelize.literal('CURRENT_DATE')
         },
         createdAt: {
             type: DataTypes.DATE

@@ -5,8 +5,8 @@ import { initDb } from './db';
 
 import 'express-async-errors';
 import { DocumentController } from './controllers/DocumentController';
-import { UserController } from './controllers/UserController';
 import { ImageController } from './controllers/ImageController';
+import { UserController } from './controllers/UserController';
 import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
 import { syncDocuments } from './scheduled-jobs/syncDocuments';
@@ -28,15 +28,13 @@ const init = async () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
-
-
     app.get('/api/auth/getCollabToken', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
     new UserController().initRoutes(app);
     new DocumentController().initRoutes(app);
     new ImageController().initRoutes(app);
     app.use(errorHandler);
 
-    syncDocuments()
+    syncDocuments();
 };
 
 init();
