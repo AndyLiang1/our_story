@@ -1,24 +1,23 @@
 import { Op } from '@sequelize/core';
+import { Transaction } from 'sequelize';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
-import { DocumentCreationAttributes, DocumentData, PartialDocumentQueryParams, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
-import { Transaction } from 'sequelize';
+import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 
 export class DocumentRepo {
     constructor() {}
 
- 
     async getDocuments(userId: string | null, startDate: string | null, endDate: string | null, hasUpdated: boolean | null) {
-        let whereObjectForDocuments: any = {}
-        let whereObjectForUsers: any = {}
+        let whereObjectForDocuments: any = {};
+        let whereObjectForUsers: any = {};
         if (startDate != null && endDate != null) {
             whereObjectForDocuments.createdAt = {
-                [Op.gte]: new Date(startDate), 
-                [Op.lte]: new Date(endDate)    
+                [Op.gte]: new Date(startDate),
+                [Op.lte]: new Date(endDate)
             };
         }
-        if(userId != null) whereObjectForUsers.userId = userId
-        if(hasUpdated != null) whereObjectForDocuments.hasUpdated = hasUpdated
+        if (userId != null) whereObjectForUsers.userId = userId;
+        if (hasUpdated != null) whereObjectForDocuments.hasUpdated = hasUpdated;
 
         const docs = await Document.findAll({
             include: [
@@ -43,13 +42,8 @@ export class DocumentRepo {
         return doc as unknown as DocumentData | null;
     }
 
-    async createDocument(
-        documentData: DocumentCreationAttributes, transaction?: Transaction
-    ) {
-        const doc = await Document.create(
-            { ...documentData },
-            { transaction }
-        );
+    async createDocument(documentData: DocumentCreationAttributes, transaction?: Transaction) {
+        const doc = await Document.create({ ...documentData }, { transaction });
         return doc.getDataValue('documentId');
     }
 
