@@ -29,8 +29,8 @@ export class DocumentController {
 
     async getDocuments(req: Request, res: Response, next: NextFunction) {
         const userId = req.query.userId ? (req.query.userId as string) : null;
-        const startDate = req.query.startDate ? (req.query.startDate as string) : null;
-        const endDate = req.query.endDate ? (req.query.endDate as string) : null;
+        const startDate = req.query.startDate ? (new Date(req.query.startDate as string)) : null;
+        const endDate = req.query.endDate ? (new Date(req.query.endDate as string)) : null;
 
         if (userId) {
             const docs = await services.documentService.getDocuments(userId, startDate, endDate, null);

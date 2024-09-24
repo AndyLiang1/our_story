@@ -12,7 +12,7 @@ export class DocumentService {
         this.documentOwnerRepo = new DocumentOwnersRepo();
     }
 
-    async getDocuments(userId: string | null = null, startDate: string | null = null, endDate: string | null = null, hasUpdated: boolean | null = null) {
+    async getDocuments(userId: string | null = null, startDate: Date | null = null, endDate: Date | null = null, hasUpdated: boolean | null = null) {
         const docs = await this.documentRepo.getDocuments(userId, startDate, endDate, hasUpdated);
         return docs;
     }
