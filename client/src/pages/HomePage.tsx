@@ -16,7 +16,7 @@ export function HomePage(props: IHomePageProps) {
     const [documents, setDocuments] = useState([]);
     const [user, setUser] = useState<User>(useLocation().state);
     const [showForm, setShowForm] = useState<boolean>(false)
-
+    const [refetchTrigger, setRefetchTrigger] = useState<Object>({})
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -37,11 +37,11 @@ export function HomePage(props: IHomePageProps) {
             }
         };
         fetchData();
-    }, [user]);
+    }, [user, refetchTrigger]);
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between relative">
-            {showForm && user && <CreateDocumentForm user={user} setShowForm={setShowForm}/>}
+            {showForm && user && <CreateDocumentForm user={user} setShowForm={setShowForm} setRefetchTrigger={setRefetchTrigger}/>}
             <NavBar />
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
                 <SideBar

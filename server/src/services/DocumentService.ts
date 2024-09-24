@@ -37,15 +37,15 @@ export class DocumentService {
     }
 
     async createDocument(documentData: DocumentCreationAttributes) {
-        return await sequelize.transaction(async (t) => {
-            const newDocId: string = await this.documentRepo.createDocument(documentData, t);
+        return await sequelize.transaction(async (transaction) => {
+            const newDocId: string = await this.documentRepo.createDocument(documentData, transaction);
 
             const owner = await this.documentOwnerRepo.creatDocumentOwner(
                 {
                     documentId: newDocId,
                     userId: documentData.createdByUserId
                 },
-                t
+                transaction
             );
 
             await services.tiptapDocumentService.createDocument(newDocId, documentData);
