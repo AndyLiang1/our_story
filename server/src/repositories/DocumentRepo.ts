@@ -7,7 +7,7 @@ import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttribut
 export class DocumentRepo {
     constructor() {}
 
-    async getDocuments(userId: string | null, startDate: string | null, endDate: string | null, hasUpdated: boolean | null) {
+    async getDocuments(userId: string | null, startDate: Date | null, endDate: Date | null, hasUpdated: boolean | null) {
         let whereObjectForDocuments: any = {};
         let whereObjectForUsers: any = {};
         if (startDate != null && endDate != null) {
