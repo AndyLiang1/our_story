@@ -11,6 +11,7 @@ import { GenericFormInput } from './GenericFormInput';
 export interface ICreateDocumentFormProps {
     user: User;
     setShowForm: React.Dispatch<React.SetStateAction<boolean>>;
+    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
 }
 
 type CreateDocumentFormData = {
@@ -18,7 +19,7 @@ type CreateDocumentFormData = {
     date: Date;
 };
 
-export function CreateDocumentForm({ user, setShowForm }: ICreateDocumentFormProps) {
+export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICreateDocumentFormProps) {
     const [formErrorMessage, setFormErrorMessage] = useState('');
 
     const CreateDocumentSchema = Yup.object().shape({
@@ -29,6 +30,7 @@ export function CreateDocumentForm({ user, setShowForm }: ICreateDocumentFormPro
     const handleSubmit = async (formData: CreateDocumentFormData) => {
         await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId });
         setShowForm(false);
+        setRefetchTrigger({})
     };
     return (
         <div className="absolute left-[50%] top-[50%] h-[50%] w-[30%] -translate-x-1/2 -translate-y-1/2 transform bg-white">
@@ -58,7 +60,7 @@ export function CreateDocumentForm({ user, setShowForm }: ICreateDocumentFormPro
                             label="Title"
                             component={GenericFormInput}
                         />
-                        <Field name="date" type="date" label="Date" component={GenericFormInput} />
+                        <Field name="date" type="date" label="Date" max="9999-12-31" component={GenericFormInput} />
 
                         {formErrorMessage && (
                             <GenericFormErrorMessage errorMessage={formErrorMessage} />
