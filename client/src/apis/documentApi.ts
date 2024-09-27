@@ -13,8 +13,16 @@ export const getAllDocuments = async (userId: string, collabToken: string, start
     return data;
 };
 
-export const createDocument = async( collabToken: string, documentData: DocumentCreationAttributes) => {
+export const createDocument = async(collabToken: string, documentData: DocumentCreationAttributes) => {
     await axios.post(`${config.baseUrl}/api/documents`, documentData, {
+        headers: {
+            'Authorization': `Bearer ${collabToken}`
+        }
+    })
+}
+
+export const editDocumentTitle = async(collabToken: string, title: string, documentId: string) => {
+    await axios.put(`${config.baseUrl}/api/documents/${documentId}`, {title}, {
         headers: {
             'Authorization': `Bearer ${collabToken}`
         }

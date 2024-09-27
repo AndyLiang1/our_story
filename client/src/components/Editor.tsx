@@ -19,34 +19,39 @@ import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 import { useEditor } from '../hooks/useEditor';
 import { MenuBar } from './MenuBar';
+import { editDocumentTitle } from '../apis/documentApi';
 
 export interface IEditorProps {
     ydoc: any;
     provider: any;
     styles: string;
+    collabToken: string;
+    documentId: string;
+    documentTitle: string;
 }
 
-const Editor = ({ ydoc, provider, styles }: IEditorProps) => {
+const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle}: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
-    const [title, setTitle] = useState('');
+    const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');
     let updatedHasChangedFlag = false;
 
     useEffect(() => {
-        // Set a timeout to update the debounced value after 2 seconds
         const handler = setTimeout(() => {
             setDebouncedValue(title);
         }, 2000);
-
-        // Cleanup the timeout if inputValue changes before 2 seconds
         return () => {
             clearTimeout(handler);
         };
     }, [title]);
 
     useEffect(() => {
-        if (debouncedValue) {
-            console.log(debouncedValue);
+        const updateDocumentTitle = async() => {
+            await editDocumentTitle(collabToken, title, documentId)
+            setRe
+        }
+        if (debouncedValue && title !== documentTitle) {
+            updateDocumentTitle()
         }
     }, [debouncedValue]);
 
@@ -128,10 +133,9 @@ const Editor = ({ ydoc, provider, styles }: IEditorProps) => {
             <MenuBar editor={editor} />{' '}
             <div className="bg-milk-mocha flex h-[95%] w-full flex-col">
                 <input
-                    className="h-[5%] w-full border-none bg-transparent"
+                    className="h-[5%] w-full border-none bg-transparent text-center"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Type something..."
                 />
                 <EditorContent className="editor__content h-[95%] w-full" editor={editor} />
             </div>

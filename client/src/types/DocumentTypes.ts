@@ -12,10 +12,12 @@ export interface DocumentCreationAttributes  {
 
 export interface DocumentData extends DocumentCreationAttributes  {
     documentId: string;
+    title: string;
     documentContent: DocumentContent;
     images: string[];
     createdAt: string;
     updatedAt: string;
+    eventDate: Date;
 }
 
 type DocumentContent = {

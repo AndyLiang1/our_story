@@ -6,14 +6,14 @@ import { SideBar } from '../components/SideBar';
 import { TipTap } from '../components/TipTap';
 
 import { getAllDocuments } from '../apis/documentApi';
+import { CreateDocumentForm } from '../components/CreateDocumentForm';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
-import { CreateDocumentForm } from '../components/CreateDocumentForm';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [user, setUser] = useState<User>(useLocation().state);
     const [showForm, setShowForm] = useState<boolean>(false)
     const [refetchTrigger, setRefetchTrigger] = useState<Object>({})
@@ -51,15 +51,16 @@ export function HomePage(props: IHomePageProps) {
                 />
 
                 <div className="flex h-full w-[85%] items-center justify-between">
-                    <div className="flex h-full w-[65%] items-center justify-center bg-blue-300 text-center padding-2">
+                    <div className="padding-2 flex h-full w-[65%] items-center justify-center bg-blue-300">
                         {user.collabToken && documents.length ? (
                             <TipTap
-                                documentId={documents[0]}
+                                documentId={documents[0].documentId}
+                                documentTitle={documents[0].title}
                                 collabToken={user.collabToken}
                                 styles="h-full w-full"
                             />
                         ) : user.collabToken && documents.length === 0 ? (
-                            <button onClick = {() => setShowForm(true)}>Create new </button>
+                            <button onClick={() => setShowForm(true)}>Create new </button>
                         ) : (
                             <div>Loading bruh</div>
                         )}
@@ -81,7 +82,15 @@ export function HomePage(props: IHomePageProps) {
                         </div>
 
                         <div className="h-[45%] w-[90%] bg-white">
-                            <GenericCalendar events={documents} />
+                            <GenericCalendar
+                                events={documents.map((doc) => {
+                                    return {
+                                        id: doc.documentId,
+                                        name: doc.title,
+                                        date: doc.eventDate
+                                    };
+                                })}
+                            />
                         </div>
                     </div>
                 </div>

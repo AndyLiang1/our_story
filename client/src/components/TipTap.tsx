@@ -6,11 +6,12 @@ import Editor from './Editor';
 
 export interface ITipTapProps {
     documentId: string;
+    documentTitle: string;
     collabToken: string;
-    styles: string
+    styles: string;
 }
 
-export function TipTap({ documentId, collabToken, styles }: ITipTapProps) {
+export function TipTap({ documentId, documentTitle, collabToken, styles }: ITipTapProps) {
     const doc = new Y.Doc();
     const provider = new TiptapCollabProvider({
         name: documentId, // Unique document identifier for syncing. This is your document name.
@@ -32,5 +33,5 @@ export function TipTap({ documentId, collabToken, styles }: ITipTapProps) {
         },        
     });
 
-    return <Editor provider={provider} ydoc={doc} styles ={styles} />;
+    return <Editor provider={provider} ydoc={doc} styles ={styles} collabToken={collabToken} documentId={documentId} documentTitle={documentTitle} />;
 }
