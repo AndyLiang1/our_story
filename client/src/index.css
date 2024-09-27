@@ -24,6 +24,10 @@ body {
         word-break: normal;
     }
 
+    .editor__content .tiptap.ProseMirror:focus {
+        outline: none;
+    }
+
     /* Render the username above the caret */
     .editor__content .collaboration-cursor__label {
         border-radius: 3px 3px 3px 0;

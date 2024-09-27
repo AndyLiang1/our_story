@@ -15,7 +15,7 @@ export function MenuBar({ editor }: IMenuBarProps) {
         }
     };
     return (
-        <div className="h-[10%] w-full">
+        <div className="h-[5%] w-full">
             <button
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -30,13 +30,13 @@ export function MenuBar({ editor }: IMenuBarProps) {
             >
                 italic
             </button>
-            <button
+            {/* <button
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 className={editor.isActive('strike') ? 'is-active' : ''}
             >
                 strike
-            </button>
+            </button> */}
             <button
                 onClick={() => editor.chain().focus().toggleCode().run()}
                 disabled={!editor.can().chain().focus().toggleCode().run()}
@@ -62,10 +62,10 @@ export function MenuBar({ editor }: IMenuBarProps) {
             >
                 right
             </button>
-            <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
+            {/* <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
                 clear marks
-            </button>
-            <button onClick={() => editor.chain().focus().clearNodes().run()}>clear nodes</button>
+            </button> */}
+            {/* <button onClick={() => editor.chain().focus().clearNodes().run()}>clear nodes</button> */}
             <button
                 onClick={() => editor.chain().focus().setParagraph().run()}
                 className={editor.isActive('paragraph') ? 'is-active' : ''}
@@ -102,19 +102,19 @@ export function MenuBar({ editor }: IMenuBarProps) {
             >
                 ordered list
             </button>
-            <button
+            {/* <button
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                 className={editor.isActive('codeBlock') ? 'is-active' : ''}
             >
                 code block
-            </button>
+            </button> */}
             {/* <button onClick={() => editor.chain().focus().toggleBlockquote().run()} className={editor.isActive('blockquote') ? 'is-active' : ''}>
                 blockquote
             </button> */}
             {/* <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>horizontal rule</button> */}
             <button onClick={() => editor.chain().focus().setHardBreak().run()}>hard break</button>
             {/* <button onClick={() => addImage()}>Image</button> */}
-            <button
+            {/* <button
                 onClick={() => editor.chain().focus().undo().run()}
                 disabled={!editor.can().chain().focus().undo().run()}
             >
@@ -125,7 +125,7 @@ export function MenuBar({ editor }: IMenuBarProps) {
                 disabled={!editor.can().chain().focus().redo().run()}
             >
                 redo
-            </button>
+            </button> */}
             <button
                 onClick={() => editor.chain().focus().toggleHighlight().run()}
                 className={editor.isActive('highlight') ? 'is-active' : ''}
