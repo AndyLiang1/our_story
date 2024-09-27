@@ -28,7 +28,27 @@ export interface IEditorProps {
 
 const Editor = ({ ydoc, provider, styles }: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
-    let updatedHasChangedFlag = false
+    const [title, setTitle] = useState('');
+    const [debouncedValue, setDebouncedValue] = useState('');
+    let updatedHasChangedFlag = false;
+
+    useEffect(() => {
+        // Set a timeout to update the debounced value after 2 seconds
+        const handler = setTimeout(() => {
+            setDebouncedValue(title);
+        }, 2000);
+
+        // Cleanup the timeout if inputValue changes before 2 seconds
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [title]);
+
+    useEffect(() => {
+        if (debouncedValue) {
+            console.log(debouncedValue);
+        }
+    }, [debouncedValue]);
 
     const editor = useEditor({
         onCreate: ({ editor: currentEditor }) => {
@@ -39,9 +59,9 @@ const Editor = ({ ydoc, provider, styles }: IEditorProps) => {
             });
         },
         onUpdate: () => {
-            if(!updatedHasChangedFlag) {
-                updatedHasChangedFlag = true
-                // call update to BE 
+            if (!updatedHasChangedFlag) {
+                updatedHasChangedFlag = true;
+                // call update to BE
             }
         },
         extensions: [
@@ -105,11 +125,16 @@ const Editor = ({ ydoc, provider, styles }: IEditorProps) => {
 
     return (
         <div className={styles}>
-            <MenuBar editor={editor} />
-            <EditorContent
-                className="editor__content bg-milk-mocha h-[90%] w-full "
-                editor={editor}
-            />
+            <MenuBar editor={editor} />{' '}
+            <div className="bg-milk-mocha flex h-[95%] w-full flex-col">
+                <input
+                    className="h-[5%] w-full border-none bg-transparent"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Type something..."
+                />
+                <EditorContent className="editor__content h-[95%] w-full" editor={editor} />
+            </div>
         </div>
     );
 };
