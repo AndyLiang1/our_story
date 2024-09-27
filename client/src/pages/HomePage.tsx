@@ -56,6 +56,7 @@ export function HomePage(props: IHomePageProps) {
                             <TipTap
                                 documentId={documents[0].documentId}
                                 documentTitle={documents[0].title}
+                                setRefetchTrigger={setRefetchTrigger}
                                 collabToken={user.collabToken}
                                 styles="h-full w-full"
                             />

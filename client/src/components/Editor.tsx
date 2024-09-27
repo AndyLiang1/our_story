@@ -28,9 +28,10 @@ export interface IEditorProps {
     collabToken: string;
     documentId: string;
     documentTitle: string;
+    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
 }
 
-const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle}: IEditorProps) => {
+const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle, setRefetchTrigger}: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
     const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');
@@ -48,7 +49,7 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
     useEffect(() => {
         const updateDocumentTitle = async() => {
             await editDocumentTitle(collabToken, title, documentId)
-            setRe
+            setRefetchTrigger({})
         }
         if (debouncedValue && title !== documentTitle) {
             updateDocumentTitle()
@@ -130,7 +131,7 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
 
     return (
         <div className={styles}>
-            <MenuBar editor={editor} />{' '}
+            <MenuBar editor={editor} />
             <div className="bg-milk-mocha flex h-[95%] w-full flex-col">
                 <input
                     className="h-[5%] w-full border-none bg-transparent text-center"

@@ -9,9 +9,10 @@ export interface ITipTapProps {
     documentTitle: string;
     collabToken: string;
     styles: string;
+    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
 }
 
-export function TipTap({ documentId, documentTitle, collabToken, styles }: ITipTapProps) {
+export function TipTap({ documentId, documentTitle, collabToken, styles, setRefetchTrigger }: ITipTapProps) {
     const doc = new Y.Doc();
     const provider = new TiptapCollabProvider({
         name: documentId, // Unique document identifier for syncing. This is your document name.
@@ -33,5 +34,5 @@ export function TipTap({ documentId, documentTitle, collabToken, styles }: ITipT
         },        
     });
 
-    return <Editor provider={provider} ydoc={doc} styles ={styles} collabToken={collabToken} documentId={documentId} documentTitle={documentTitle} />;
+    return <Editor provider={provider} ydoc={doc} styles ={styles} collabToken={collabToken} documentId={documentId} documentTitle={documentTitle} setRefetchTrigger={setRefetchTrigger} />;
 }
