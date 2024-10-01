@@ -44,30 +44,10 @@ export function HomePage(props: IHomePageProps) {
             {showForm && user && <CreateDocumentForm user={user} setShowForm={setShowForm} setRefetchTrigger={setRefetchTrigger}/>}
             <NavBar />
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
-                <SideBar
-                    dataList={documents.map((doc: DocumentData) => {
-                        return { id: doc.documentId, name: doc.title, date: doc.date };
-                    })}
-                />
+                
 
                 <div className="flex h-full w-[85%] items-center justify-between">
-                    <div className="padding-2 flex h-full w-[65%] items-center justify-center bg-blue-300">
-                        {user.collabToken && documents.length ? (
-                            <TipTap
-                                documentId={documents[0].documentId}
-                                documentTitle={documents[0].title}
-                                setRefetchTrigger={setRefetchTrigger}
-                                collabToken={user.collabToken}
-                                styles="h-full w-full"
-                            />
-                        ) : user.collabToken && documents.length === 0 ? (
-                            <button onClick={() => setShowForm(true)}>Create new </button>
-                        ) : (
-                            <div>Loading bruh</div>
-                        )}
-                    </div>
-
-                    <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
+                <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
                         <div className="h-[45%] w-[90%] bg-red-700">
                             <ImageCarousel
                                 images={[
@@ -94,7 +74,29 @@ export function HomePage(props: IHomePageProps) {
                             />
                         </div>
                     </div>
+                    <div className="padding-2 flex h-full w-[65%] items-center justify-center bg-blue-300">
+                        {user.collabToken && documents.length ? (
+                            <TipTap
+                                documentId={documents[0].documentId}
+                                documentTitle={documents[0].title}
+                                setRefetchTrigger={setRefetchTrigger}
+                                collabToken={user.collabToken}
+                                styles="h-full w-full"
+                            />
+                        ) : user.collabToken && documents.length === 0 ? (
+                            <button onClick={() => setShowForm(true)}>Create new </button>
+                        ) : (
+                            <div>Loading bruh</div>
+                        )}
+                    </div>
+
+                    
                 </div>
+                <SideBar
+                    dataList={documents.map((doc: DocumentData) => {
+                        return { id: doc.documentId, name: doc.title, date: doc.date };
+                    })}
+                />
             </div>
         </div>
     );
