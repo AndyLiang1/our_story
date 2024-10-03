@@ -27,7 +27,7 @@ export function GenericFormInput({
                             ? ' border-red-500'
                             : ' border-gray-800') +
                         ' ' +
-                        'peer pl-4 pt-5 hover:border hover:border-black focus:border-[3px] focus:border-black focus:outline-none'
+                        'peer pl-4 pr-2 pt-5 hover:border hover:border-black focus:border-[3px] focus:border-black focus:outline-none'
                     }
                     placeholder=""
                 />

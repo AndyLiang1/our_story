@@ -33,7 +33,7 @@ export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICr
         setRefetchTrigger({})
     };
     return (
-        <div className="absolute left-[50%] top-[50%] h-[50%] w-[30%] -translate-x-1/2 -translate-y-1/2 transform bg-white">
+        <div className="absolute left-[50%] top-[50%] h-[50%] w-[30%] -translate-x-1/2 -translate-y-1/2 transform bg-white z-10 flex justify-center">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowForm(false)}
