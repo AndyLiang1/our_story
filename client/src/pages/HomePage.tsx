@@ -42,7 +42,7 @@ export function HomePage(props: IHomePageProps) {
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between relative">
             {showForm && user && <CreateDocumentForm user={user} setShowForm={setShowForm} setRefetchTrigger={setRefetchTrigger}/>}
-            <NavBar />
+            <NavBar setShowForm={setShowForm}/>
             <div className="home_page_container flex h-[90%] w-full items-center justify-between">
                 
 
