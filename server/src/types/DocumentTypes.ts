@@ -17,6 +17,7 @@ interface DocumentUpdateAttributes {
     title: string;
     documentContent: DocumentContent;
     hasUpdatedInTipTap: boolean;
+    images: string[];
 }
 export type PartialDocumentUpdateAttributes = Partial<DocumentUpdateAttributes>;
 

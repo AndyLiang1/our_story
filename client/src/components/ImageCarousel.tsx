@@ -1,49 +1,80 @@
 import axios from 'axios';
-import { useState } from 'react';
-import { config } from '../config/config';
+import { useEffect, useState } from 'react';
+import { editDocumentImages } from '../apis/documentApi';
+import {
+    getGeneratedDownloadImageSignedUrls,
+    getGeneratedUploadImageSignedUrls
+} from '../apis/imageApi';
 
 export interface IImageCarouselProps {
-    images: string[];
+    collabToken: string;
+    documentId: string;
+    setImageNames: React.Dispatch<React.SetStateAction<string[]>>;
+    imageNames: string[];
     height: string;
     width: string;
 }
+
 enum DIRECTION {
     LEFT = 'left',
     RIGHT = 'right'
 }
 
-export function ImageCarousel({ images, height, width }: IImageCarouselProps) {
-    const [file, setFile] = useState<any>();
-
+export function ImageCarousel({
+    collabToken,
+    documentId,
+    imageNames,
+    setImageNames,
+    height,
+    width
+}: IImageCarouselProps) {
+    const [imagesToUpload, setImagesToUpload] = useState<FileList | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [signedImageUrls, setSignedImageUrls] = useState<string[]>([]);
+
+    useEffect(() => {
+        const getSignedImageUrls = async () => {
+            const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
+                collabToken,
+                imageNames
+            );
+            setSignedImageUrls(signedDownloadUrls);
+        };
+        getSignedImageUrls();
+    }, [imageNames]);
 
     const changeIndex = (direction: DIRECTION) => {
         if (direction === DIRECTION.LEFT) {
-            setCurrentIndex(currentIndex !== 0 ? currentIndex - 1 : images.length - 1);
+            setCurrentIndex(currentIndex !== 0 ? currentIndex - 1 : signedImageUrls.length - 1);
         } else {
-            setCurrentIndex(currentIndex !== images.length - 1 ? currentIndex + 1 : 0);
+            setCurrentIndex(currentIndex !== signedImageUrls.length - 1 ? currentIndex + 1 : 0);
         }
     };
 
-    const handleChange = (event: any) => {
-        setFile(event.target.files[0] as any);
+    const uploadImages = async () => {
+        if (!imagesToUpload) return;
+        const imageToUploadNames = Array.from(imagesToUpload).map((image: File) => image.name);
+        const signedUrlsAndImageNamesWithGuid = await getGeneratedUploadImageSignedUrls(
+            collabToken,
+            imageToUploadNames
+        );
+        const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
+        const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
+        for (const [index, signedUrl] of signedUploadUrls.entries()) {
+            const res = await axios.put(signedUrl, imagesToUpload[index], {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        }
+        await editDocumentImages(
+            collabToken,
+            [...imageNames, ...newImageNamesWithGuid],
+            documentId
+        );
+        setImageNames([...imageNames, ...newImageNamesWithGuid]);
     };
 
-    const submit = async () => {
-        if (file) {
-            const { data } = await axios.get(`${config.baseUrl}/api/images/${file.name}`);
-            try {
-                const res = await axios.put(`${data}`, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
-                    body: file
-                });
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    };
     return (
         <div className={`${height} ${width} relative`}>
             <div
@@ -62,10 +93,16 @@ export function ImageCarousel({ images, height, width }: IImageCarouselProps) {
             >
                 R
             </div>
-            <div className="h-full w-full bg-[url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s)] bg-cover bg-center"></div>
-            {/* <img src=""></img> */}
-            <input type="file" multiple accept = "image/*" onChange={handleChange} />
-            <button onClick={submit}>Upload</button>
+            {signedImageUrls && signedImageUrls.length && (
+                <img src={signedImageUrls[currentIndex]} className="h-full w-full object-cover" />
+            )}
+            <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(event: any) => setImagesToUpload(event.target.files)}
+            />
+            <button onClick={uploadImages}>Upload</button>
         </div>
     );
 }

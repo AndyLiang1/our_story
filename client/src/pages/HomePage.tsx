@@ -14,9 +14,10 @@ export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const [documents, setDocuments] = useState<DocumentData[]>([]);
+    const [imageNames, setImageNames] = useState<string[]>([]);
     const [user, setUser] = useState<User>(useLocation().state);
-    const [showForm, setShowForm] = useState<boolean>(false)
-    const [refetchTrigger, setRefetchTrigger] = useState<Object>({})
+    const [showForm, setShowForm] = useState<boolean>(false);
+    const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -39,27 +40,34 @@ export function HomePage(props: IHomePageProps) {
         fetchData();
     }, [user, refetchTrigger]);
 
-    return (
-        <div className="v-screen h-screen flex-wrap items-center justify-between relative">
-            {showForm && user && <CreateDocumentForm user={user} setShowForm={setShowForm} setRefetchTrigger={setRefetchTrigger}/>}
-            <NavBar setShowForm={setShowForm}/>
-            <div className="home_page_container flex h-[90%] w-full items-center justify-between">
-                
+    useEffect(() => {
+        if (documents && documents.length) setImageNames(documents[0].images);
+    }, [documents]);
 
+    return (
+        <div className="v-screen relative h-screen flex-wrap items-center justify-between">
+            {showForm && user && (
+                <CreateDocumentForm
+                    user={user}
+                    setShowForm={setShowForm}
+                    setRefetchTrigger={setRefetchTrigger}
+                />
+            )}
+            <NavBar setShowForm={setShowForm} />
+            <div className="home_page_container flex h-[90%] w-full items-center justify-between">
                 <div className="flex h-full w-[85%] items-center justify-between">
-                <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
+                    <div className="flex h-full w-[35%] flex-col items-center justify-evenly bg-blue-500 text-center">
                         <div className="h-[45%] w-[90%] bg-red-700">
-                            <ImageCarousel
-                                images={[
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s',
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxB9LYAJ-6j2oUhIYzBiscqR2lGjemhGH3DA&s'
-                                ]}
-                                height="h-full"
-                                width="w-full"
-                            />
+                            {documents.length && (
+                                <ImageCarousel
+                                    collabToken={user.collabToken}
+                                    documentId={documents[0].documentId}
+                                    imageNames={imageNames}
+                                    setImageNames={setImageNames}
+                                    height="h-full"
+                                    width="w-full"
+                                />
+                            )}
                         </div>
 
                         <div className="h-[45%] w-[90%] bg-white">
@@ -89,8 +97,6 @@ export function HomePage(props: IHomePageProps) {
                             <div>Loading bruh</div>
                         )}
                     </div>
-
-                    
                 </div>
                 <SideBar
                     dataList={documents.map((doc: DocumentData) => {
