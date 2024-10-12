@@ -11,9 +11,9 @@ export interface CustomRequest extends Request {
 
 export class JwtVerifier {
     private static verifier = CognitoJwtVerifier.create({
-        userPoolId: config.awsCognito.userPoolId as string,
+        userPoolId: config.awsUser.cognitoUserPoolId as string,
         tokenUse: 'id',
-        clientId: config.awsCognito.clientId as string
+        clientId: config.awsUser.cognitoClientId as string
     });
     private static tiptapSecret = config.tiptap.appSecret as string;
 

@@ -8,7 +8,7 @@ import { UserData } from '../types/UserTypes';
 export class UserController {
     router: Router;
     private static cognitoClient = new CognitoIdentityProviderClient({
-        region: config.awsCognito.region
+        region: config.awsUser.region
     });
     constructor() {
         this.router = express.Router();
@@ -29,7 +29,7 @@ export class UserController {
     private async userSignedUp(email: string): Promise<boolean> {
         try {
             const input: AdminGetUserCommandInput = {
-                UserPoolId: config.awsCognito.userPoolId,
+                UserPoolId: config.awsUser.cognitoUserPoolId,
                 Username: email
             };
             const command = new AdminGetUserCommand(input);
