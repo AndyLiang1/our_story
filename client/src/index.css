@@ -53,6 +53,12 @@ body {
         /* background-color: rgb(255, 255, 255); */
     }
 
+    .bg-pogo {
+        background-image: url('../public/pogo.jpg');
+        background-size: cover;
+        background-position: bottom;
+    }
+
     .react-calendar {
         @apply h-full w-full;
     }
