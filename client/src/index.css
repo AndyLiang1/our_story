@@ -14,6 +14,10 @@ body {
         font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
     }
 
+    .editor__content mark {
+        background-color: rgba(224, 246, 255, 0.7 );
+    }
+
     .editor__content .collaboration-cursor__caret {
         border-left: 1px solid #0d0d0d;
         border-right: 1px solid #0d0d0d;
@@ -45,18 +49,16 @@ body {
         white-space: nowrap;
     }
 
-    .bg-milk-mocha {
-        background-image: url('../public/Milk_and_Mocha_Star_Gaze_5.jpg');
-        background-size: cover;
-        background-position: bottom;
-        opacity: 90%;
-        /* background-color: rgb(255, 255, 255); */
-    }
-
     .bg-pogo {
         background-image: url('../public/pogo.jpg');
         background-size: cover;
         background-position: bottom;
+    }
+
+    .bg-notepad {
+        background-image: url('../public/brown_notepad.jpg');
+        background-size: cover;
+        background-position: center;
     }
 
     .react-calendar {

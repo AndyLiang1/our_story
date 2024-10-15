@@ -54,7 +54,7 @@ export function HomePage(props: IHomePageProps) {
             )}
             <NavBar setShowForm={setShowForm} />
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
-                <div className="padding-2 flex h-full w-[50%] items-center justify-center">
+                <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
                     {user.collabToken && documents.length ? (
                         <TipTap
                             documentId={documents[0].documentId}
@@ -69,8 +69,8 @@ export function HomePage(props: IHomePageProps) {
                         <div>Loading bruh</div>
                     )}
                 </div>
-                <div className="flex h-full w-[30%] flex-col items-center justify-evenly text-center bg-red-500">
-                    <div className="h-[45%] w-[90%]">
+                <div className="flex h-full w-[30%] flex-col items-center justify-evenly bg-red-500 p-[2rem] text-center">
+                    <div className="h-[45%] w-full">
                         {documents.length && (
                             <ImageCarousel
                                 collabToken={user.collabToken}
@@ -82,8 +82,8 @@ export function HomePage(props: IHomePageProps) {
                             />
                         )}
                     </div>
-
-                    <div className="h-[45%] w-[90%]">
+                    <div className="h-[10%] w-full"></div>
+                    <div className="h-[45%] w-full">
                         <GenericCalendar
                             events={documents.map((doc) => {
                                 return {
