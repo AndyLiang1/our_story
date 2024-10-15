@@ -67,7 +67,6 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
         onUpdate: () => {
             if (!updatedHasChangedFlag) {
                 updatedHasChangedFlag = true;
-                // call update to BE
             }
         },
         extensions: [
@@ -79,6 +78,7 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
             Strike,
             Highlight.configure({
                 multicolor: true
+                // Highlight styling set by index.css
             }),
             Heading.configure({
                 levels: [1, 2, 3]
@@ -102,12 +102,7 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
                     color: '#e0f6ff'
                 }
             })
-        ],
-        editorProps: {
-            attributes: {
-                class: 'h-full w-full p-4'
-            }
-        }
+        ]
     });
 
     useEffect(() => {
@@ -125,20 +120,20 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
 
     useEffect(() => {
         if (editor && !editor.isActive('highlight')) {
-            editor.chain().focus().toggleHighlight({ color: '#e0f6ff' }).run();
+            editor.chain().focus().toggleHighlight().run()
         }
     }, [editor?.isActive('highlight')]);
 
     return (
-        <div className={styles}>
+        <div className="h-full w-full">
             <MenuBar editor={editor} />
-            <div className="bg-milk-mocha flex h-[95%] w-full flex-col">
+            <div className="bg-notepad flex h-[95%] w-full flex-col rounded-b-[2.8rem] pl-[1.5rem] shadow-[0.5rem_0.5rem_2.8rem_rgba(0,0,0,0.2)]">
                 <input
                     className="h-[5%] w-full border-none bg-transparent text-center"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
-                <EditorContent className="editor__content h-[95%] w-full" editor={editor} />
+                <EditorContent className="editor__content h-[95%] w-full pt-2 " editor={editor} />
             </div>
         </div>
     );
