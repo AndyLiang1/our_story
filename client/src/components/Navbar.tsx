@@ -11,7 +11,9 @@ export function NavBar({setShowForm}: INavBarProps) {
     const [user, setUser] = useState<User>(useLocation().state);
 
     return <div className="h-[10%] w-full bg-white flex justify-start ">
-        <div className="h-full w-[20%] bg-red-200 text-[3rem]">Our Story</div>
+        <div className="h-full w-[20%] bg-red-200 text-[3rem] cursor-pointer flex justify-start items-center" onClick = {() => {
+            navigate('/home', { state: user })
+        }}>Our Story</div>
         <div className="h-full w-[10%] text-[1.2rem] flex justify-center items-center text-center cursor-pointer" onClick = {() => {
             navigate('/stories', { state: user })
         }}>Stories</div>
