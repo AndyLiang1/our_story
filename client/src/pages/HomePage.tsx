@@ -33,7 +33,11 @@ export function HomePage(props: IHomePageProps) {
         const fetchData = async () => {
             if (user.collabToken) {
                 const documents = await getAllDocuments(user.userId, user.collabToken, null, null);
-                setDocuments(documents);
+                setDocuments(
+                    documents.map((doc: DocumentData) => {
+                        return { ...doc, eventDate: new Date(doc.eventDate) };
+                    })
+                );
             }
         };
         fetchData();

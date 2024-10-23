@@ -7,7 +7,7 @@ export type EventMetaData = {
 export interface DocumentCreationAttributes  {
     title: string;
     createdByUserId: string;
-    date: Date;
+    eventDate: Date;
 };
 
 export interface DocumentData extends DocumentCreationAttributes  {

@@ -1,7 +1,6 @@
 // Schema of document from a get
 export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
-    images: string[];
     createdAt: string;
     updatedAt: string;
 }
@@ -11,6 +10,7 @@ export interface DocumentCreationAttributes {
     documentContent: DocumentContent;
     createdByUserId: string;
     eventDate: string; // YYYY-MM-DD
+    images: string[]
 }
 
 interface DocumentUpdateAttributes {

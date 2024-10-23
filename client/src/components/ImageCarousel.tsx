@@ -5,6 +5,7 @@ import {
     getGeneratedDownloadImageSignedUrls,
     getGeneratedUploadImageSignedUrls
 } from '../apis/imageApi';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export interface IImageCarouselProps {
     collabToken: string;
@@ -77,22 +78,22 @@ export function ImageCarousel({
 
     return (
         <div className={`${height} ${width} relative`}>
-            <div
+            <button
                 onClick={() => {
                     changeIndex(DIRECTION.LEFT);
                 }}
                 className="absolute left-2 top-[50%] translate-x-0 translate-y-[-50%] transform"
             >
-                L
-            </div>
-            <div
+                <FaChevronLeft />
+            </button>
+            <button
                 onClick={() => {
                     changeIndex(DIRECTION.RIGHT);
                 }}
                 className="absolute right-2 top-[50%] translate-x-0 translate-y-[-50%] transform"
             >
-                R
-            </div>
+                <FaChevronRight /> 
+            </button>
             {signedImageUrls && signedImageUrls.length && (
                 <img src={signedImageUrls[currentIndex]} className="h-full w-full object-cover" />
             )}

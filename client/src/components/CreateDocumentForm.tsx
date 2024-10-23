@@ -16,7 +16,7 @@ export interface ICreateDocumentFormProps {
 
 type CreateDocumentFormData = {
     title: string;
-    date: Date;
+    eventDate: Date;
 };
 
 export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICreateDocumentFormProps) {
@@ -24,11 +24,11 @@ export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICr
 
     const CreateDocumentSchema = Yup.object().shape({
         title: Yup.string().required('Title is required.'),
-        date: Yup.date().required('Date is required.')
+        eventDate: Yup.date().required('Date is required.')
     });
 
     const handleSubmit = async (formData: CreateDocumentFormData) => {
-        await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId });
+        await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId, });
         setShowForm(false);
         setRefetchTrigger({})
     };
@@ -39,12 +39,12 @@ export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICr
                 onClick={() => setShowForm(false)}
             ></IoIosClose>
             <Formik
-                initialValues={{ title: '', date: '' }}
+                initialValues={{ title: '', eventDate: '' }}
                 validationSchema={CreateDocumentSchema}
                 onSubmit={(values, actions) => {
                     handleSubmit({
                         title: values.title,
-                        date: new Date(values.date)
+                        eventDate: new Date(values.eventDate)
                     });
                     setTimeout(() => {
                         actions.setSubmitting(false);
@@ -60,7 +60,7 @@ export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICr
                             label="Title"
                             component={GenericFormInput}
                         />
-                        <Field name="date" type="date" label="Date" max="9999-12-31" component={GenericFormInput} />
+                        <Field name="eventDate" type="date" label="Date" max="9999-12-31" component={GenericFormInput} />
 
                         {formErrorMessage && (
                             <GenericFormErrorMessage errorMessage={formErrorMessage} />
