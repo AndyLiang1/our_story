@@ -57,13 +57,13 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
     }, [debouncedValue]);
 
     const editor = useEditor({
-        onCreate: ({ editor: currentEditor }) => {
-            provider.on('synced', () => {
-                if (currentEditor.isEmpty) {
-                    currentEditor.commands.setContent('Hwllo');
-                }
-            });
-        },
+        // onCreate: ({ editor: currentEditor }) => {
+        //     provider.on('synced', () => {
+        //         if (currentEditor.isEmpty) {
+        //             currentEditor.commands.setContent('Hwllo');
+        //         }
+        //     });
+        // },
         onUpdate: () => {
             if (!updatedHasChangedFlag) {
                 updatedHasChangedFlag = true;

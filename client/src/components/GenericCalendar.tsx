@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { EventMetaData } from '../types/DocumentTypes';
 import { GenericCalendarEvents } from './GenericCalendarEvents';
@@ -12,16 +12,15 @@ export interface IGenericCalendarProps {
 }
 
 export function GenericCalendar({ events }: IGenericCalendarProps) {
-    const [value, onChange] = useState<Value>(new Date());
+    const [value, setValue] = useState<Value>(new Date('2024-10-02'));
 
     const addEventsToCalendarDay = ({ date, view }: any) => {
         if (view !== 'month') return null;
         const calendarDate = date.toISOString().split('T')[0];
         let eventsOnThisDay = [];
-
         for (let event of events) {
-            if (event.date > calendarDate) break;
-            if (event.date === calendarDate) {
+            if (event.date.toISOString().split('T')[0] > calendarDate) continue;
+            if (event.date.toISOString().split('T')[0] === calendarDate) {
                 eventsOnThisDay.push(event);
             }
         }
@@ -29,5 +28,5 @@ export function GenericCalendar({ events }: IGenericCalendarProps) {
         return eventsOnThisDay.length ? <GenericCalendarEvents events={eventsOnThisDay} /> : null;
     };
 
-    return <Calendar onChange={onChange} value={value} tileContent={addEventsToCalendarDay} />;
+    return <Calendar onChange={setValue} value={value} tileContent={addEventsToCalendarDay} />;
 }

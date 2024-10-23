@@ -70,7 +70,8 @@ export class DocumentController {
             title: reqBody.title,
             documentContent: defaultDocumentContent,
             createdByUserId: reqBody.createdByUserId,
-            eventDate: reqBody.eventDate
+            eventDate: reqBody.eventDate,
+            images: []
         };
         const doc = await services.documentService.createDocument(documentData);
         res.status(201).json(doc);
