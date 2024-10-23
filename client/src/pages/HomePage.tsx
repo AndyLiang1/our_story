@@ -48,7 +48,7 @@ export function HomePage(props: IHomePageProps) {
     }, [documents]);
 
     return (
-        <div className="v-screen relative h-screen flex-wrap items-center justify-between">
+        <div className="v-screen h-screen flex-wrap items-center justify-between">
             {showForm && user && (
                 <CreateDocumentForm
                     user={user}

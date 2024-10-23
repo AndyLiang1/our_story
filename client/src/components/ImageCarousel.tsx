@@ -1,11 +1,7 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { editDocumentImages } from '../apis/documentApi';
-import {
-    getGeneratedDownloadImageSignedUrls,
-    getGeneratedUploadImageSignedUrls
-} from '../apis/imageApi';
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
+import { UploadImageModal } from './Modals/UploadImageModal';
 
 export interface IImageCarouselProps {
     collabToken: string;
@@ -29,9 +25,9 @@ export function ImageCarousel({
     height,
     width
 }: IImageCarouselProps) {
-    const [imagesToUpload, setImagesToUpload] = useState<FileList | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [signedImageUrls, setSignedImageUrls] = useState<string[]>([]);
+    const [showUploadImageModal, setShowUploadImageModal] = useState<boolean>(false);
 
     useEffect(() => {
         const getSignedImageUrls = async () => {
@@ -52,30 +48,6 @@ export function ImageCarousel({
         }
     };
 
-    const uploadImages = async () => {
-        if (!imagesToUpload) return;
-        const imageToUploadNames = Array.from(imagesToUpload).map((image: File) => image.name);
-        const signedUrlsAndImageNamesWithGuid = await getGeneratedUploadImageSignedUrls(
-            collabToken,
-            imageToUploadNames
-        );
-        const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
-        const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
-        for (const [index, signedUrl] of signedUploadUrls.entries()) {
-            const res = await axios.put(signedUrl, imagesToUpload[index], {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-        }
-        await editDocumentImages(
-            collabToken,
-            [...imageNames, ...newImageNamesWithGuid],
-            documentId
-        );
-        setImageNames([...imageNames, ...newImageNamesWithGuid]);
-    };
-
     return (
         <div className={`${height} ${width} relative`}>
             <button
@@ -92,18 +64,34 @@ export function ImageCarousel({
                 }}
                 className="absolute right-2 top-[50%] translate-x-0 translate-y-[-50%] transform"
             >
-                <FaChevronRight /> 
+                <FaChevronRight />
             </button>
             {signedImageUrls && signedImageUrls.length && (
                 <img src={signedImageUrls[currentIndex]} className="h-full w-full object-cover" />
             )}
-            <input
+            {/* <input
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={(event: any) => setImagesToUpload(event.target.files)}
             />
-            <button onClick={uploadImages}>Upload</button>
+            <button onClick={uploadImages}>Upload</button> */}
+            <button
+                onClick={() => {
+                    setShowUploadImageModal(true);
+                }}
+            >
+                Upload images
+            </button>
+            {showUploadImageModal && (
+                <UploadImageModal
+                    setShowUploadImageModal={setShowUploadImageModal}
+                    collabToken={collabToken}
+                    documentId={documentId}
+                    imageNames={imageNames}
+                    setImageNames={setImageNames}
+                />
+            )}
         </div>
     );
 }

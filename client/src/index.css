@@ -14,6 +14,10 @@ body {
         font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
     }
 
+    .center-of-page {
+        @apply fixed left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 transform
+    }
+
     .editor__content mark {
         background-color: rgba(224, 246, 255, 0.7 );
     }
