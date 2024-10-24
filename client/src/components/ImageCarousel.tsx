@@ -67,15 +67,8 @@ export function ImageCarousel({
                 <FaChevronRight />
             </button>
             {signedImageUrls && signedImageUrls.length && (
-                <img src={signedImageUrls[currentIndex]} className="h-full w-full object-cover" />
+                <img src={signedImageUrls[currentIndex]} className="h-full w-full object-contain" />
             )}
-            {/* <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(event: any) => setImagesToUpload(event.target.files)}
-            />
-            <button onClick={uploadImages}>Upload</button> */}
             <button
                 onClick={() => {
                     setShowUploadImageModal(true);
