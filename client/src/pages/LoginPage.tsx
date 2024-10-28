@@ -92,11 +92,13 @@ export function LoginPage(props: ILoginPageProps) {
                                 displayMessage="Log in"
                                 type="submit"
                                 disabled={props.isSubmitting}
+                                styles="h-12 w-[30%] mt-4"
                             ></GenericFormButton>
                             <GenericFormButton
                                 displayMessage="Need an account? Sign Up"
                                 disabled={false}
                                 onClick={() => navigate('/signup')}
+                                styles="h-12 w-[30%] mt-4"
                             ></GenericFormButton>
                         </Form>
                     )}
