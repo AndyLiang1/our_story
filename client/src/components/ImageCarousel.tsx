@@ -69,7 +69,7 @@ export function ImageCarousel({
             {signedImageUrls && signedImageUrls.length && (
                 <img src={signedImageUrls[currentIndex]} className="h-full w-full object-contain" />
             )}
-            <button
+            <button className="flex w-full justify-center"
                 onClick={() => {
                     setShowUploadImageModal(true);
                 }}

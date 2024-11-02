@@ -72,7 +72,7 @@ export function UploadImageModal({
     };
 
     return (
-        <div className="center-of-page z-10 flex h-[70%] w-[50%] flex-col items-center justify-evenly bg-white text-center">
+        <div className="center-of-page z-10 flex h-[70%] w-[50%] flex-col items-center justify-evenly bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowUploadImageModal(false)}
@@ -114,13 +114,13 @@ export function UploadImageModal({
             </div>
             <div
                 className={
-                    `flex flex-wrap flex-col w-[90%] overflow-x-auto` +
+                    `overflow-x-auto whitespace-nowrap w-[90%] text-[0px]` +
                     (imagesToUpload && imagesToUpload.length ? ' h-[20%]' : ' hidden')
                 }
             >
                 {imagesToUpload &&
                     imagesToUpload.map((image: File, index: number) => (
-                        <div className="h-full ">
+                        <div className="h-full inline-block whitespace-normal mr-[2rem]">
                             {/* <span>&times;</span> */}
                             <img className="h-full w-full object-contain"src={URL.createObjectURL(image)} alt={image.name} ></img>
                         </div>

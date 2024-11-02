@@ -73,7 +73,7 @@ export function HomePage(props: IHomePageProps) {
                         <div>Loading bruh</div>
                     )}
                 </div>
-                <div className="flex h-full w-[30%] flex-col items-center justify-evenly bg-red-500 p-[2rem] text-center">
+                <div className="flex h-full w-[30%] flex-col items-center justify-evenly bg-red-500 p-[2rem]">
                     <div className="h-[45%] w-full">
                         {documents.length && (
                             <ImageCarousel
