@@ -12,7 +12,7 @@ export interface IGenericCalendarProps {
 }
 
 export function GenericCalendar({ events }: IGenericCalendarProps) {
-    const [value, setValue] = useState<Value>(new Date('2024-10-02'));
+    const [value, setValue] = useState<Value>(new Date());
 
     const addEventsToCalendarDay = ({ date, view }: any) => {
         if (view !== 'month') return null;
