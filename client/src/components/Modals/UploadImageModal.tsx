@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
 import { editDocumentImages } from '../../apis/documentApi';
 import { getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
@@ -72,7 +73,7 @@ export function UploadImageModal({
     };
 
     return (
-        <div className="center-of-page z-10 flex h-[70%] w-[50%] flex-col items-center justify-evenly bg-white">
+        <div className="center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowUploadImageModal(false)}
@@ -83,7 +84,7 @@ export function UploadImageModal({
             <div
                 className={
                     'flex w-[90%] items-center justify-center border-[0.1rem] border-dashed border-[#dbbf63] text-center' +
-                    (imagesToUpload && imagesToUpload.length ? ' h-[50%]' : ' h-[70%]')
+                    (imagesToUpload && imagesToUpload.length ? ' h-[40%]' : ' h-[70%]')
                 }
                 onDragOver={onDragOver}
                 onDragLeave={onDragLeave}
@@ -109,20 +110,38 @@ export function UploadImageModal({
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         const newFiles = Array.from(event.target.files as FileList);
                         setImagesToUpload([...imagesToUpload, ...newFiles]);
+                        event.target.value = '';
                     }}
                 ></input>
             </div>
             <div
                 className={
-                    `overflow-x-auto whitespace-nowrap w-[90%] text-[0px]` +
-                    (imagesToUpload && imagesToUpload.length ? ' h-[20%]' : ' hidden')
+                    `w-[90%] items-center overflow-x-auto whitespace-nowrap text-[0px] pl-[0.5rem]` +
+                    (imagesToUpload && imagesToUpload.length ? ' h-[30%]' : ' hidden')
                 }
             >
                 {imagesToUpload &&
                     imagesToUpload.map((image: File, index: number) => (
-                        <div className="h-full inline-block whitespace-normal mr-[2rem]">
-                            {/* <span>&times;</span> */}
-                            <img className="h-full w-full object-contain"src={URL.createObjectURL(image)} alt={image.name} ></img>
+                        <div className="relative mr-[2rem] inline-block h-full whitespace-normal">
+                            <div className="flex h-full items-center justify-center text-center">
+                                <div className="relative h-[75%] transform transition-transform duration-300 ease-in-out hover:scale-110">
+                                    <AiTwotoneCloseCircle
+                                        className="absolute right-[-0.8rem] top-[-0.8rem] cursor-pointer text-[1.6rem]"
+                                        onClick={() => {
+                                            setImagesToUpload(
+                                                imagesToUpload.filter(
+                                                    (_, i) => i !== index
+                                                )
+                                            );
+                                        }}
+                                    />
+                                    <img
+                                        className="h-full w-full object-contain"
+                                        src={URL.createObjectURL(image)}
+                                        alt={image.name}
+                                    ></img>
+                                </div>
+                            </div>
                         </div>
                     ))}
             </div>
