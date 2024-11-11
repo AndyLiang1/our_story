@@ -32,9 +32,9 @@ export function HomePage(props: IHomePageProps) {
     useEffect(() => {
         const fetchData = async () => {
             if (user.collabToken) {
-                const documents = await getAllDocuments(user.userId, user.collabToken, null, null);
+                const docs = await getAllDocuments(user.userId, user.collabToken, null, null);
                 setDocuments(
-                    documents.map((doc: DocumentData) => {
+                    docs.map((doc: DocumentData) => {
                         return { ...doc, eventDate: new Date(doc.eventDate) };
                     })
                 );
@@ -61,6 +61,7 @@ export function HomePage(props: IHomePageProps) {
                 <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
                     {user.collabToken && documents.length ? (
                         <TipTap
+                            key={documents[0].documentId}
                             documentId={documents[0].documentId}
                             documentTitle={documents[0].title}
                             setRefetchTrigger={setRefetchTrigger}
