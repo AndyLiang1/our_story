@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Calendar from 'react-calendar';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { EventMetaData } from '../types/DocumentTypes';
 import { GenericCalendarEvents } from './GenericCalendarEvents';
 
@@ -10,6 +11,18 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 export interface IGenericCalendarProps {
     events: EventMetaData[];
 }
+
+const prevLabel = (
+    <div className="flex justify-start pl-2 text-[0.8rem]">
+        <FaChevronLeft />
+    </div>
+);
+
+const nextLabel = (
+    <div className="flex justify-end pr-2 text-[0.8rem]">
+        <FaChevronRight />
+    </div>
+);
 
 export function GenericCalendar({ events }: IGenericCalendarProps) {
     const [value, setValue] = useState<Value>(new Date());
@@ -28,5 +41,13 @@ export function GenericCalendar({ events }: IGenericCalendarProps) {
         return eventsOnThisDay.length ? <GenericCalendarEvents events={eventsOnThisDay} /> : null;
     };
 
-    return <Calendar onChange={setValue} value={value} tileContent={addEventsToCalendarDay} />;
+    return (
+        <Calendar
+            onChange={setValue}
+            value={value}
+            tileContent={addEventsToCalendarDay}
+            prevLabel={prevLabel}
+            nextLabel={nextLabel}
+        />
+    );
 }

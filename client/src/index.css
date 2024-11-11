@@ -71,12 +71,24 @@ body {
 
     /* The entire first row, with the buttons and month selector */
     .react-calendar .react-calendar__navigation {
-        @apply h-[15%] w-full bg-green-300;
+        @apply h-[15%] w-full bg-green-300 flex justify-center text-center items-center;
     }
 
     /* The month selector part */
     .react-calendar .react-calendar__navigation__label {
-        @apply h-full w-[90%];
+        @apply h-full w-[40%];
+    }
+
+    .react-calendar .react-calendar__navigation__prev-button {
+        @apply h-full w-[30%];
+    }
+    .react-calendar .react-calendar__navigation__next-button {
+        @apply h-full w-[30%];
+    }
+
+    .react-calendar .react-calendar__navigation__prev2-button,
+    .react-calendar .react-calendar__navigation__next2-button {
+        @apply hidden;
     }
 
     /* The container for the week day categories and the actual days of the month */
@@ -125,11 +137,6 @@ body {
 
     .react-calendar .react-calendar__month-view__days__day--neighboringMonth {
         @apply opacity-70;
-    }
-
-    .react-calendar .react-calendar__navigation__prev2-button,
-    .react-calendar .react-calendar__navigation__next2-button {
-        @apply hidden;
     }
 
     .react-calendar .react-calendar__tile--now {
