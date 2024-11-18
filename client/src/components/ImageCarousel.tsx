@@ -48,7 +48,7 @@ export function ImageCarousel({
 
     return (
         <div className={`relative h-full w-full flex-col items-center justify-evenly text-center`}>
-            {signedImageUrls && signedImageUrls.length > 0 && (
+            {signedImageUrls && signedImageUrls.length > 0 ? (
                 <div className="relative h-[90%] w-full rounded-[2.5rem] border">
                     <button
                         onClick={() => {
@@ -69,10 +69,25 @@ export function ImageCarousel({
                     <img
                         src={signedImageUrls[currentIndex]}
                         className="absolute z-[2] h-full w-full object-contain"
+                        alt=""
                     />
                     <img
                         src={signedImageUrls[currentIndex]}
                         className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-[2.5rem] border bg-center object-cover opacity-70 blur-sm"
+                        alt=""
+                    />
+                </div>
+            ) : (
+                <div className="relative h-[90%] w-full overflow-hidden rounded-[2.5rem] border border-none">
+                    <img
+                        src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
+                        className="absolute z-[2] h-full w-full object-contain"
+                        alt=""
+                    />
+                    <img
+                        src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
+                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-[2.5rem] border bg-center object-cover opacity-70 blur-sm"
+                        alt=""
                     />
                 </div>
             )}
@@ -83,16 +98,26 @@ export function ImageCarousel({
                         setShowUploadImageModal(true);
                     }}
                     displayMessage={
-                        <>
-                            Upload images&nbsp;
-                            <IoMdCloudUpload />
-                        </>
+                        signedImageUrls && signedImageUrls.length > 0 ? (
+                            <>
+                                Upload images&nbsp;
+                                <IoMdCloudUpload />
+                            </>
+                        ) : (
+                            <>
+                                Add your first image&nbsp;
+                                <IoMdCloudUpload />
+                            </>
+                        )
                     }
-                    styles={'h-[90%] w-[10rem]'}
+                    styles={
+                        'h-[90%] ' +
+                        (signedImageUrls && signedImageUrls.length > 0 ? 'w-[10rem]' : 'w-full')
+                    }
                     bold={false}
                     backgroundColor="bg-[pink]"
                     fontSize="text-[0.9rem]"
-                    padding="p-[0.7rem]"
+                    padding="p-[0.6rem]"
                 ></GenericFormButton>
                 {signedImageUrls && signedImageUrls.length > 0 && (
                     <div className="flex h-full w-[40%] items-center justify-end">
