@@ -9,6 +9,7 @@ import { CreateDocumentForm } from '../components/CreateDocumentForm';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
+
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
