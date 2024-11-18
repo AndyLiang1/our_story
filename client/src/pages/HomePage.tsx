@@ -75,19 +75,17 @@ export function HomePage(props: IHomePageProps) {
                     )}
                 </div>
                 <div className="flex h-full w-[30%] flex-col items-center justify-evenly bg-red-500 p-[2rem]">
-                    <div className="h-[45%] w-full">
+                    <div className="h-[52%] w-full">
                         {documents.length && (
                             <ImageCarousel
                                 collabToken={user.collabToken}
                                 documentId={documents[0].documentId}
                                 imageNames={imageNames}
                                 setImageNames={setImageNames}
-                                height="h-full"
-                                width="w-full"
                             />
                         )}
                     </div>
-                    <div className="h-[10%] w-full"></div>
+                    <div className="h-[2%] w-full"></div>
                     <div className="h-[45%] w-full">
                         <GenericCalendar
                             events={documents.map((doc) => {
