@@ -32,7 +32,7 @@ export function HomePage(props: IHomePageProps) {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (user.collabToken) {
+            if (user && user.collabToken) {
                 const docs = await getAllDocuments(user.userId, user.collabToken, null, null);
                 setDocuments(
                     docs.map((doc: DocumentData) => {
@@ -60,7 +60,7 @@ export function HomePage(props: IHomePageProps) {
             <NavBar setShowForm={setShowForm} />
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
                 <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
-                    {user.collabToken && documents.length ? (
+                    {user && user.collabToken && documents.length ? (
                         <TipTap
                             key={documents[0].documentId}
                             documentId={documents[0].documentId}
@@ -69,15 +69,15 @@ export function HomePage(props: IHomePageProps) {
                             collabToken={user.collabToken}
                             styles="h-full w-full"
                         />
-                    ) : user.collabToken && documents.length === 0 ? (
+                    ) : user && user.collabToken && documents.length === 0 ? (
                         <button onClick={() => setShowForm(true)}>Create new </button>
                     ) : (
                         <div>Loading bruh</div>
                     )}
                 </div>
-                <div className="flex h-full w-[30%] flex-col items-center justify-evenly bg-red-500 p-[2rem]">
+                <div className="flex h-full w-[30%] flex-col items-center justify-evenly p-[2rem]">
                     <div className="h-[52%] w-full">
-                        {documents.length && (
+                        {user && documents.length && (
                             <ImageCarousel
                                 collabToken={user.collabToken}
                                 documentId={documents[0].documentId}
