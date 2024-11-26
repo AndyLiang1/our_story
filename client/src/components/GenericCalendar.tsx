@@ -24,6 +24,8 @@ const nextLabel = (
     </div>
 );
 
+const formatShortWeekday = (locale: any, date: Date) => ['S', 'M', 'T', 'W', 'T', 'F', 'S'][date.getDay()]
+
 export function GenericCalendar({ events }: IGenericCalendarProps) {
     const [value, setValue] = useState<Value>(new Date());
 
@@ -48,6 +50,8 @@ export function GenericCalendar({ events }: IGenericCalendarProps) {
             tileContent={addEventsToCalendarDay}
             prevLabel={prevLabel}
             nextLabel={nextLabel}
+            calendarType={"gregory"}
+            formatShortWeekday={formatShortWeekday}
         />
     );
 }
