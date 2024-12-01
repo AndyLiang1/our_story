@@ -42,6 +42,17 @@ export class DocumentRepo {
         return doc as unknown as DocumentData | null;
     }
 
+    async getLatestDocument() {
+        const doc = await Document.findAll({
+            order: [['createdAt', 'DESC']],
+            limit: 1
+        });
+        if (doc.length == 0) {
+            return null;
+        }
+        return doc[0];
+    }
+
     async createDocument(documentData: DocumentCreationAttributes, transaction?: Transaction) {
         const doc = await Document.create({ ...documentData }, { transaction });
         return doc.getDataValue('documentId');
