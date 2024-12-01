@@ -36,6 +36,11 @@ export class DocumentService {
         return data;
     }
 
+    async getLatestDocument() {
+        const doc = await this.documentRepo.getLatestDocument();
+        return doc;
+    }
+
     async createDocument(documentData: DocumentCreationAttributes) {
         return await sequelize.transaction(async (transaction) => {
             const newDocId: string = await this.documentRepo.createDocument(documentData, transaction);

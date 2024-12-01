@@ -28,6 +28,6 @@ export const config = {
         cognitoUserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
         cognitoClientId: process.env.AWS_COGNITO_CLIENT_ID,
         region: 'us-east-2',
-        s3BucketName: process.env.S3_BUCKET_NAME,
+        s3BucketName: process.env.S3_BUCKET_NAME
     }
 };

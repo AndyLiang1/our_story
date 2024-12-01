@@ -10,7 +10,7 @@ export interface DocumentCreationAttributes {
     documentContent: DocumentContent;
     createdByUserId: string;
     eventDate: string; // YYYY-MM-DD
-    images: string[]
+    images: string[];
 }
 
 interface DocumentUpdateAttributes {
