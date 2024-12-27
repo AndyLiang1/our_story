@@ -9,6 +9,7 @@ import { CreateDocumentForm } from '../components/CreateDocumentForm';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
+import { Flipbook } from '../components/Flipbook';
 
 export interface IHomePageProps {}
 
@@ -59,7 +60,8 @@ export function HomePage(props: IHomePageProps) {
             )}
             <NavBar setShowForm={setShowForm} />
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
-                <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
+                <Flipbook />
+                {/* <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
                     {user && user.collabToken && documents.length ? (
                         <TipTap
                             key={documents[0].documentId}
@@ -98,7 +100,7 @@ export function HomePage(props: IHomePageProps) {
                             })}
                         />
                     </div>
-                </div>
+                </div> */}
                 {/* <SideBar
                     dataList={documents.map((doc: DocumentData) => {
                         return { id: doc.documentId, name: doc.title, date: doc.date };

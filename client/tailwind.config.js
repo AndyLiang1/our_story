@@ -3,7 +3,11 @@
 module.exports = {
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
-        extend: {}
+        extend: {
+            transform: {
+                'rotate-y-neg-180': 'rotateY(-180deg)',
+            },
+        },
     },
     plugins: []
 };

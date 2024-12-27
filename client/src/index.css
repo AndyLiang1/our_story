@@ -14,6 +14,74 @@ body {
         font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
     }
 
+    .rotate-y-neg-180deg {
+        transform: rotateY(-180deg)
+    }
+
+    
+
+    .book {
+        position: relative;
+        width: 350px;
+        height: 500px;
+        transition: transform 0.5s;
+    }
+    
+    .paper {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        perspective: 1500px;
+    
+    }
+    
+    .front,
+    .back {
+        background-color: white;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform-origin: left;
+        transition: transform 0.5s;
+    }
+    
+    .front {
+        z-index: 1;
+        backface-visibility: hidden;
+        border-left: 3px solid powderblue;
+    }
+    
+    .back {
+        z-index: 0;
+    }
+    
+    .front-content,
+    .back-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .back-content {
+        transform: rotateY(180deg)
+    }
+    
+    /* Paper flip effect */
+    /* .flipped .front,
+    .flipped .back {
+        transform: rotateY(-180deg);
+    } */
+
+
+    
+
+
     .center-of-page {
         @apply fixed left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2 transform;
     }
