@@ -2,16 +2,11 @@ import { useEffect, useState } from 'react';
 
 export interface IFlipbookProps {}
 
-enum BOOKSTATE {
-    'INITIAL' = 'initial',
-    'OPENED' = 'opened',
-    'CLOSED_START' = 'closedStart',
-    'CLOSED_END' = 'closedEnd'
-}
+
 
 export function Flipbook(props: IFlipbookProps) {
     const [documents, setDocuments] = useState([1, 2, 3, 4, 5, 6, 7]);
-    const [currentLocation, setCurrentLocation] = useState(1);
+    const [currentLocation, setCurrentLocation] = useState(2);
 
     const [pageStylesState, setPageStylesState] = useState<any>(null);
 
@@ -27,43 +22,21 @@ export function Flipbook(props: IFlipbookProps) {
         );
     }, [documents]);
 
-    const [bookState, setBookState] = useState<BOOKSTATE>(BOOKSTATE.INITIAL);
-
-    const getTranslationFromBookState = () => {
-        if (bookState === BOOKSTATE.INITIAL) return '';
-        if (bookState === BOOKSTATE.OPENED) return ' translate-x-[50%]';
-        if (bookState === BOOKSTATE.CLOSED_START) return ' translate-x-[0%]';
-        if (bookState === BOOKSTATE.CLOSED_END) return ' translate-x-[100%]';
-    };
-
     let numOfPapers = documents.length;
     let maxLocation = numOfPapers + 1;
-    const openBook = () => {
-        setBookState(BOOKSTATE.OPENED);
-    };
-    const closeBook = (isAtBeginning: boolean) => {
-        if (isAtBeginning) {
-            setBookState(BOOKSTATE.CLOSED_START);
-        } else {
-            setBookState(BOOKSTATE.CLOSED_END);
-        }
-    };
+   
     const goNextPage = () => {
-        if (currentLocation < maxLocation) {
-            if (currentLocation === 1) openBook();
+        if (currentLocation < maxLocation - 1) {
             setPageStylesState(
                 pageStylesState.map((page: any, i: number) => {
                     return i === currentLocation - 1 ? { ...page, flipped: true } : page;
                 })
             );
-            if (currentLocation === documents.length) closeBook(false);
             setCurrentLocation(currentLocation + 1);
         }
     };
     const goPrevPage = () => {
-        if (currentLocation > 1) {
-            if (currentLocation === 2) closeBook(true);
-            if (currentLocation === documents.length + 1) openBook();
+        if (currentLocation > 2) {
             setPageStylesState(
                 pageStylesState.map((page: any, i: number) => {
                     return i === currentLocation - 2 ? { ...page, flipped: false } : page;
@@ -93,7 +66,7 @@ export function Flipbook(props: IFlipbookProps) {
             </button>
 
             <div className="relative flex h-[95%] w-[90%] items-center justify-center border-black bg-blue-200 text-center">
-                <div className={`book` + getTranslationFromBookState()}>
+                <div className={`book translate-x-[50%]`}>
                     {pageStylesState &&
                         documents.map((doc, index) => {
                             const flippedZIndex = pageStylesState[index].flippedZIndex;
@@ -104,7 +77,7 @@ export function Flipbook(props: IFlipbookProps) {
                                     // unfortunately, putting z-index into styles because tailwind
                                     // does not like dynamic classnames 
                                     style={{
-                                        zIndex: pageStylesState[index].flipped
+                                        zIndex: pageStylesState[index].flipped || index === 0
                                             ? flippedZIndex
                                             : regularZIndex
                                     }}
@@ -112,7 +85,7 @@ export function Flipbook(props: IFlipbookProps) {
                                     <div
                                         className={
                                             'front' +
-                                            (pageStylesState[index].flipped
+                                            (pageStylesState[index].flipped || index === 0
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
                                         }
@@ -124,7 +97,7 @@ export function Flipbook(props: IFlipbookProps) {
                                     <div
                                         className={
                                             'back' +
-                                            (pageStylesState[index].flipped
+                                            (pageStylesState[index].flipped || index === 0
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
                                         }
