@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 
 export interface IFlipbookProps {}
 
-
-
 export function Flipbook(props: IFlipbookProps) {
     const [documents, setDocuments] = useState([1, 2, 3, 4, 5, 6, 7]);
     const [currentLocation, setCurrentLocation] = useState(2);
 
     const [pageStylesState, setPageStylesState] = useState<any>(null);
+    const [goToPageCalled, setGoToPageCalled] = useState(0);
 
     useEffect(() => {
         setPageStylesState(
@@ -16,7 +15,8 @@ export function Flipbook(props: IFlipbookProps) {
                 return {
                     flipped: false,
                     regularZIndex: documents.length - i,
-                    flippedZIndex: i + 1
+                    flippedZIndex: i + 1,
+                    goToPageTriggered: false
                 };
             })
         );
@@ -24,7 +24,39 @@ export function Flipbook(props: IFlipbookProps) {
 
     let numOfPapers = documents.length;
     let maxLocation = numOfPapers + 1;
-   
+
+    const goToPage = (pageNum: number) => {
+        setGoToPageCalled(pageNum);
+    };
+
+    useEffect(() => {
+        setTimeout(() => {
+            goToPage(3);
+        }, 3000);
+    }, []);
+
+    useEffect(() => {
+        if (goToPageCalled !== 0) {
+            setPageStylesState(
+                documents.map((document, i) => {
+                    return i < goToPageCalled
+                        ? { ...pageStylesState[i], flipped: true, goToPageTriggered: true }
+                        : pageStylesState[i];
+                })
+            );
+            setCurrentLocation(goToPageCalled + 1);
+            setGoToPageCalled(0);
+        } else {
+            if (pageStylesState) {
+                setPageStylesState(
+                    documents.map((document, i) => {
+                        return { ...pageStylesState[i], goToPageTriggered: false };
+                    })
+                );
+            }
+        }
+    }, [goToPageCalled]);
+
     const goNextPage = () => {
         if (currentLocation < maxLocation - 1) {
             setPageStylesState(
@@ -75,16 +107,20 @@ export function Flipbook(props: IFlipbookProps) {
                                 <div
                                     className={'paper'}
                                     // unfortunately, putting z-index into styles because tailwind
-                                    // does not like dynamic classnames 
+                                    // does not like dynamic classnames
                                     style={{
-                                        zIndex: pageStylesState[index].flipped || index === 0
-                                            ? flippedZIndex
-                                            : regularZIndex
+                                        zIndex:
+                                            pageStylesState[index].flipped || index === 0
+                                                ? flippedZIndex
+                                                : regularZIndex
                                     }}
                                 >
                                     <div
                                         className={
                                             'front' +
+                                            (pageStylesState[index].goToPageTriggered
+                                                ? ' transition duration-0'
+                                                : ' transition duration-1000') +
                                             (pageStylesState[index].flipped || index === 0
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
@@ -97,6 +133,9 @@ export function Flipbook(props: IFlipbookProps) {
                                     <div
                                         className={
                                             'back' +
+                                            (pageStylesState[index].goToPageTriggered
+                                                ? ' transition duration-0'
+                                                : ' transition duration-1000') +
                                             (pageStylesState[index].flipped || index === 0
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
