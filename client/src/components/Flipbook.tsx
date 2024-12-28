@@ -10,30 +10,24 @@ enum BOOKSTATE {
 }
 
 export function Flipbook(props: IFlipbookProps) {
-    const [documents, setDocuments] = useState([1, 2, 3]);
+    const [documents, setDocuments] = useState([1, 2, 3, 4, 5, 6, 7]);
     const [currentLocation, setCurrentLocation] = useState(1);
-    const [pageStylesState, setPageStylesState] = useState<any>([
-        {
-            flipped: false,
-            regularZIndex: 3,
-            flippedZIndex: 1
-        },
-        {
-            flipped: false,
-            regularZIndex: 2,
-            flippedZIndex: 2
-        },
-        {
-            flipped: false,
-            regularZIndex: 1,
-            flippedZIndex: 3
-        }
-    ]);
-    const [bookState, setBookState] = useState<BOOKSTATE>(BOOKSTATE.INITIAL);
+
+    const [pageStylesState, setPageStylesState] = useState<any>(null);
 
     useEffect(() => {
-        console.log(pageStylesState);
-    }, [pageStylesState]);
+        setPageStylesState(
+            documents.map((document, i) => {
+                return {
+                    flipped: false,
+                    regularZIndex: documents.length - i,
+                    flippedZIndex: i + 1
+                };
+            })
+        );
+    }, [documents]);
+
+    const [bookState, setBookState] = useState<BOOKSTATE>(BOOKSTATE.INITIAL);
 
     const getTranslationFromBookState = () => {
         if (bookState === BOOKSTATE.INITIAL) return '';
@@ -42,14 +36,7 @@ export function Flipbook(props: IFlipbookProps) {
         if (bookState === BOOKSTATE.CLOSED_END) return ' translate-x-[100%]';
     };
 
-    const zIndex1 = ` z-[${pageStylesState[0].regularZIndex}]`;
-    const flippedZIndex1 = ` z-[${pageStylesState[0].flippedZIndex}]`;
-    const zIndex2 = ` z-[${pageStylesState[1].regularZIndex}]`;
-    const flippedZIndex2 = ` z-[${pageStylesState[1].flippedZIndex}]`;
-    const zIndex3 = ` z-[${pageStylesState[2].regularZIndex}]`;
-    const flippedZIndex3 = ` z-[${pageStylesState[2].flippedZIndex}]`;
-
-    let numOfPapers = 3;
+    let numOfPapers = documents.length;
     let maxLocation = numOfPapers + 1;
     const openBook = () => {
         setBookState(BOOKSTATE.OPENED);
@@ -63,66 +50,25 @@ export function Flipbook(props: IFlipbookProps) {
     };
     const goNextPage = () => {
         if (currentLocation < maxLocation) {
-            switch (currentLocation) {
-                case 1:
-                    openBook();
-                    setPageStylesState(
-                        pageStylesState.map((page: any, i: number) => {
-                            return i === 0 ? { ...page, flipped: true } : page;
-                        })
-                    );
-                    break;
-                case 2:
-                    setPageStylesState(
-                        pageStylesState.map((page: any, i: number) => {
-                            return i === 1 ? { ...page, flipped: true } : page;
-                        })
-                    );
-                    break;
-                case 3:
-                    setPageStylesState(
-                        pageStylesState.map((page: any, i: number) => {
-                            return i === 2 ? { ...page, flipped: true } : page;
-                        })
-                    );
-                    closeBook(false);
-                    break;
-                default:
-                    throw new Error('unkown state');
-            }
+            if (currentLocation === 1) openBook();
+            setPageStylesState(
+                pageStylesState.map((page: any, i: number) => {
+                    return i === currentLocation - 1 ? { ...page, flipped: true } : page;
+                })
+            );
+            if (currentLocation === documents.length) closeBook(false);
             setCurrentLocation(currentLocation + 1);
         }
     };
     const goPrevPage = () => {
         if (currentLocation > 1) {
-            switch (currentLocation) {
-                case 2:
-                    closeBook(true);
-                    setPageStylesState(
-                        pageStylesState.map((page: any, i: number) => {
-                            return i === 0 ? { ...page, flipped: false } : page;
-                        })
-                    );
-                    break;
-                case 3:
-                    setPageStylesState(
-                        pageStylesState.map((page: any, i: number) => {
-                            return i === 1 ? { ...page, flipped: false } : page;
-                        })
-                    );
-                    break;
-                case 4:
-                    openBook();
-                    setPageStylesState(
-                        pageStylesState.map((page: any, i: number) => {
-                            return i === 2 ? { ...page, flipped: false } : page;
-                        })
-                    );
-                    break;
-                default:
-                    throw new Error('unkown state');
-            }
-
+            if (currentLocation === 2) closeBook(true);
+            if (currentLocation === documents.length + 1) openBook();
+            setPageStylesState(
+                pageStylesState.map((page: any, i: number) => {
+                    return i === currentLocation - 2 ? { ...page, flipped: false } : page;
+                })
+            );
             setCurrentLocation(currentLocation - 1);
         }
     };
@@ -148,78 +94,48 @@ export function Flipbook(props: IFlipbookProps) {
 
             <div className="relative flex h-[95%] w-[90%] items-center justify-center border-black bg-blue-200 text-center">
                 <div className={`book` + getTranslationFromBookState()}>
-                    <div
-                        className={
-                            'paper' + (pageStylesState[0].flipped ? flippedZIndex1 : zIndex1)
-                        }
-                    >
-                        <div
-                            className={
-                                'front' + (pageStylesState[0].flipped ? ' rotate-y-neg-180deg' : '')
-                            }
-                        >
-                            <div className="front-content">
-                                <h1>Front 1</h1>
-                            </div>
-                        </div>
-                        <div
-                            className={
-                                'back' + (pageStylesState[0].flipped ? ' rotate-y-neg-180deg' : '')
-                            }
-                        >
-                            <div className="back-content">
-                                <h1>Back 1</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        className={
-                            'paper' + (pageStylesState[1].flipped ? flippedZIndex2 : zIndex2)
-                        }
-                    >
-                        <div
-                            className={
-                                'front' + (pageStylesState[1].flipped ? ' rotate-y-neg-180deg' : '')
-                            }
-                        >
-                            <div className="front-content">
-                                <h1>Front 2</h1>
-                            </div>
-                        </div>
-                        <div
-                            className={
-                                'back' + (pageStylesState[1].flipped ? ' rotate-y-neg-180deg' : '')
-                            }
-                        >
-                            <div className="back-content">
-                                <h1>Back 2</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        className={
-                            'paper' + (pageStylesState[2].flipped ? flippedZIndex3 : zIndex3)
-                        }
-                    >
-                        <div
-                            className={
-                                'front' + (pageStylesState[2].flipped ? ' rotate-y-neg-180deg' : '')
-                            }
-                        >
-                            <div className="front-content">
-                                <h1>Front 3</h1>
-                            </div>
-                        </div>
-                        <div
-                            className={
-                                'back' + (pageStylesState[2].flipped ? ' rotate-y-neg-180deg' : '')
-                            }
-                        >
-                            <div className="back-content">
-                                <h1>Back 3</h1>
-                            </div>
-                        </div>
-                    </div>
+                    {pageStylesState &&
+                        documents.map((doc, index) => {
+                            const flippedZIndex = pageStylesState[index].flippedZIndex;
+                            const regularZIndex = pageStylesState[index].regularZIndex;
+                            return (
+                                <div
+                                    className={'paper'}
+                                    // unfortunately, putting z-index into styles because tailwind
+                                    // does not like dynamic classnames 
+                                    style={{
+                                        zIndex: pageStylesState[index].flipped
+                                            ? flippedZIndex
+                                            : regularZIndex
+                                    }}
+                                >
+                                    <div
+                                        className={
+                                            'front' +
+                                            (pageStylesState[index].flipped
+                                                ? ' rotate-y-neg-180deg'
+                                                : '')
+                                        }
+                                    >
+                                        <div className="front-content">
+                                            <h1>Front {index + 1}</h1>
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={
+                                            'back' +
+                                            (pageStylesState[index].flipped
+                                                ? ' rotate-y-neg-180deg'
+                                                : '')
+                                        }
+                                    >
+                                        <div className="back-content">
+                                            <h1>Back {index + 1}</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                 </div>
             </div>
         </div>
