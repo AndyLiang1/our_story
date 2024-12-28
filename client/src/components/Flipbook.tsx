@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export interface IFlipbookProps {}
 
 export function Flipbook(props: IFlipbookProps) {
-    const [documents, setDocuments] = useState([1, 2, 3, 4, 5, 6, 7]);
+    const [documents, setDocuments] = useState([1, 2, 3]);
     const [currentLocation, setCurrentLocation] = useState(2);
 
     const [pageStylesState, setPageStylesState] = useState<any>(null);
@@ -13,7 +13,7 @@ export function Flipbook(props: IFlipbookProps) {
         setPageStylesState(
             documents.map((document, i) => {
                 return {
-                    flipped: false,
+                    flipped: i !== 0 ? false : true,
                     regularZIndex: documents.length - i,
                     flippedZIndex: i + 1,
                     goToPageTriggered: false
@@ -31,9 +31,13 @@ export function Flipbook(props: IFlipbookProps) {
 
     useEffect(() => {
         setTimeout(() => {
-            goToPage(3);
+            // goToPage(3);
         }, 3000);
     }, []);
+
+    useEffect(() => {
+        console.log(pageStylesState)
+    }, [pageStylesState])
 
     useEffect(() => {
         if (goToPageCalled !== 0) {
@@ -61,7 +65,9 @@ export function Flipbook(props: IFlipbookProps) {
         if (currentLocation < maxLocation - 1) {
             setPageStylesState(
                 pageStylesState.map((page: any, i: number) => {
-                    return i === currentLocation - 1 ? { ...page, flipped: true } : page;
+                    if(i === currentLocation - 1) return { ...page, flipped: true }
+                    if(i > currentLocation - 1) return {...page, regularZIndex: page.regularZIndex + 1}
+                    return page;
                 })
             );
             setCurrentLocation(currentLocation + 1);
@@ -71,7 +77,9 @@ export function Flipbook(props: IFlipbookProps) {
         if (currentLocation > 2) {
             setPageStylesState(
                 pageStylesState.map((page: any, i: number) => {
-                    return i === currentLocation - 2 ? { ...page, flipped: false } : page;
+                    if(i === currentLocation - 2) return { ...page, flipped: false }
+                    if(i > currentLocation - 2) return {...page, regularZIndex: page.regularZIndex - 1}
+                    return page
                 })
             );
             setCurrentLocation(currentLocation - 1);
@@ -127,6 +135,7 @@ export function Flipbook(props: IFlipbookProps) {
                                         }
                                     >
                                         <div className="front-content">
+                                            <input className = "bg-red-500"></input>
                                             <h1>Front {index + 1}</h1>
                                         </div>
                                     </div>

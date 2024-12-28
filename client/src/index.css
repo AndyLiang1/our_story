@@ -34,7 +34,7 @@ body {
         top: 0;
         left: 0;
         perspective: 1500px;
-    
+        transform-origin: left;
     }
     
     .front,
