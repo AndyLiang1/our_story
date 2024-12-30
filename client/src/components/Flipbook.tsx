@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export interface IFlipbookProps {}
 
 export function Flipbook(props: IFlipbookProps) {
-    const debug = false;
+    const debug = true;
     const [documents, setDocuments] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [currentLocation, setCurrentLocation] = useState(2);
 
@@ -79,13 +79,14 @@ export function Flipbook(props: IFlipbookProps) {
         if (nextPageTriggered) {
             const goNextPage = async () => {
                 console.log('Go next page triggered.');
-                // set all Z-indices after this page to be LESS or equal to this page, just set em all to 0.
+                // set all Z-indices after this page to be LESS or equal to this page, 
+                // just set em all to negative values.
                 if (currentLocation < maxLocation - 1) {
                     setPageStylesState({
                         state: 'GoToNextPageState1SettingZIndexZero',
                         styles: pageStylesState.styles.map((page: any, i: number) => {
                             if (i === currentLocation - 1) return { ...page, flipped: true };
-                            if (i > currentLocation - 1) return { ...page, regularZIndex: 0 };
+                            if (i > currentLocation - 1) return { ...page, regularZIndex: 0 - i };
                             return page;
                         })
                     });
@@ -96,29 +97,36 @@ export function Flipbook(props: IFlipbookProps) {
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
     useEffect(() => {
-        if (nextPageTriggered) {
-            if (pageStylesState.state === 'GoToNextPageState2RestoringZIndex') {
-                setCurrentLocation(currentLocation + 1);
-                return;
-            }
-            const restoreZIndices = () => {
-                console.log('Restore Z indices triggered.');
-                setPageStylesState({
-                    state: 'GoToNextPageState2RestoringZIndex',
-                    styles: pageStylesState.styles.map((page: any, i: number) => {
-                        if (i > currentLocation - 1)
-                            return {
-                                ...page,
-                                regularZIndex:
-                                    tempCurrentPageStylesStateForMovingToNextPage.styles[i]
-                                        .regularZIndex + 1
-                            };
-                        return page;
-                    })
-                });
-            };
-            restoreZIndices();
+        if (
+            nextPageTriggered && pageStylesState.state ===
+            'GoToNextPageState2RestoringZIndex'
+        ) {
+            setCurrentLocation(currentLocation + 1);
+            return;
         }
+        // if (nextPageTriggered) {
+        //     if (pageStylesState.state === 'GoToNextPageState2RestoringZIndex') {
+        //         setCurrentLocation(currentLocation + 1);
+        //         return;
+        //     }
+        //     const restoreZIndices = () => {
+        //         console.log('Restore Z indices triggered.');
+        //         setPageStylesState({
+        //             state: 'GoToNextPageState2RestoringZIndex',
+        //             styles: pageStylesState.styles.map((page: any, i: number) => {
+        //                 if (i > currentLocation - 1)
+        //                     return {
+        //                         ...page,
+        //                         regularZIndex:
+        //                             tempCurrentPageStylesStateForMovingToNextPage.styles[i]
+        //                                 .regularZIndex + 1
+        //                     };
+        //                 return page;
+        //             })
+        //         });
+        //     };
+        //     restoreZIndices();
+        // }
     }, [pageStylesState]);
 
     const saveCurrentState = () => {
@@ -160,11 +168,11 @@ export function Flipbook(props: IFlipbookProps) {
     };
 
     useEffect(() => {
-        if (debug) console.log(currentLocation);
+        if (debug) console.log("Current location: ", currentLocation);
     }, [currentLocation]);
 
     useEffect(() => {
-        if (debug) console.log(pageStylesState);
+        if (debug) console.log("Page style state: ", pageStylesState);
     }, [pageStylesState]);
 
     return (
@@ -214,6 +222,30 @@ export function Flipbook(props: IFlipbookProps) {
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
                                         }
+                                        onTransitionEnd={() => {
+                                            if (nextPageTriggered) {
+                                                const restoreZIndices = () => {
+                                                    console.log('Restore Z indices triggered.');
+                                                    setPageStylesState({
+                                                        state: 'GoToNextPageState2RestoringZIndex',
+                                                        styles: pageStylesState.styles.map(
+                                                            (page: any, i: number) => {
+                                                                if (i > currentLocation - 1)
+                                                                    return {
+                                                                        ...page,
+                                                                        regularZIndex:
+                                                                            tempCurrentPageStylesStateForMovingToNextPage
+                                                                                .styles[i]
+                                                                                .regularZIndex + 1
+                                                                    };
+                                                                return page;
+                                                            }
+                                                        )
+                                                    });
+                                                };
+                                                restoreZIndices();
+                                            }
+                                        }}
                                     >
                                         <div className="front-content">
                                             <input className="bg-red-500"></input>
