@@ -3,15 +3,22 @@ import { useEffect, useState } from 'react';
 export interface IFlipbookProps {}
 
 export function Flipbook(props: IFlipbookProps) {
-    const [documents, setDocuments] = useState([1, 2, 3]);
+    const debug = false;
+    const [documents, setDocuments] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [currentLocation, setCurrentLocation] = useState(2);
 
     const [pageStylesState, setPageStylesState] = useState<any>(null);
     const [goToPageCalled, setGoToPageCalled] = useState(0);
+    const [nextPageTriggered, setNextPageTriggered] = useState(false);
+    const [
+        tempCurrentPageStylesStateForMovingToNextPage,
+        setTempCurrentPageStylesStateForMovingToNextPage
+    ] = useState<any>(null);
 
     useEffect(() => {
-        setPageStylesState(
-            documents.map((document, i) => {
+        setPageStylesState({
+            state: 'initial',
+            styles: documents.map((document, i) => {
                 return {
                     flipped: i !== 0 ? false : true,
                     regularZIndex: documents.length - i,
@@ -19,7 +26,7 @@ export function Flipbook(props: IFlipbookProps) {
                     goToPageTriggered: false
                 };
             })
-        );
+        });
     }, [documents]);
 
     let numOfPapers = documents.length;
@@ -36,55 +43,129 @@ export function Flipbook(props: IFlipbookProps) {
     }, []);
 
     useEffect(() => {
-        console.log(pageStylesState)
-    }, [pageStylesState])
-
-    useEffect(() => {
         if (goToPageCalled !== 0) {
-            setPageStylesState(
-                documents.map((document, i) => {
+            setPageStylesState({
+                state: 'goToPageCalled',
+                styles: documents.map((document, i) => {
                     return i < goToPageCalled
                         ? { ...pageStylesState[i], flipped: true, goToPageTriggered: true }
                         : pageStylesState[i];
                 })
-            );
+            });
+            console.log('here?');
             setCurrentLocation(goToPageCalled + 1);
             setGoToPageCalled(0);
         } else {
             if (pageStylesState) {
-                setPageStylesState(
-                    documents.map((document, i) => {
+                setPageStylesState({
+                    state: 'goToPageCalled',
+                    styles: documents.map((document, i) => {
                         return { ...pageStylesState[i], goToPageTriggered: false };
                     })
-                );
+                });
             }
         }
     }, [goToPageCalled]);
 
-    const goNextPage = () => {
-        if (currentLocation < maxLocation - 1) {
-            setPageStylesState(
-                pageStylesState.map((page: any, i: number) => {
-                    if(i === currentLocation - 1) return { ...page, flipped: true }
-                    if(i > currentLocation - 1) return {...page, regularZIndex: page.regularZIndex + 1}
-                    return page;
-                })
-            );
-            setCurrentLocation(currentLocation + 1);
+    /* Next page */
+
+    useEffect(() => {
+        if (nextPageTriggered) {
+            saveCurrentState();
         }
+    }, [nextPageTriggered]);
+
+    useEffect(() => {
+        if (nextPageTriggered) {
+            const goNextPage = async () => {
+                console.log('Go next page triggered.');
+                // set all Z-indices after this page to be LESS or equal to this page, just set em all to 0.
+                if (currentLocation < maxLocation - 1) {
+                    setPageStylesState({
+                        state: 'GoToNextPageState1SettingZIndexZero',
+                        styles: pageStylesState.styles.map((page: any, i: number) => {
+                            if (i === currentLocation - 1) return { ...page, flipped: true };
+                            if (i > currentLocation - 1) return { ...page, regularZIndex: 0 };
+                            return page;
+                        })
+                    });
+                }
+            };
+            goNextPage();
+        }
+    }, [tempCurrentPageStylesStateForMovingToNextPage]);
+
+    useEffect(() => {
+        if (nextPageTriggered) {
+            if (pageStylesState.state === 'GoToNextPageState2RestoringZIndex') {
+                setCurrentLocation(currentLocation + 1);
+                return;
+            }
+            const restoreZIndices = () => {
+                console.log('Restore Z indices triggered.');
+                setPageStylesState({
+                    state: 'GoToNextPageState2RestoringZIndex',
+                    styles: pageStylesState.styles.map((page: any, i: number) => {
+                        if (i > currentLocation - 1)
+                            return {
+                                ...page,
+                                regularZIndex:
+                                    tempCurrentPageStylesStateForMovingToNextPage.styles[i]
+                                        .regularZIndex + 1
+                            };
+                        return page;
+                    })
+                });
+            };
+            restoreZIndices();
+        }
+    }, [pageStylesState]);
+
+    const saveCurrentState = () => {
+        setTempCurrentPageStylesStateForMovingToNextPage(pageStylesState);
     };
+
+    // useEffect(() => {
+    //     if (nextPageTriggered) {
+    //         setPageStylesState(
+    //             pageStylesState.map((page: any, i: number) => {
+    //                 if (i === currentLocation - 1) return { ...page, flipped: true };
+    //                 if (i > currentLocation - 1) return { ...page, regularZIndex: 0 };
+    //                 return page;
+    //             })
+    //         );
+    //         setCurrentLocation(currentLocation + 1);
+    //     }
+    // }, []);
+
+    useEffect(() => {
+        if (nextPageTriggered) {
+            setNextPageTriggered(false);
+        }
+    }, [currentLocation]);
+
     const goPrevPage = () => {
         if (currentLocation > 2) {
-            setPageStylesState(
-                pageStylesState.map((page: any, i: number) => {
-                    if(i === currentLocation - 2) return { ...page, flipped: false }
-                    if(i > currentLocation - 2) return {...page, regularZIndex: page.regularZIndex - 1}
-                    return page
+            setPageStylesState({
+                state: 'initial',
+                styles: pageStylesState.styles.map((page: any, i: number) => {
+                    if (i === currentLocation - 2) return { ...page, flipped: false };
+                    if (i > currentLocation - 2)
+                        return { ...page, regularZIndex: page.regularZIndex - 1 };
+                    return page;
                 })
-            );
+            });
             setCurrentLocation(currentLocation - 1);
         }
     };
+
+    useEffect(() => {
+        if (debug) console.log(currentLocation);
+    }, [currentLocation]);
+
+    useEffect(() => {
+        if (debug) console.log(pageStylesState);
+    }, [pageStylesState]);
 
     return (
         <div className="flex h-full w-full items-center justify-center bg-red-100">
@@ -99,7 +180,7 @@ export function Flipbook(props: IFlipbookProps) {
             <button
                 className="absolute right-10"
                 onClick={() => {
-                    goNextPage();
+                    setNextPageTriggered(true);
                 }}
             >
                 R
@@ -109,8 +190,8 @@ export function Flipbook(props: IFlipbookProps) {
                 <div className={`book translate-x-[50%]`}>
                     {pageStylesState &&
                         documents.map((doc, index) => {
-                            const flippedZIndex = pageStylesState[index].flippedZIndex;
-                            const regularZIndex = pageStylesState[index].regularZIndex;
+                            const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
+                            const regularZIndex = pageStylesState.styles[index].regularZIndex;
                             return (
                                 <div
                                     className={'paper'}
@@ -118,7 +199,7 @@ export function Flipbook(props: IFlipbookProps) {
                                     // does not like dynamic classnames
                                     style={{
                                         zIndex:
-                                            pageStylesState[index].flipped || index === 0
+                                            pageStylesState.styles[index].flipped || index === 0
                                                 ? flippedZIndex
                                                 : regularZIndex
                                     }}
@@ -126,31 +207,32 @@ export function Flipbook(props: IFlipbookProps) {
                                     <div
                                         className={
                                             'front' +
-                                            (pageStylesState[index].goToPageTriggered
+                                            (pageStylesState.styles[index].goToPageTriggered
                                                 ? ' transition duration-0'
                                                 : ' transition duration-1000') +
-                                            (pageStylesState[index].flipped || index === 0
+                                            (pageStylesState.styles[index].flipped || index === 0
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
                                         }
                                     >
                                         <div className="front-content">
-                                            <input className = "bg-red-500"></input>
+                                            <input className="bg-red-500"></input>
                                             <h1>Front {index + 1}</h1>
                                         </div>
                                     </div>
                                     <div
                                         className={
                                             'back' +
-                                            (pageStylesState[index].goToPageTriggered
+                                            (pageStylesState.styles[index].goToPageTriggered
                                                 ? ' transition duration-0'
                                                 : ' transition duration-1000') +
-                                            (pageStylesState[index].flipped || index === 0
+                                            (pageStylesState.styles[index].flipped || index === 0
                                                 ? ' rotate-y-neg-180deg'
                                                 : '')
                                         }
                                     >
                                         <div className="back-content">
+                                            <input className="bg-blue-500"></input>
                                             <h1>Back {index + 1}</h1>
                                         </div>
                                     </div>
