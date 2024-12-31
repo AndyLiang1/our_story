@@ -32,8 +32,11 @@ export class DocumentController {
         const startDate = req.query.startDate ? new Date(req.query.startDate as string) : null;
         const endDate = req.query.endDate ? new Date(req.query.endDate as string) : null;
 
-        if (userId) {
-            const docs = await services.documentService.getDocuments(userId, startDate, endDate, null);
+        const neighbouringDocs = req.query.neighbouringDocs === 'true' ? true : null;
+        const documentId = req.query.documentId !== 'null' ? (req.query.documentId as string): null
+
+        if (userId) {            
+            const docs = await services.documentService.getDocuments(userId, startDate, endDate, neighbouringDocs, documentId, null);
             res.status(200).json(docs);
         } else {
             res.status(400).json({

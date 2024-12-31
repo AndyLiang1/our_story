@@ -1,24 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GenericCalendar } from '../components/GenericCalendar';
 import { NavBar } from '../components/Navbar';
-import { TipTap } from '../components/TipTap';
 
-import { getAllDocuments } from '../apis/documentApi';
+import { getNeighbouringDocuments } from '../apis/documentApi';
 import { CreateDocumentForm } from '../components/CreateDocumentForm';
-import { ImageCarousel } from '../components/ImageCarousel';
+import { Flipbook } from '../components/Flipbook';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
-import { Flipbook } from '../components/Flipbook';
 
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const [documents, setDocuments] = useState<DocumentData[]>([]);
+    const [documentsWindow, setDocumentsWindow] = useState<{
+        documents: DocumentData[];
+        firstDocumentFlag: boolean;
+        lastDocumentFlag: boolean;
+    } | null>(null);
     const [imageNames, setImageNames] = useState<string[]>([]);
     const [user, setUser] = useState<User>(useLocation().state);
     const [showForm, setShowForm] = useState<boolean>(false);
     const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
+    const [isFirstDocument, setIsFirstDocument] = useState(false);
+    const [isLastDocument, setIsLastDocument] = useState(false);
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -34,12 +38,13 @@ export function HomePage(props: IHomePageProps) {
     useEffect(() => {
         const fetchData = async () => {
             if (user && user.collabToken) {
-                const docs = await getAllDocuments(user.userId, user.collabToken, null, null);
-                setDocuments(
-                    docs.map((doc: DocumentData) => {
-                        return { ...doc, eventDate: new Date(doc.eventDate) };
-                    })
+                const documentsWindow = await getNeighbouringDocuments(
+                    user.userId,
+                    user.collabToken,
+                    new Date(),
+                    null
                 );
+                setDocumentsWindow(documentsWindow);
             }
         };
         fetchData();
@@ -60,7 +65,9 @@ export function HomePage(props: IHomePageProps) {
             )}
             <NavBar setShowForm={setShowForm} />
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
-                <Flipbook />
+                <Flipbook
+                    documentsWindow={documentsWindow}
+                />
                 {/* <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
                     {user && user.collabToken && documents.length ? (
                         <TipTap

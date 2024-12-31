@@ -1,16 +1,16 @@
 // Schema of document from a get
 export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface DocumentCreationAttributes {
     title: string;
     documentContent: DocumentContent;
     createdByUserId: string;
-    eventDate: string; // YYYY-MM-DD
-    images: string[];
+    eventDate: Date; // YYYY-MM-DD
+    images: string[]
 }
 
 interface DocumentUpdateAttributes {
@@ -37,3 +37,9 @@ interface DocumentQueryParams {
 }
 
 export type PartialDocumentQueryParams = Partial<DocumentQueryParams>;
+
+export type DocumentsWithFlags = {
+    documents: DocumentData[];
+    firstDocumentFlag: boolean;
+    lastDocumentFlag: boolean;
+};
