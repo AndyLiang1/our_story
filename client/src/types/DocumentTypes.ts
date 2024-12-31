@@ -24,3 +24,9 @@ type DocumentContent = {
     type: string;
     content: any;
 }
+
+export type DocumentsWithFlags = {
+    documents: DocumentData[];
+    firstDocumentFlag: boolean;
+    lastDocumentFlag: boolean;
+};

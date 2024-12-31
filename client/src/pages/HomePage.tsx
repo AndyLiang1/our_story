@@ -67,6 +67,8 @@ export function HomePage(props: IHomePageProps) {
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
                 <Flipbook
                     documentsWindow={documentsWindow}
+                    user={user}
+                    setRefetchTrigger={setRefetchTrigger}
                 />
                 {/* <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
                     {user && user.collabToken && documents.length ? (

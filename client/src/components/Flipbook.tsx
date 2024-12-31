@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { DocumentData } from '../types/DocumentTypes';
+import { User } from '../types/UserTypes';
+import { GenericCalendar } from './GenericCalendar';
+import { ImageCarousel } from './ImageCarousel';
+import { TipTap } from './TipTap';
 
 export interface IFlipbookProps {
     documentsWindow: {
@@ -7,6 +11,8 @@ export interface IFlipbookProps {
         firstDocumentFlag: boolean;
         lastDocumentFlag: boolean;
     } | null;
+    user: User;
+    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {
@@ -17,7 +23,7 @@ enum PAGE_STYLE_POSSIBLE_STATES {
     'GO_PREV' = 'goPrev'
 }
 
-export function Flipbook({ documentsWindow }: IFlipbookProps) {
+export function Flipbook({ documentsWindow, user, setRefetchTrigger }: IFlipbookProps) {
     const [currentLocation, setCurrentLocation] = useState(2);
 
     const [pageStylesState, setPageStylesState] = useState<any>(null);
@@ -59,74 +65,72 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
 
     useEffect(() => {
         if (documents.length) {
+            let styles = [];
+            for (let i = 0; i < documents.length + 1; i++) {
+                styles.push({
+                    flipped: i !== 0 ? false : true,
+                    regularZIndex: i === 0 ? documents.length - i + 1 : documents.length - i + 2, // mocking one flip for the others
+                    flippedZIndex: i + 1,
+                    goToPageTriggered: true
+                });
+            }
             setPageStylesState({
                 state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
-                styles: documents.map((document, i) => {
-                    return {
-                        flipped: i !== 0 ? false : true,
-                        regularZIndex:
-                            i === 0 ? documents.length - i + 1 : documents.length - i + 2, // mocking one flip for the others
-                        flippedZIndex: i + 1,
-                        goToPageTriggered: true
-                    };
-                })
+                styles
             });
         }
     }, [documents]);
 
-    let numOfPapers = documents.length;
+    let numOfPapers = documents.length + 1;
     let maxLocation = numOfPapers + 1;
-
-    useEffect(() => {
-        setTimeout(() => {
-            // setGoToPageCalled(4);
-        }, 3000);
-    }, []);
 
     useEffect(() => {
         if (goToPageCalled !== 0) {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
+            let styles = [];
+            for (let i = 0; i < documents.length + 1; i++) {
+                if (i === 0) {
+                    styles.push({
+                        ...pageStylesState.styles[i],
+                        flipped: true,
+                        goToPageTriggered: true,
+                        regularZIndex: pageStylesState.styles[i].regularZIndex
+                        // first paper never gets the +1 in regularZIndex as a result from flipping
+                    });
+                    continue;
+                }
+                if (i < goToPageCalled) {
+                    styles.push({
+                        ...pageStylesState.styles[i],
+                        flipped: true,
+                        goToPageTriggered: true,
+                        regularZIndex: pageStylesState.styles[i].regularZIndex + i - 1
+                        // we must adjust regular z-index as well because, well,
+                        // turning a papers increments this value for all subsequent papers
+                    });
+                } else {
+                    styles.push({
+                        ...pageStylesState.styles[i],
+                        regularZIndex: pageStylesState.styles[i].regularZIndex + goToPageCalled - 1
+                    });
+                }
+            }
             setPageStylesState({
                 state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED,
-                styles: documents.map((document, i) => {
-                    if (i === 0) {
-                        return {
-                            ...pageStylesState.styles[i],
-                            flipped: true,
-                            goToPageTriggered: true,
-                            regularZIndex: pageStylesState.styles[i].regularZIndex
-                            // first paper never gets the +1 in regularZIndex as a result from flipping
-                        };
-                    }
-                    if (i < goToPageCalled) {
-                        return {
-                            ...pageStylesState.styles[i],
-                            flipped: true,
-                            goToPageTriggered: true,
-                            regularZIndex: pageStylesState.styles[i].regularZIndex + i - 1
-                            // we must adjust regular z-index as well because, well,
-                            // turning a papers increments this value for all subsequent papers
-                        };
-                    } else {
-                        return {
-                            ...pageStylesState.styles[i],
-                            regularZIndex:
-                                pageStylesState.styles[i].regularZIndex + goToPageCalled - 1
-                        };
-                        // return {...pageStylesState.styles[i]}
-                    }
-                })
+                styles
             });
             setCurrentLocation(goToPageCalled + 1);
             setGoToPageCalled(0);
         } else {
             if (pageStylesState) {
+                let styles = [];
+                for (let i = 0; i < documents.length + 1; i++) {
+                    styles.push({ ...pageStylesState.styles[i], goToPageTriggered: false });
+                }
                 setPageStylesState({
                     state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED,
-                    styles: documents.map((document, i) => {
-                        return { ...pageStylesState.styles[i], goToPageTriggered: false };
-                    })
+                    styles
                 });
             }
         }
@@ -143,14 +147,18 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
             const goNextPage = async () => {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
                 // just set em all to negative values.
+                let styles = [];
+                for (let i = 0; i < documents.length + 1; i++) {
+                    if (i === currentLocation - 1)
+                        styles.push({ ...pageStylesState.styles[i], flipped: true });
+                    else if (i > currentLocation - 1)
+                        styles.push({ ...pageStylesState.styles[i], regularZIndex: 0 - i });
+                    else styles.push(pageStylesState.styles[i]);
+                }
                 if (currentLocation < maxLocation - 1) {
                     setPageStylesState({
                         state: PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_1,
-                        styles: pageStylesState.styles.map((page: any, i: number) => {
-                            if (i === currentLocation - 1) return { ...page, flipped: true };
-                            if (i > currentLocation - 1) return { ...page, regularZIndex: 0 - i };
-                            return page;
-                        })
+                        styles
                     });
                 }
                 // after this, we will go to the onTransitionEnd in the TSX below
@@ -168,7 +176,7 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
             return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
-            setGoToPageCalled(documents.length - 1);
+            setGoToPageCalled(documents.length);
         }
     }, [pageStylesState]);
 
@@ -186,17 +194,137 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
 
     const goPrevPage = () => {
         if (currentLocation > 2) {
+            let styles = [];
+            for (let i = 0; i < documents.length + 1; i++) {
+                if (i === currentLocation - 2)
+                    styles.push({ ...pageStylesState.styles[i], flipped: false });
+                else if (i > currentLocation - 2)
+                    styles.push({
+                        ...pageStylesState.styles[i],
+                        regularZIndex: pageStylesState.styles[i].regularZIndex - 1
+                    });
+                else styles.push({ ...pageStylesState.styles[i] });
+            }
             setPageStylesState({
                 state: PAGE_STYLE_POSSIBLE_STATES.GO_PREV,
-                styles: pageStylesState.styles.map((page: any, i: number) => {
-                    if (i === currentLocation - 2) return { ...page, flipped: false };
-                    if (i > currentLocation - 2)
-                        return { ...page, regularZIndex: page.regularZIndex - 1 };
-                    return page;
-                })
+                styles
             });
             setCurrentLocation(currentLocation - 1);
         }
+    };
+
+    const renderedPapers = () => {
+        const renderedPages = [];
+        for (let index = 0; index < documents.length + 1; index++) {
+            const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
+            const regularZIndex = pageStylesState.styles[index].regularZIndex;
+            renderedPages.push(
+                <div
+                    className={'paper'}
+                    // unfortunately, putting z-index into styles because tailwind
+                    // does not like dynamic classnames
+                    style={{
+                        zIndex:
+                            pageStylesState.styles[index].flipped || index === 0
+                                ? flippedZIndex
+                                : regularZIndex
+                    }}
+                >
+                    <div
+                        className={
+                            'front' +
+                            (pageStylesState.styles[index].goToPageTriggered
+                                ? ' transition duration-0'
+                                : ' transition duration-1000') +
+                            (pageStylesState.styles[index].flipped || index === 0
+                                ? ' rotate-y-neg-180deg'
+                                : '')
+                        }
+                        onTransitionEnd={() => {
+                            if (
+                                nextPageTriggered &&
+                                pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_1
+                            ) {
+                                const restoreZIndices = () => {
+                                    let styles = [];
+                                    for (let i = 0; i < documents.length + 1; i++) {
+                                        if (i > currentLocation - 1)
+                                            styles.push({
+                                                ...pageStylesState.styles[i],
+                                                regularZIndex:
+                                                    tempCurrentPageStylesStateForMovingToNextPage
+                                                        .styles[i].regularZIndex + 1 // from RULE 1. Because all subsequent papers will still pull its z-indices from the regularZIndex
+                                            });
+                                        else styles.push({ ...pageStylesState.styles[i] });
+                                    }
+                                    setPageStylesState({
+                                        state: PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2,
+                                        styles
+                                    });
+                                };
+                                restoreZIndices();
+                            }
+                        }}
+                    >
+                        <div className="front-content">
+                            {index > 0 && (
+                                <div className="flex h-full w-full flex-col items-center justify-evenly p-[2rem]">
+                                    <div className="h-[52%] w-full">
+                                        {user && documents.length && (
+                                            <ImageCarousel
+                                                collabToken={user.collabToken}
+                                                documentId={documents[index - 1].documentId}
+                                                imageNames={[]}
+                                                setImageNames={() => {}}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="h-[2%] w-full"></div>
+                                    <div className="h-[45%] w-full">
+                                        {documents && documents.length && (
+                                            <GenericCalendar
+                                                events={documents.map((doc) => {
+                                                    return {
+                                                        id: doc.documentId,
+                                                        name: doc.title,
+                                                        date: doc.eventDate
+                                                    };
+                                                })}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div
+                        className={
+                            'back' +
+                            (pageStylesState.styles[index].goToPageTriggered
+                                ? ' transition duration-0'
+                                : ' transition duration-1000') +
+                            (pageStylesState.styles[index].flipped || index === 0
+                                ? ' rotate-y-neg-180deg'
+                                : '')
+                        }
+                    >
+                        <div className="back-content">
+                            {index < documents.length && (
+                                <TipTap
+                                    key={documents[index].documentId}
+                                    documentId={documents[index].documentId}
+                                    documentTitle={documents[index].title}
+                                    setRefetchTrigger={setRefetchTrigger}
+                                    collabToken={user.collabToken}
+                                    styles="h-full w-full"
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        return renderedPages;
     };
 
     return (
@@ -220,85 +348,7 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
 
             <div className="relative flex h-[95%] w-[90%] items-center justify-center border-black bg-blue-200 text-center">
                 <div className={`book translate-x-[50%]`}>
-                    {pageStylesState &&
-                        pageStylesState.styles.length &&
-                        documents.map((doc, index) => {
-                            const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
-                            const regularZIndex = pageStylesState.styles[index].regularZIndex;
-                            return (
-                                <div
-                                    className={'paper'}
-                                    // unfortunately, putting z-index into styles because tailwind
-                                    // does not like dynamic classnames
-                                    style={{
-                                        zIndex:
-                                            pageStylesState.styles[index].flipped || index === 0
-                                                ? flippedZIndex
-                                                : regularZIndex
-                                    }}
-                                >
-                                    <div
-                                        className={
-                                            'front' +
-                                            (pageStylesState.styles[index].goToPageTriggered
-                                                ? ' transition duration-0'
-                                                : ' transition duration-1000') +
-                                            (pageStylesState.styles[index].flipped || index === 0
-                                                ? ' rotate-y-neg-180deg'
-                                                : '')
-                                        }
-                                        onTransitionEnd={() => {
-                                            if (
-                                                nextPageTriggered &&
-                                                pageStylesState.state ===
-                                                    PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_1
-                                            ) {
-                                                const restoreZIndices = () => {
-                                                    setPageStylesState({
-                                                        state: PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2,
-                                                        styles: pageStylesState.styles.map(
-                                                            (page: any, i: number) => {
-                                                                if (i > currentLocation - 1)
-                                                                    return {
-                                                                        ...page,
-                                                                        regularZIndex:
-                                                                            tempCurrentPageStylesStateForMovingToNextPage
-                                                                                .styles[i]
-                                                                                .regularZIndex + 1 // from RULE 1. Because all subsequent papers will still pull its z-indices from the regularZIndex
-                                                                    };
-                                                                return page;
-                                                            }
-                                                        )
-                                                    });
-                                                };
-                                                restoreZIndices();
-                                            }
-                                        }}
-                                    >
-                                        <div className="front-content">
-                                            <input className="bg-red-500"></input>
-                                            <h1>Front {index + 1}</h1>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className={
-                                            'back' +
-                                            (pageStylesState.styles[index].goToPageTriggered
-                                                ? ' transition duration-0'
-                                                : ' transition duration-1000') +
-                                            (pageStylesState.styles[index].flipped || index === 0
-                                                ? ' rotate-y-neg-180deg'
-                                                : '')
-                                        }
-                                    >
-                                        <div className="back-content">
-                                            <input className="bg-blue-500"></input>
-                                            <h1>Back {index + 1}</h1>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                    {pageStylesState && pageStylesState.styles.length && renderedPapers()}
                 </div>
             </div>
         </div>
