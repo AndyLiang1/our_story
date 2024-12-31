@@ -55,8 +55,6 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
      * 4) When turning a paper right due to flipping backwards, we do not need to tinker with the z-indices.
      * The flipped z-indices are always in order: 1,2,3,4,5,6,7. So the previous paper's content, would
      * never appear above the flipping animation as the previous paper would also have a lower z-index.
-     *
-     *
      */
 
     useEffect(() => {
@@ -121,11 +119,9 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
                 })
             });
             setCurrentLocation(goToPageCalled + 1);
-            console.log('setting istriggered');
             setGoToPageCalled(0);
         } else {
             if (pageStylesState) {
-                console.log('unsetting istriggered');
                 setPageStylesState({
                     state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED,
                     styles: documents.map((document, i) => {
@@ -143,7 +139,6 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
     }, [nextPageTriggered]);
 
     useEffect(() => {
-        console.log('Current state: ', tempCurrentPageStylesStateForMovingToNextPage);
         if (nextPageTriggered) {
             const goNextPage = async () => {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
@@ -165,7 +160,6 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
     useEffect(() => {
-        console.log(pageStylesState);
         if (
             nextPageTriggered &&
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2
@@ -174,22 +168,17 @@ export function Flipbook({ documentsWindow }: IFlipbookProps) {
             return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
-            console.log('Going to page called');
-
-            setGoToPageCalled(4);
+            setGoToPageCalled(documents.length - 1);
         }
     }, [pageStylesState]);
 
     useEffect(() => {
-        // console.log('Current location: ', currentLocation, maxLocation, documents);
         if (nextPageTriggered) {
             setNextPageTriggered(false);
         }
         if (currentLocation === maxLocation - 1) {
-            console.log('Reached end');
         }
         if (currentLocation === 2) {
-            console.log('Reached beginning');
         }
     }, [currentLocation]);
 

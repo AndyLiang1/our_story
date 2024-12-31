@@ -98,7 +98,7 @@ export class DocumentRepo {
                     ['eventDate', 'DESC'],
                     ['createdAt', 'DESC']
                 ],
-                limit: 6 + 1 // includes itself
+                limit: 3 + 1 // includes itself
             };
             const mostRecentDocsInReversedChronologicalOrder =
                 await Document.findAll(mostRecentQueryObject);
