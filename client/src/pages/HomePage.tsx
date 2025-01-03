@@ -12,17 +12,17 @@ export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const [documents, setDocuments] = useState<DocumentData[]>([]);
-    const [documentsWindow, setDocumentsWindow] = useState<{
-        documents: DocumentData[];
-        firstDocumentFlag: boolean;
-        lastDocumentFlag: boolean;
-    } | null>(null);
+    
     const [imageNames, setImageNames] = useState<string[]>([]);
     const [user, setUser] = useState<User>(useLocation().state);
     const [showForm, setShowForm] = useState<boolean>(false);
     const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
-    const [isFirstDocument, setIsFirstDocument] = useState(false);
-    const [isLastDocument, setIsLastDocument] = useState(false);
+    const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
+    
+    let numOfPapers = documents.length + 1;
+    let maxLocation = numOfPapers + 1;
+
+    
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -34,25 +34,6 @@ export function HomePage(props: IHomePageProps) {
             setUser(userWithCollabToken);
         }
     }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            if (user && user.collabToken) {
-                const documentsWindow = await getNeighbouringDocuments(
-                    user.userId,
-                    user.collabToken,
-                    new Date(),
-                    null
-                );
-                setDocumentsWindow(documentsWindow);
-            }
-        };
-        fetchData();
-    }, [user, refetchTrigger]);
-
-    useEffect(() => {
-        if (documents && documents.length) setImageNames(documents[0].images);
-    }, [documents]);
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
@@ -66,7 +47,6 @@ export function HomePage(props: IHomePageProps) {
             <NavBar setShowForm={setShowForm} />
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
                 <Flipbook
-                    documentsWindow={documentsWindow}
                     user={user}
                     setRefetchTrigger={setRefetchTrigger}
                 />

@@ -14,6 +14,7 @@ export interface ITipTapProps {
 
 export function TipTap({ documentId, documentTitle, collabToken, styles, setRefetchTrigger }: ITipTapProps) {
     const doc = new Y.Doc();
+    const debug = false
     const provider = new TiptapCollabProvider({
         name: documentId, // Unique document identifier for syncing. This is your document name.
         appId: `${config.tiptapProvider.appId}`, // Your Cloud Dashboard AppID or `baseURL` for on-premises
@@ -21,16 +22,16 @@ export function TipTap({ documentId, documentTitle, collabToken, styles, setRefe
         document: doc,
         // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
         onOpen() {
-            console.log('WebSocket connection opened');
+            if(debug) console.log('WebSocket connection opened');
         },
         onConnect() {
-            console.log('Connected to the server.');
+            if(true) console.log('Connected to the server.');
         },
         onAuthenticated() {
-            console.log('Authenticated');
+            if(debug) console.log('Authenticated');
         },
         onAuthenticationFailed() {
-            console.log('Auth failed.');
+            if(debug) console.log('Auth failed.');
         },        
     });
 
