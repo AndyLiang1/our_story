@@ -223,10 +223,12 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
             console.log("Current location changed: ", currentLocationFlipbook)
             if (documentsWindow) {
                 if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
-                    // fetchData(documents[currentLocationFlipbook - 2].documentId)
+                    setDocumentId(documentsWindow.documents[currentLocationFlipbook-2].documentId);
+                    return 
                 }
                 if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
                     setDocumentId(documentsWindow.documents[0].documentId);
+                    return
                 }
             }
         }, [currentLocationFlipbook]);
@@ -256,9 +258,10 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
 
     const renderedPapers = () => {
         const renderedPages = [];
+        console.log("Render: ", documents.length + 1, pageStylesState.styles.length)
         if(documents.length + 1 !== pageStylesState.styles.length) return []
+        
         for (let index = 0; index < documents.length + 1; index++) {
-            console.log("In render pages: ", pageStylesState)
             const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
             const regularZIndex = pageStylesState.styles[index].regularZIndex;
             renderedPages.push(
