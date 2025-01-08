@@ -16,15 +16,16 @@ enum PAGE_STYLE_POSSIBLE_STATES {
     'GO_TO_PAGE_CALLED' = 'goToPageCalled',
     'GO_NEXT_PAGE_1' = 'goToNextPageState1SettingZIndexZero',
     'GO_NEXT_PAGE_2' = 'goToNextPageState2RestoringZIndex',
-    'GO_PREV' = 'goPrev'
+    'GO_PREV' = 'goPrev',
+    'REFETCH' = 'refetch'
 }
 
 export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is 
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2)
-    const [pageStylesState, setPageStylesState] = useState<any>(null);
+    const [pageStylesState, setPageStylesState] = useState<any>({state: PAGE_STYLE_POSSIBLE_STATES.INITIAL, styles: []});
     // given a param n, we will flip the first n papers.
-    const [goToPageCalled, setGoToPageCalled] = useState(0);
+    const [goToPageCalled, setGoToPageCalled] = useState<number | boolean>(false);
     const [nextPageTriggered, setNextPageTriggered] = useState(false);
     const [
         tempCurrentPageStylesStateForMovingToNextPage,
@@ -36,6 +37,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
         firstDocumentFlag: boolean;
         lastDocumentFlag: boolean;
     } | null>(null);
+    const [documentId, setDocumentId] = useState('')
     const documents = documentsWindow ? documentsWindow.documents : [];
 
     const fetchData = async (documentId: string | null) => {
@@ -50,6 +52,12 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
             setDocumentsWindow(documentsWindow);
         }
     };
+
+    useEffect(() => {
+        if(documentId) {
+            fetchData(documentId)
+        }
+    }, [documentId])
 
     useEffect(() => {
         if(user) fetchData(null)
@@ -94,7 +102,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 });
             }
             setPageStylesState({
-                state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
+                state: documentId ? PAGE_STYLE_POSSIBLE_STATES.REFETCH : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
                 styles
             });
         }
@@ -104,7 +112,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     let maxLocation = numOfPapers + 1;
 
     useEffect(() => {
-        if (goToPageCalled !== 0) {
+        if (typeof goToPageCalled === 'number') {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
             let styles = [];
@@ -140,7 +148,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 styles
             });
             setCurrentLocationFlipbook(goToPageCalled + 1);
-            setGoToPageCalled(0);
+            setGoToPageCalled(false);
         } else {
             if (pageStylesState) {
                 let styles = [];
@@ -198,6 +206,11 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
             setGoToPageCalled(documents.length);
         }
+        if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH) {
+            const index = documents.findIndex((doc) => doc.documentId === documentId);
+            console.log("FOUND INDEX: ", index)
+            setGoToPageCalled(index + 1);
+        }
     }, [pageStylesState]);
 
     useEffect(() => {
@@ -213,7 +226,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                     // fetchData(documents[currentLocationFlipbook - 2].documentId)
                 }
                 if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
-                    fetchData(documentsWindow.documents[0].documentId);
+                    setDocumentId(documentsWindow.documents[0].documentId);
                 }
             }
         }, [currentLocationFlipbook]);
