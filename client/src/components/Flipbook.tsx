@@ -48,7 +48,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 new Date(),
                 documentId
             );
-            console.log("Received: ", documentsWindow)
             setDocumentsWindow(documentsWindow);
         }
     };
@@ -90,7 +89,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
      */
 
     useEffect(() => {
-        console.log("Documents changed: ",documents)
         if (documents.length) {
             let styles = [];
             for (let i = 0; i < documents.length + 1; i++) {
@@ -195,7 +193,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
     useEffect(() => {
-        console.log("Page style state: ", pageStylesState)
         if (
             nextPageTriggered &&
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2
@@ -208,7 +205,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH) {
             const index = documents.findIndex((doc) => doc.documentId === documentId);
-            console.log("FOUND INDEX: ", index)
             setGoToPageCalled(index + 1);
         }
     }, [pageStylesState]);
@@ -220,7 +216,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     }, [currentLocationFlipbook]);
 
     useEffect(() => {
-            console.log("Current location changed: ", currentLocationFlipbook)
             if (documentsWindow) {
                 if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
                     setDocumentId(documentsWindow.documents[currentLocationFlipbook-2].documentId);
@@ -258,7 +253,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
 
     const renderedPapers = () => {
         const renderedPages = [];
-        console.log("Render: ", documents.length + 1, pageStylesState.styles.length)
         if(documents.length + 1 !== pageStylesState.styles.length) return []
         
         for (let index = 0; index < documents.length + 1; index++) {
