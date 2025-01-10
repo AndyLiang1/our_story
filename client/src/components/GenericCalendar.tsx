@@ -28,7 +28,6 @@ const formatShortWeekday = (locale: any, date: Date) => ['S', 'M', 'T', 'W', 'T'
 
 export function GenericCalendar({ events }: IGenericCalendarProps) {
     const [value, setValue] = useState<Value>(new Date());
-
     const addEventsToCalendarDay = ({ date, view }: any) => {
         if (view !== 'month') return null;
         const calendarDate = date.toISOString().split('T')[0];

@@ -2,12 +2,21 @@ import { Op } from '@sequelize/core';
 import { Transaction } from 'sequelize';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
-import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
+import {
+    DocumentCreationAttributes,
+    DocumentData,
+    PartialDocumentUpdateAttributes
+} from '../types/DocumentTypes';
 
 export class DocumentRepo {
     constructor() {}
 
-    async getDocuments(userId: string | null, startDate: Date | null, endDate: Date | null, hasUpdated: boolean | null) {
+    async getDocuments(
+        userId: string | null,
+        startDate: Date | null,
+        endDate: Date | null,
+        hasUpdated: boolean | null
+    ) {
         let whereObjectForDocuments: any = {};
         let whereObjectForUsers: any = {};
         if (startDate != null && endDate != null) {
@@ -37,11 +46,6 @@ export class DocumentRepo {
         return docs as unknown as DocumentData[];
     }
 
-    async getDocument(documentId: string) {
-        const doc = await Document.findByPk(documentId);
-        return doc as unknown as DocumentData | null;
-    }
-
     async getLatestDocument() {
         const doc = await Document.findAll({
             order: [['createdAt', 'DESC']],
@@ -53,8 +57,121 @@ export class DocumentRepo {
         return doc[0];
     }
 
+    async getDocument(documentId: string) {
+        const doc = await Document.findByPk(documentId, {
+            raw: true
+        });
+        console.log("Raw DB=======")
+        console.log(doc)
+        return doc as unknown as DocumentData | null;
+    }
+
+    async getNeighbouringDocuments(
+        userId: string | null,
+        eventDate: Date,
+        createdAt: Date | null
+    ) {
+        const isInitialLoad = createdAt === null;
+        let documents: DocumentData[] = [];
+        let firstDocumentFlag;
+        let lastDocumentFlag;
+        const queryObject: any = {
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    where: { userId: userId },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: []
+                }
+            ]
+        };
+        if (isInitialLoad) {
+            const mostRecentQueryObject = {
+                ...queryObject,
+                where: {
+                    eventDate: { [Op.lte]: new Date(eventDate).toISOString().split('T')[0] }
+                },
+                order: [
+                    ['eventDate', 'DESC'],
+                    ['createdAt', 'DESC']
+                ],
+                limit: 3 + 1 // includes itself
+            };
+            const mostRecentDocsInReversedChronologicalOrder =
+                await Document.findAll(mostRecentQueryObject);
+            const mostRecentDocuments = [...mostRecentDocsInReversedChronologicalOrder].reverse();
+            documents = [...mostRecentDocuments] as unknown as DocumentData[];
+            firstDocumentFlag = mostRecentDocuments.length < 4;
+            lastDocumentFlag = true;
+        } else {
+            const previousDocumentsQueryObject = {
+                ...queryObject,
+                where: {
+                    [Op.or]: [
+                        { eventDate: { [Op.lt]: new Date(eventDate).toISOString().split('T')[0] } },
+                        {
+                            [Op.and]: [
+                                { eventDate: new Date(eventDate).toISOString().split('T')[0] },
+                                { createdAt: { [Op.lt]: createdAt } }
+                            ]
+                        }
+                    ]
+                },
+                order: [
+                    ['eventDate', 'DESC'],
+                    ['createdAt', 'DESC']
+                ],
+                limit: 3
+            };
+            
+            const nextAndCurrDocumentsQueryObject = {
+                ...queryObject,
+                where: {
+                    [Op.or]: [
+                        { eventDate: { [Op.gt]: new Date(eventDate).toISOString().split('T')[0] } },
+                        {
+                            [Op.and]: [
+                                { eventDate: new Date(eventDate).toISOString().split('T')[0] },
+                                { createdAt: { [Op.gte]: createdAt } }
+                            ]
+                        }
+                    ]
+                },
+                order: [
+                    ['eventDate', 'ASC'],
+                    ['createdAt', 'ASC']
+                ],
+                limit: 3 + 1 // will always find one since it includes itself
+            };
+            const previousDocsInReversedChronologicalOrder = await Document.findAll(
+                previousDocumentsQueryObject
+            );
+
+            const previousDocuments = [...previousDocsInReversedChronologicalOrder].reverse();
+            const nextAndCurrDocuments = await Document.findAll(nextAndCurrDocumentsQueryObject);
+            documents = [
+                ...previousDocuments,
+                ...nextAndCurrDocuments
+            ] as unknown as DocumentData[];
+
+            console.log("prev: ", previousDocuments as unknown as DocumentData[])
+            console.log("next: ", nextAndCurrDocuments as unknown as DocumentData[])
+            firstDocumentFlag = previousDocuments.length < 3;
+            lastDocumentFlag = nextAndCurrDocuments.length < 4;
+        }
+
+        return {
+            documents,
+            firstDocumentFlag,
+            lastDocumentFlag
+        };
+    }
+
     async createDocument(documentData: DocumentCreationAttributes, transaction?: Transaction) {
-        const doc = await Document.create({ ...documentData }, { transaction });
+        const doc = await Document.create({ ...documentData, eventDate: new Date(documentData.eventDate).toISOString().split('T')[0]}, { transaction });
         return doc.getDataValue('documentId');
     }
 
