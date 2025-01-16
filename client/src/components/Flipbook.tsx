@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import BeatLoader from 'react-spinners/BeatLoader';
+import { getNeighbouringDocuments } from '../apis/documentApi';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 import { GenericCalendar } from './GenericCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTap } from './TipTap';
-import { getNeighbouringDocuments } from '../apis/documentApi';
 
 export interface IFlipbookProps {
     user: User;
@@ -20,10 +21,37 @@ enum PAGE_STYLE_POSSIBLE_STATES {
     'REFETCH' = 'refetch'
 }
 
+const loadingSpinnerPages = [
+    <div className={'paper'}>
+        <div className="front rotate-y-neg-180deg transition duration-0">
+            <div className="front-content"></div>
+        </div>
+        <div className="back rotate-y-neg-180deg transition duration-0">
+            <div className="back-content">
+                <BeatLoader color="#94bfff" size={50}></BeatLoader>
+            </div>
+        </div>
+    </div>,
+
+    <div className="paper">
+        <div className="front">
+            <div className="front-content">
+                <BeatLoader color="#94bfff" size={50}></BeatLoader>
+            </div>
+        </div>
+        <div className="back">
+            <div className="back-content"></div>
+        </div>
+    </div>
+];
+
 export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
-    // a location n is defined as where we see the FRONT of paper n. So a location of 2 is 
-    const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2)
-    const [pageStylesState, setPageStylesState] = useState<any>({state: PAGE_STYLE_POSSIBLE_STATES.INITIAL, styles: []});
+    // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
+    const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
+    const [pageStylesState, setPageStylesState] = useState<any>({
+        state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
+        styles: []
+    });
     // given a param n, we will flip the first n papers.
     const [goToPageCalled, setGoToPageCalled] = useState<number | boolean>(false);
     const [nextPageTriggered, setNextPageTriggered] = useState(false);
@@ -37,7 +65,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
         firstDocumentFlag: boolean;
         lastDocumentFlag: boolean;
     } | null>(null);
-    const [documentId, setDocumentId] = useState('')
+    const [documentId, setDocumentId] = useState('');
     const documents = documentsWindow ? documentsWindow.documents : [];
 
     const fetchData = async (documentId: string | null) => {
@@ -53,14 +81,14 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     };
 
     useEffect(() => {
-        if(documentId) {
-            fetchData(documentId)
+        if (documentId) {
+            fetchData(documentId);
         }
-    }, [documentId])
+    }, [documentId]);
 
     useEffect(() => {
-        if(user) fetchData(null)
-    }, [user])
+        if (user) fetchData(null);
+    }, [user]);
 
     /**
      * Important info:
@@ -100,7 +128,9 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 });
             }
             setPageStylesState({
-                state: documentId ? PAGE_STYLE_POSSIBLE_STATES.REFETCH : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
+                state: documentId
+                    ? PAGE_STYLE_POSSIBLE_STATES.REFETCH
+                    : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
                 styles
             });
         }
@@ -216,17 +246,17 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     }, [currentLocationFlipbook]);
 
     useEffect(() => {
-            if (documentsWindow) {
-                if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
-                    setDocumentId(documentsWindow.documents[currentLocationFlipbook-2].documentId);
-                    return 
-                }
-                if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
-                    setDocumentId(documentsWindow.documents[0].documentId);
-                    return
-                }
+        if (documentsWindow) {
+            if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
+                setDocumentId(documentsWindow.documents[currentLocationFlipbook - 2].documentId);
+                return;
             }
-        }, [currentLocationFlipbook]);
+            if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
+                setDocumentId(documentsWindow.documents[0].documentId);
+                return;
+            }
+        }
+    }, [currentLocationFlipbook]);
 
     /* End of next page useEffect chains */
 
@@ -253,8 +283,10 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
 
     const renderedPapers = () => {
         const renderedPages = [];
-        if(documents.length + 1 !== pageStylesState.styles.length) return []
-        
+        if (documents.length + 1 !== pageStylesState.styles.length) {
+            return loadingSpinnerPages;
+        }
+
         for (let index = 0; index < documents.length + 1; index++) {
             const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
             const regularZIndex = pageStylesState.styles[index].regularZIndex;
@@ -386,7 +418,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 R
             </button>
 
-            <div className="relative flex h-[95%] w-[90%] items-center justify-center border-black overflow-y-hidden">
+            <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book h-[80%] w-[30%] translate-x-[50%]`}>
                     {pageStylesState && pageStylesState.styles.length && renderedPapers()}
                 </div>
