@@ -129,12 +129,6 @@ body {
         background-position: bottom;
     }
 
-    .bg-notepad {
-        background-image: url('../public/brown_notepad.jpg');
-        background-size: cover;
-        background-position: center;
-    }
-
     .react-calendar {
         @apply h-full w-full rounded-[2rem] bg-[url("../public/calendar_bg2.jpg")] bg-cover bg-center p-2;
     }
