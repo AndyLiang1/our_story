@@ -248,7 +248,6 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     }, [currentLocationFlipbook]);
 
     useEffect(() => {
-        console.log('Current loc: ', currentLocationFlipbook);
         if (documentsWindow) {
             if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
                 setDocumentId(documentsWindow.documents[currentLocationFlipbook - 2].documentId);
@@ -384,7 +383,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                         }
                     >
                         <div className="back-content">
-                            {index < documents.length && index === currentLocationFlipbook - 2 && (
+                            {index < documents.length && (
                                 <TipTapCollab
                                     key={documents[index].documentId}
                                     documentId={documents[index].documentId}
@@ -392,15 +391,8 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                                     setRefetchTrigger={setRefetchTrigger}
                                     collabToken={user.collabToken}
                                     styles="h-full w-full"
+                                    collabFlag = {index === currentLocationFlipbook - 2}
                                 />
-                            )}
-                            {index < documents.length && index !== currentLocationFlipbook - 2 && (
-                                <TipTapNonCollab  key={documents[index].documentId}
-                                documentId={documents[index].documentId}
-                                documentTitle={documents[index].title}
-                                setRefetchTrigger={setRefetchTrigger}
-                                collabToken={user.collabToken} styles="h-full w-full"/>
-                                
                             )}
                         </div>
                     </div>

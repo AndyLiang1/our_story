@@ -11,6 +11,9 @@ export interface ITipTapCollabProps {
     collabToken: string;
     styles: string;
     setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
+    collabFlag?: boolean;
+    index?: number;
+    desiredLoc?: number;
 }
 
 export function TipTapCollab({
@@ -19,6 +22,9 @@ export function TipTapCollab({
     collabToken,
     styles,
     setRefetchTrigger,
+    collabFlag = true,
+    index,
+    desiredLoc
 }: ITipTapCollabProps) {
     const [providerAndDoc, setProviderAndDoc] = useState<any>(null);
     // const provider = new TiptapCollabProvider({
@@ -42,35 +48,40 @@ export function TipTapCollab({
     // });
     useEffect(() => {
         const debug = false;
-        const doc = new Y.Doc();
-        const provider = new TiptapCollabProvider({
-            name: documentId, // Unique document identifier for syncing. This is your document name.
-            appId: `${config.tiptapProvider.appId}`, // Your Cloud Dashboard AppID or `baseURL` for on-premises
-            token: collabToken,
-            document: doc,
-            // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
-            onOpen() {
-                if (debug) console.log('WebSocket connection opened');
-            },
-            onConnect() {
-                if (true) console.log('Connected to the server.');
-            },
-            onAuthenticated() {
-                if (debug) console.log('Authenticated');
-            },
-            onAuthenticationFailed() {
-                if (debug) console.log('Auth failed.');
-            }
-        });
+        const doc: any = (collabFlag) ? new Y.Doc() : null;
+        let provider: any = null;
+        if (collabFlag) {
+            provider = new TiptapCollabProvider({
+                name: documentId, // Unique document identifier for syncing. This is your document name.
+                appId: `${config.tiptapProvider.appId}`, // Your Cloud Dashboard AppID or `baseURL` for on-premises
+                token: collabToken,
+                document: doc,
+                // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
+                onOpen() {
+                    if (debug) console.log('WebSocket connection opened');
+                },
+                onConnect() {
+                    if (true) console.log('Connected to the server.');
+                },
+                onAuthenticated() {
+                    if (debug) console.log('Authenticated');
+                },
+                onAuthenticationFailed() {
+                    if (debug) console.log('Auth failed.');
+                }
+            });
+            
+        }
+
         setProviderAndDoc({
             doc,
             provider
         });
 
-        return ()=> {
-            if(provider) provider.destroy()
-        }
-    }, []);
+        return () => {
+            if (provider) provider.destroy();
+        };
+    }, [collabFlag]);
 
     return (
         providerAndDoc && (

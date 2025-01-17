@@ -1,7 +1,10 @@
+// this code is from a github issue somewhere, I think it was to deal with flickers
+// https://github.com/ueberdosis/tiptap/issues/2040
+
 import { Editor, EditorOptions } from '@tiptap/react';
 import { useEffect, useRef, useState } from 'react';
 
-export const useEditor = (options: Partial<EditorOptions> = {}, deps = []) => {
+export const useEditor = (options: Partial<EditorOptions> = {}, deps: any[] = []) => {
     const editorRef = useRef<Editor | null>(null);
     const [_, forceUpdate] = useState({});
 
