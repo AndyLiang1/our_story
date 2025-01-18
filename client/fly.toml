@@ -17,7 +17,7 @@ primary_region = 'sea'
   processes = ['app']
 
 [[vm]]
-  memory = '1gb'
+  memory = '1.5gb'
   cpu_kind = 'shared'
   cpus = 1
 

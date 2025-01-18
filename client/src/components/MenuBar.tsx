@@ -22,7 +22,7 @@ export function MenuBar({ editor }: IMenuBarProps) {
     }
 
     return (
-        <div className="flex h-[5%] w-full justify-start rounded-t-[2.8rem] bg-gray-100 pl-[1.5rem]">
+        <div className="flex h-[5%] w-full justify-start bg-gray-100 pl-[1.5rem]">
             <button
                 className={
                     'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'

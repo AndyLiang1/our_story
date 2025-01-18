@@ -17,21 +17,32 @@ import Text from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
+import { editDocumentTitle } from '../apis/documentApi';
+// import { useEditor } from '../hooks/useEditor';
 import { useEditor } from '../hooks/useEditor';
 import { MenuBar } from './MenuBar';
-import { editDocumentTitle } from '../apis/documentApi';
 
 export interface IEditorProps {
-    ydoc: any;
-    provider: any;
+    ydoc?: any;
+    provider?: any;
     styles: string;
     collabToken: string;
     documentId: string;
     documentTitle: string;
     setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
+    collabFlag?: boolean;
 }
 
-const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle, setRefetchTrigger}: IEditorProps) => {
+const Editor = ({
+    ydoc,
+    provider,
+    styles,
+    collabToken,
+    documentId,
+    documentTitle,
+    setRefetchTrigger,
+    collabFlag = true
+}: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
     const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');
@@ -47,63 +58,96 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
     }, [title]);
 
     useEffect(() => {
-        const updateDocumentTitle = async() => {
-            await editDocumentTitle(collabToken, title, documentId)
-            setRefetchTrigger({})
-        }
+        const updateDocumentTitle = async () => {
+            await editDocumentTitle(collabToken, title, documentId);
+            setRefetchTrigger({});
+        };
         if (debouncedValue && title !== documentTitle) {
-            updateDocumentTitle()
+            updateDocumentTitle();
         }
     }, [debouncedValue]);
 
-    const editor = useEditor({
-        // onCreate: ({ editor: currentEditor }) => {
-        //     provider.on('synced', () => {
-        //         if (currentEditor.isEmpty) {
-        //             currentEditor.commands.setContent('Hwllo');
-        //         }
-        //     });
-        // },
-        onUpdate: () => {
-            if (!updatedHasChangedFlag) {
-                updatedHasChangedFlag = true;
-            }
-        },
-        extensions: [
-            Document,
-            Paragraph,
-            Text,
-            Bold,
-            Italic,
-            Strike,
-            Highlight.configure({
-                multicolor: true
-                // Highlight styling set by index.css
-            }),
-            Heading.configure({
-                levels: [1, 2, 3]
-            }),
-            TextAlign.configure({
-                types: ['heading', 'paragraph']
-            }),
-            BulletList,
-            OrderedList,
-            ListItem,
-            Code,
-            CodeBlock,
-            HardBreak,
-            Collaboration.configure({
-                document: ydoc
-            }),
-            CollaborationCursor.configure({
-                provider: provider,
-                user: {
-                    name: 'Andy Arya',
-                    color: '#e0f6ff'
-                }
-            })
-        ]
+    useEffect(() => {
+        console.log(documentTitle, ' ', ydoc, ' ', provider);
     });
+
+    const editor = useEditor(
+        {
+            // onCreate: ({ editor: currentEditor }) => {
+            //     provider.on('synced', () => {
+            //         if (currentEditor.isEmpty) {
+            //             currentEditor.commands.setContent('Hwllo');
+            //         }
+            //     });
+            // },
+            // onUpdate: () => {
+            //     if (!updatedHasChangedFlag) {
+            //         updatedHasChangedFlag = true;
+            //     }
+            // },
+            extensions:
+                ydoc && provider
+                    ? [
+                          Document,
+                          Paragraph,
+                          Text,
+                          Bold,
+                          Italic,
+                          Strike,
+                          Highlight.configure({
+                              multicolor: true
+                              // Highlight styling set by index.css
+                          }),
+                          Heading.configure({
+                              levels: [1, 2, 3]
+                          }),
+                          TextAlign.configure({
+                              types: ['heading', 'paragraph']
+                          }),
+                          BulletList,
+                          OrderedList,
+                          ListItem,
+                          Code,
+                          CodeBlock,
+                          HardBreak,
+                          Collaboration.configure({
+                              document: ydoc
+                          }),
+                          CollaborationCursor.configure({
+                              provider: provider,
+                              user: {
+                                  name: 'Andy Arya',
+                                  color: '#e0f6ff'
+                              }
+                          })
+                      ]
+                    : [
+                          Document,
+                          Paragraph,
+                          Text,
+                          Bold,
+                          Italic,
+                          Strike,
+                          Highlight.configure({
+                              multicolor: true
+                              // Highlight styling set by index.css
+                          }),
+                          Heading.configure({
+                              levels: [1, 2, 3]
+                          }),
+                          TextAlign.configure({
+                              types: ['heading', 'paragraph']
+                          }),
+                          BulletList,
+                          OrderedList,
+                          ListItem,
+                          Code,
+                          CodeBlock,
+                          HardBreak
+                      ],
+        },
+        [ydoc, provider]
+    );
 
     useEffect(() => {
         // Update status changes
@@ -111,30 +155,35 @@ const Editor = ({ ydoc, provider, styles, collabToken, documentId, documentTitle
             setStatus(event.status);
         };
 
-        provider.on('status', statusHandler);
+        if (provider) provider.on('status', statusHandler);
 
         return () => {
-            provider.off('status', statusHandler);
+            if (provider) provider.off('status', statusHandler);
         };
     }, [provider]);
 
     useEffect(() => {
         if (editor && !editor.isActive('highlight')) {
-            editor.chain().focus().toggleHighlight().run()
+            editor.chain().focus().toggleHighlight().run();
         }
     }, [editor?.isActive('highlight')]);
 
     return (
         <div className="h-full w-full">
-            <MenuBar editor={editor} />
-            <div className="bg-notepad flex h-[95%] w-full flex-col rounded-b-[2.8rem] pl-[1.5rem] shadow-[0.5rem_0.5rem_2.8rem_rgba(0,0,0,0.2)]">
-                <input
-                    className="h-[5%] w-full border-none bg-transparent text-center"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <EditorContent className="editor__content h-[95%] w-full pt-2 " editor={editor} />
-            </div>
+            {editor && <MenuBar editor={editor} />}
+            {editor && (
+                <div className="flex h-[95%] w-full flex-col pl-[1.5rem]">
+                    <input
+                        className="h-[5%] w-full border-none bg-transparent text-center"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <EditorContent
+                        className="editor__content h-[95%] w-full pt-2"
+                        editor={editor}
+                    />
+                </div>
+            )}
         </div>
     );
 };

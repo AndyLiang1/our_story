@@ -5,7 +5,8 @@ import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 import { GenericCalendar } from './GenericCalendar';
 import { ImageCarousel } from './ImageCarousel';
-import { TipTap } from './TipTap';
+import { TipTapCollab } from './TipTapCollab';
+import { TipTapNonCollab } from './TipTapNonCollab';
 
 export interface IFlipbookProps {
     user: User;
@@ -47,12 +48,13 @@ const loadingSpinnerPages = [
 
 export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
+    // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
     const [pageStylesState, setPageStylesState] = useState<any>({
         state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
         styles: []
     });
-    // given a param n, we will flip the first n papers.
+    // given a param n, we will flip the first n papers (not zero indexed?).
     const [goToPageCalled, setGoToPageCalled] = useState<number | boolean>(false);
     const [nextPageTriggered, setNextPageTriggered] = useState(false);
     const [
@@ -307,7 +309,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                             'front' +
                             (pageStylesState.styles[index].goToPageTriggered
                                 ? ' transition duration-0'
-                                : ' transition duration-1000') +
+                                : ' transition duration-[1500ms]') +
                             (pageStylesState.styles[index].flipped || index === 0
                                 ? ' rotate-y-neg-180deg'
                                 : '')
@@ -374,7 +376,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                             'back' +
                             (pageStylesState.styles[index].goToPageTriggered
                                 ? ' transition duration-0'
-                                : ' transition duration-1000') +
+                                : ' transition duration-[1500ms]') +
                             (pageStylesState.styles[index].flipped || index === 0
                                 ? ' rotate-y-neg-180deg'
                                 : '')
@@ -382,13 +384,14 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                     >
                         <div className="back-content">
                             {index < documents.length && (
-                                <TipTap
+                                <TipTapCollab
                                     key={documents[index].documentId}
                                     documentId={documents[index].documentId}
                                     documentTitle={documents[index].title}
                                     setRefetchTrigger={setRefetchTrigger}
                                     collabToken={user.collabToken}
                                     styles="h-full w-full"
+                                    collabFlag = {index === currentLocationFlipbook - 2}
                                 />
                             )}
                         </div>
