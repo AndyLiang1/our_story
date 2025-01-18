@@ -18,7 +18,6 @@ import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 import { editDocumentTitle } from '../apis/documentApi';
-// import { useEditor } from '../hooks/useEditor';
 import { useEditor } from '../hooks/useEditor';
 import { MenuBar } from './MenuBar';
 
@@ -66,10 +65,6 @@ const Editor = ({
             updateDocumentTitle();
         }
     }, [debouncedValue]);
-
-    useEffect(() => {
-        console.log(documentTitle, ' ', ydoc, ' ', provider);
-    });
 
     const editor = useEditor(
         {

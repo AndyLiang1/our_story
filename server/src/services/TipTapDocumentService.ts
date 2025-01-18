@@ -8,7 +8,7 @@ export class TipTapDocumentService {
     async createDocument(documentId: string, document: DocumentCreationAttributes) {
         await axios.post(`${config.tiptap.restApiUrl}/${documentId}?format=json`, document.documentContent, {
             headers: {
-                Authorization: config.tiptap.apiSecret, // Add your token here,
+                Authorization: config.tiptap.apiSecret, 
                 'Content-Type': 'application/json'
             }
         });
