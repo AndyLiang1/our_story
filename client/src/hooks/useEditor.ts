@@ -1,5 +1,5 @@
-// this code is from a github issue somewhere, I think it was to deal with flickers
-// https://github.com/ueberdosis/tiptap/issues/2040
+// this code is to deal with collab cursor flickering
+// https://github.com/ueberdosis/tiptap/issues/4482#issuecomment-1866686151
 
 import { Editor, EditorOptions } from '@tiptap/react';
 import { useEffect, useRef, useState } from 'react';
