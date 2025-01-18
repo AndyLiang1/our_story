@@ -23,7 +23,6 @@ export const getAllDocuments = async (
             eventDate: moment.utc(document.eventDate).local().format('YYYY-MM-DD')
         };
     });
-    console.log('Returning documents: ', documents);
     return documents;
 };
 

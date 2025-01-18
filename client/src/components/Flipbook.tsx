@@ -6,7 +6,6 @@ import { User } from '../types/UserTypes';
 import { GenericCalendar } from './GenericCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
-import { TipTapNonCollab } from './TipTapNonCollab';
 
 export interface IFlipbookProps {
     user: User;
@@ -391,7 +390,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                                     setRefetchTrigger={setRefetchTrigger}
                                     collabToken={user.collabToken}
                                     styles="h-full w-full"
-                                    collabFlag = {index === currentLocationFlipbook - 2}
+                                    collabFlag={index === currentLocationFlipbook - 2}
                                 />
                             )}
                         </div>

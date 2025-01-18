@@ -44,15 +44,14 @@ export class DocumentService {
     async getDocument(documentId: string) {
         if(!documentId) return null
         const docFromDB: DocumentData | null = await this.documentRepo.getDocument(documentId);
-        console.log("Doc from db==========")
-        console.log(docFromDB)
-        // const docFromTipTap = await services.tiptapDocumentService.getDocument(documentId);
+
+        const docFromTipTap = await services.tiptapDocumentService.getDocument(documentId);
         let data = null;
         if (docFromDB) {
             data = {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,
-                // documentContent: docFromTipTap,
+                documentContent: docFromTipTap,
                 documentContent: [],
                 createdAt: docFromDB.createdAt,
                 updatedAt: docFromDB.updatedAt,
@@ -77,8 +76,6 @@ export class DocumentService {
 
     async createDocument(documentData: DocumentCreationAttributes) {
         return await sequelize.transaction(async (transaction) => {
-
-            // console.log({...documentData, eventDate: new Date(moment(documentData.eventDate).format('YYYY-MM-DD'))})
             const newDocId: string = await this.documentRepo.createDocument(
                 {...documentData},
                 transaction

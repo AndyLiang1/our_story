@@ -61,8 +61,6 @@ export class DocumentRepo {
         const doc = await Document.findByPk(documentId, {
             raw: true
         });
-        console.log("Raw DB=======")
-        console.log(doc)
         return doc as unknown as DocumentData | null;
     }
 
@@ -156,9 +154,6 @@ export class DocumentRepo {
                 ...previousDocuments,
                 ...nextAndCurrDocuments
             ] as unknown as DocumentData[];
-
-            console.log("prev: ", previousDocuments as unknown as DocumentData[])
-            console.log("next: ", nextAndCurrDocuments as unknown as DocumentData[])
             firstDocumentFlag = previousDocuments.length < 3;
             lastDocumentFlag = nextAndCurrDocuments.length < 4;
         }
