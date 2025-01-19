@@ -96,7 +96,7 @@ export class DocumentRepo {
                     ['eventDate', 'DESC'],
                     ['createdAt', 'DESC']
                 ],
-                limit: 3 + 1 // includes itself
+                limit: 10 + 1 // includes itself
             };
             const mostRecentDocsInReversedChronologicalOrder =
                 await Document.findAll(mostRecentQueryObject);
@@ -142,7 +142,7 @@ export class DocumentRepo {
                     ['eventDate', 'ASC'],
                     ['createdAt', 'ASC']
                 ],
-                limit: 3 + 1 // will always find one since it includes itself
+                limit: 7 + 1 // will always find one since it includes itself
             };
             const previousDocsInReversedChronologicalOrder = await Document.findAll(
                 previousDocumentsQueryObject
