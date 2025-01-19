@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { DocumentData } from '../types/DocumentTypes';
@@ -68,6 +69,9 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     } | null>(null);
     const [documentId, setDocumentId] = useState('');
     const documents = documentsWindow ? documentsWindow.documents : [];
+    const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true
+    const lastDocumentFlag = documentsWindow ? documentsWindow.lastDocumentFlag : true
+    const [arrowClickPause, setArrowClickPause] = useState(false);
 
     const fetchData = async (documentId: string | null) => {
         if (user && user.collabToken) {
@@ -308,7 +312,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                             'front' +
                             (pageStylesState.styles[index].goToPageTriggered
                                 ? ' transition duration-0'
-                                : ' transition duration-[1500ms]') +
+                                : ' transition duration-[1000ms]') +
                             (pageStylesState.styles[index].flipped || index === 0
                                 ? ' rotate-y-neg-180deg'
                                 : '')
@@ -375,7 +379,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                             'back' +
                             (pageStylesState.styles[index].goToPageTriggered
                                 ? ' transition duration-0'
-                                : ' transition duration-[1500ms]') +
+                                : ' transition duration-[1000ms]') +
                             (pageStylesState.styles[index].flipped || index === 0
                                 ? ' rotate-y-neg-180deg'
                                 : '')
@@ -403,23 +407,33 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
 
     return (
         <div className="flex h-full w-full items-center justify-center">
-            <button
-                className="absolute left-10"
-                onClick={() => {
+            {!(firstDocumentFlag && currentLocationFlipbook === 2) && <button
+                className={"absolute left-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] " + (arrowClickPause ? "text-gray-300" : "text-white")}
+                onClick={async () => {
+                    if (arrowClickPause) return;
+                    setArrowClickPause(true);
                     goPrevPage();
+                    setTimeout(() => {
+                        setArrowClickPause(false);
+                    }, 1500);
                 }}
             >
-                L
-            </button>
-            <button
-                className="absolute right-10"
-                onClick={() => {
+                <FaChevronLeft />
+            </button>}
+            {!(lastDocumentFlag && currentLocationFlipbook === maxLocation - 1) &&  <button
+                onClick={async () => {
+                    if (arrowClickPause) return
+                    setArrowClickPause(true);
                     setNextPageTriggered(true);
+                    setTimeout(() => {
+                        setArrowClickPause(false);
+                    }, 1500);
                 }}
+                className={"absolute right-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] " + (arrowClickPause ? "text-gray-300" : "text-white")}
+                disabled={arrowClickPause}
             >
-                R
-            </button>
-
+                <FaChevronRight />
+            </button>}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book h-[80%] w-[30%] translate-x-[50%]`}>
                     {pageStylesState && pageStylesState.styles.length && renderedPapers()}
