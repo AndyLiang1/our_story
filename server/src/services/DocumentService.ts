@@ -52,7 +52,6 @@ export class DocumentService {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,
                 documentContent: docFromTipTap,
-                documentContent: [],
                 createdAt: docFromDB.createdAt,
                 updatedAt: docFromDB.updatedAt,
                 eventDate: new Date(docFromDB.eventDate),
