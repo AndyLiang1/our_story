@@ -1,14 +1,7 @@
-import moment from 'moment';
 import sequelize from '../db';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
-import {
-    DocumentCreationAttributes,
-    DocumentData,
-    DocumentOwnerData,
-    DocumentsWithFlags,
-    PartialDocumentUpdateAttributes
-} from '../types/DocumentTypes';
+import { DocumentCreationAttributes, DocumentData, DocumentOwnerData, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import { services } from './services';
 export class DocumentService {
     documentRepo: DocumentRepo;
@@ -42,7 +35,7 @@ export class DocumentService {
     }
 
     async getDocument(documentId: string) {
-        if(!documentId) return null
+        if (!documentId) return null;
         const docFromDB: DocumentData | null = await this.documentRepo.getDocument(documentId);
 
         const docFromTipTap = await services.tiptapDocumentService.getDocument(documentId);
@@ -63,22 +56,16 @@ export class DocumentService {
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
-        const currDocument: DocumentData | null = (await this.getDocument(
-            documentId as string
-        )) as unknown as DocumentData | null;
+        const currDocument: DocumentData | null = (await this.getDocument(documentId as string)) as unknown as DocumentData | null;
         const eventDate = currDocument ? currDocument.eventDate : new Date();
         const createdAt = currDocument ? currDocument.createdAt : null;
-        const docsFromDBAndFlags: DocumentsWithFlags =
-            await this.documentRepo.getNeighbouringDocuments(userId, eventDate, createdAt);
+        const docsFromDBAndFlags: DocumentsWithFlags = await this.documentRepo.getNeighbouringDocuments(userId, eventDate, createdAt);
         return docsFromDBAndFlags;
     }
 
     async createDocument(documentData: DocumentCreationAttributes) {
         return await sequelize.transaction(async (transaction) => {
-            const newDocId: string = await this.documentRepo.createDocument(
-                {...documentData},
-                transaction
-            );
+            const newDocId: string = await this.documentRepo.createDocument({ ...documentData }, transaction);
 
             const owner = await this.documentOwnerRepo.creatDocumentOwner(
                 {
@@ -109,9 +96,7 @@ export class DocumentService {
         const docsThatNeedUpdating = await this.documentRepo.getDocuments(null, null, null, true);
 
         for (const docThatNeedsUpdated of docsThatNeedUpdating) {
-            const docFromTipTap = await services.tiptapDocumentService.getDocument(
-                docThatNeedsUpdated.documentId
-            );
+            const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId);
             this.updateDocument(docThatNeedsUpdated.documentId, {
                 documentContent: docFromTipTap.content
             });

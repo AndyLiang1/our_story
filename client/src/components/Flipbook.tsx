@@ -4,7 +4,7 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
-import { GenericCalendar } from './GenericCalendar';
+import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
 
@@ -68,7 +68,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
         lastDocumentFlag: boolean;
     } | null>(null);
     const [documentId, setDocumentId] = useState('');
-    const documents = documentsWindow ? documentsWindow.documents : [];
+    const documentsFlipBook = documentsWindow ? documentsWindow.documents : [];
     const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true
     const lastDocumentFlag = documentsWindow ? documentsWindow.lastDocumentFlag : true
     const [arrowClickPause, setArrowClickPause] = useState(false);
@@ -122,12 +122,12 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
      */
 
     useEffect(() => {
-        if (documents.length) {
+        if (documentsFlipBook.length) {
             let styles = [];
-            for (let i = 0; i < documents.length + 1; i++) {
+            for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 styles.push({
                     flipped: i !== 0 ? false : true,
-                    regularZIndex: i === 0 ? documents.length - i + 1 : documents.length - i + 2, // mocking one flip for the others
+                    regularZIndex: i === 0 ? documentsFlipBook.length - i + 1 : documentsFlipBook.length - i + 2, // mocking one flip for the others
                     flippedZIndex: i + 1,
                     goToPageTriggered: true
                 });
@@ -139,9 +139,9 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 styles
             });
         }
-    }, [documents]);
+    }, [documentsFlipBook]);
 
-    let numOfPapers = documents.length + 1;
+    let numOfPapers = documentsFlipBook.length + 1;
     let maxLocation = numOfPapers + 1;
 
     useEffect(() => {
@@ -149,7 +149,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
             let styles = [];
-            for (let i = 0; i < documents.length + 1; i++) {
+            for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 if (i === 0) {
                     styles.push({
                         ...pageStylesState.styles[i],
@@ -185,7 +185,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
         } else {
             if (pageStylesState) {
                 let styles = [];
-                for (let i = 0; i < documents.length + 1; i++) {
+                for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                     styles.push({ ...pageStylesState.styles[i], goToPageTriggered: false });
                 }
                 setPageStylesState({
@@ -208,7 +208,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
                 // just set em all to negative values.
                 let styles = [];
-                for (let i = 0; i < documents.length + 1; i++) {
+                for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                     if (i === currentLocationFlipbook - 1)
                         styles.push({ ...pageStylesState.styles[i], flipped: true });
                     else if (i > currentLocationFlipbook - 1)
@@ -236,10 +236,10 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
             return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
-            setGoToPageCalled(documents.length);
+            setGoToPageCalled(documentsFlipBook.length);
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH) {
-            const index = documents.findIndex((doc) => doc.documentId === documentId);
+            const index = documentsFlipBook.findIndex((doc) => doc.documentId === documentId);
             setGoToPageCalled(index + 1);
         }
     }, [pageStylesState]);
@@ -253,11 +253,11 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     useEffect(() => {
         if (documentsWindow) {
             if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
-                setDocumentId(documentsWindow.documents[currentLocationFlipbook - 2].documentId);
+                setDocumentId(documentsFlipBook[currentLocationFlipbook - 2].documentId);
                 return;
             }
             if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
-                setDocumentId(documentsWindow.documents[0].documentId);
+                setDocumentId(documentsFlipBook[0].documentId);
                 return;
             }
         }
@@ -268,7 +268,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
     const goPrevPage = () => {
         if (currentLocationFlipbook > 2) {
             let styles = [];
-            for (let i = 0; i < documents.length + 1; i++) {
+            for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 if (i === currentLocationFlipbook - 2)
                     styles.push({ ...pageStylesState.styles[i], flipped: false });
                 else if (i > currentLocationFlipbook - 2)
@@ -288,11 +288,11 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
 
     const renderedPapers = () => {
         const renderedPages = [];
-        if (documents.length + 1 !== pageStylesState.styles.length) {
+        if (documentsFlipBook.length + 1 !== pageStylesState.styles.length) {
             return loadingSpinnerPages;
         }
 
-        for (let index = 0; index < documents.length + 1; index++) {
+        for (let index = 0; index < documentsFlipBook.length + 1; index++) {
             const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
             const regularZIndex = pageStylesState.styles[index].regularZIndex;
             renderedPages.push(
@@ -324,7 +324,7 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                             ) {
                                 const restoreZIndices = () => {
                                     let styles = [];
-                                    for (let i = 0; i < documents.length + 1; i++) {
+                                    for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                                         if (i > currentLocationFlipbook - 1)
                                             styles.push({
                                                 ...pageStylesState.styles[i],
@@ -347,26 +347,22 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                             {index > 0 && (
                                 <div className="flex h-full w-full flex-col items-center justify-evenly p-[2rem]">
                                     <div className="h-[52%] w-full">
-                                        {user && documents.length && (
+                                        {user && documentsFlipBook.length && (
                                             <ImageCarousel
                                                 collabToken={user.collabToken}
-                                                documentId={documents[index - 1].documentId}
+                                                documentId={documentsFlipBook[index - 1].documentId}
                                                 imageNames={[]}
                                                 setImageNames={() => {}}
                                             />
                                         )}
                                     </div>
-                                    <div className="h-[2%] w-full"></div>
+                                    <div className="h-[2%] w-full">{index}</div>
                                     <div className="h-[45%] w-full">
-                                        {documents && documents.length && (
-                                            <GenericCalendar
-                                                events={documents.map((doc) => {
-                                                    return {
-                                                        id: doc.documentId,
-                                                        name: doc.title,
-                                                        date: doc.eventDate
-                                                    };
-                                                })}
+                                        {documentsFlipBook && documentsFlipBook.length && (
+                                            <DateCalendar
+                                                userId={user.userId}
+                                                collabToken={user.collabToken}
+                                                disabled={index !== currentLocationFlipbook - 1}
                                             />
                                         )}
                                     </div>
@@ -386,11 +382,11 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                         }
                     >
                         <div className="back-content">
-                            {index < documents.length && (
+                            {index < documentsFlipBook.length && (
                                 <TipTapCollab
-                                    key={documents[index].documentId}
-                                    documentId={documents[index].documentId}
-                                    documentTitle={documents[index].title}
+                                    key={documentsFlipBook[index].documentId}
+                                    documentId={documentsFlipBook[index].documentId}
+                                    documentTitle={documentsFlipBook[index].title}
                                     setRefetchTrigger={setRefetchTrigger}
                                     collabToken={user.collabToken}
                                     styles="h-full w-full"

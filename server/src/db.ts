@@ -1,18 +1,17 @@
+import pg from 'pg';
 import { Sequelize } from 'sequelize';
 import { config } from './config/config';
-import pg from 'pg'
 
 // https://github.com/sequelize/sequelize/issues/3000
-pg.types.setTypeParser(1114, (str:string) => new Date((str.split(' ').join('T'))+'Z'));
+pg.types.setTypeParser(1114, (str: string) => new Date(str.split(' ').join('T') + 'Z'));
 
 const sequelize = new Sequelize(config.postgres.url, {
     dialect: 'postgres',
-    timezone: '+00:00',
+    timezone: '+00:00' // possibly not needed
 });
 
 export const initDb = async () => {
     try {
-        
         await sequelize.authenticate();
         console.log('Database connection established');
     } catch (error) {

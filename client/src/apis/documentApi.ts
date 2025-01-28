@@ -1,7 +1,10 @@
 import axios from 'axios';
-import moment from 'moment';
 import { config } from '../config/config';
-import { DocumentCreationAttributes, DocumentData, DocumentsWithFlags } from '../types/DocumentTypes';
+import {
+    DocumentCreationAttributes,
+    DocumentData,
+    DocumentsWithFlags
+} from '../types/DocumentTypes';
 export const getAllDocuments = async (
     userId: string,
     collabToken: string,
@@ -20,10 +23,38 @@ export const getAllDocuments = async (
     const documents: DocumentData[] = data.map((document: DocumentData) => {
         return {
             ...document,
-            eventDate: moment.utc(document.eventDate).local().format('YYYY-MM-DD')
+            eventDate: new Date(document.eventDate)
         };
     });
     return documents;
+};
+
+export const getDocumentsInMonth = async (
+    dateWhoseMonthToSearchFor: Date,
+    userId: string,
+    collabToken: string
+) => {
+    const { firstDateOfMonth, lastDateOfMonth } =
+        getFirstAndLastDayOfMonth(dateWhoseMonthToSearchFor);
+    const url = `${config.baseUrl}/api/documents?userId=${userId}&startDate=${firstDateOfMonth}&endDate=${lastDateOfMonth}`;
+    const { data } = await axios.get(url, {
+        headers: {
+            Authorization: `Bearer ${collabToken}`
+        }
+    });
+    const documents: DocumentData[] = data.map((document: DocumentData) => {
+        return {
+            ...document,
+            eventDate: new Date(document.eventDate)
+        };
+    });
+    return documents;
+};
+
+const getFirstAndLastDayOfMonth = (currentDate: Date) => {
+    const firstDateOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const lastDateOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    return { firstDateOfMonth, lastDateOfMonth };
 };
 
 export const getNeighbouringDocuments = async (
@@ -54,7 +85,7 @@ export const createDocument = async (
 ) => {
     await axios.post(
         `${config.baseUrl}/api/documents`,
-        { ...documentData, eventDate: moment.utc(documentData.eventDate).toDate() },
+        { ...documentData, eventDate: new Date(documentData.eventDate) },
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`

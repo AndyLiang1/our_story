@@ -31,7 +31,6 @@ export class DocumentController {
         const userId = req.query.userId ? (req.query.userId as string) : null;
         const startDate = req.query.startDate ? new Date(req.query.startDate as string) : null;
         const endDate = req.query.endDate ? new Date(req.query.endDate as string) : null;
-
         const neighbouringDocs = req.query.neighbouringDocs === 'true' ? true : null;
         const documentId = req.query.documentId !== 'null' ? (req.query.documentId as string): null
 
