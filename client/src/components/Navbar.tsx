@@ -3,10 +3,10 @@ import { User } from "../types/UserTypes";
 import { useState } from "react";
 
 export interface INavBarProps {
-    setShowForm: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function NavBar({setShowForm}: INavBarProps) {
+export function NavBar({setShowCreateDocumentForm}: INavBarProps) {
     const navigate = useNavigate();
     const [user, setUser] = useState<User>(useLocation().state);
 
@@ -17,6 +17,6 @@ export function NavBar({setShowForm}: INavBarProps) {
         <div className="h-full w-[10%] text-[1.2rem] flex justify-center items-center text-center cursor-pointer" onClick = {() => {
             navigate('/stories', { state: user })
         }}>Stories</div>
-        <div className="h-full w-[10%] text-[1.2rem] flex justify-center items-center text-center cursor-pointer" onClick = {() => {setShowForm(true)}}>Create</div>
+        <div className="h-full w-[10%] text-[1.2rem] flex justify-center items-center text-center cursor-pointer" onClick = {() => {setShowCreateDocumentForm(true)}}>Create</div>
     </div>;
 }

@@ -10,7 +10,7 @@ import { GenericFormInput } from './GenericFormInput';
 
 export interface ICreateDocumentFormProps {
     user: User;
-    setShowForm: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
     setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
 }
 
@@ -19,7 +19,7 @@ type CreateDocumentFormData = {
     eventDate: Date;
 };
 
-export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICreateDocumentFormProps) {
+export function CreateDocumentForm({ user, setShowCreateDocumentForm, setRefetchTrigger }: ICreateDocumentFormProps) {
     const [formErrorMessage, setFormErrorMessage] = useState('');
 
     const CreateDocumentSchema = Yup.object().shape({
@@ -29,14 +29,14 @@ export function CreateDocumentForm({ user, setShowForm, setRefetchTrigger }: ICr
 
     const handleSubmit = async (formData: CreateDocumentFormData) => {
         await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId, });
-        setShowForm(false);
+        setShowCreateDocumentForm(false);
         setRefetchTrigger({})
     };
     return (
         <div className="center-of-page h-[50%] w-[30%] bg-white z-10 flex justify-center">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowForm(false)}
+                onClick={() => setShowCreateDocumentForm(false)}
             ></IoIosClose>
             <Formik
                 initialValues={{ title: '', eventDate: '' }}

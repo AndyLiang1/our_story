@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
 import { editDocumentImages } from '../../apis/documentApi';
@@ -11,7 +11,10 @@ export interface IUploadImageModalProps {
     collabToken: string;
     documentId: string;
     imageNames: string[];
-    setShowUploadImageModal: React.Dispatch<React.SetStateAction<boolean>>;
+    showUploadModalInfo: { documentId: string; status: boolean };
+    setShowUploadModalInfo: React.Dispatch<
+        React.SetStateAction<{ documentId: string; status: boolean }>
+    >;
     setImageNames: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
@@ -19,7 +22,7 @@ export function UploadImageModal({
     collabToken,
     documentId,
     imageNames,
-    setShowUploadImageModal,
+    setShowUploadModalInfo,
     setImageNames
 }: IUploadImageModalProps) {
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
@@ -76,7 +79,7 @@ export function UploadImageModal({
         <div className="center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowUploadImageModal(false)}
+                onClick={() => setShowUploadModalInfo({documentId: "", status: false})}
             ></IoIosClose>
             <div className="flex h-[10%] w-full items-center justify-center text-center text-[1.5rem] font-bold">
                 Upload your images
@@ -116,7 +119,7 @@ export function UploadImageModal({
             </div>
             <div
                 className={
-                    `w-[90%] items-center overflow-x-auto whitespace-nowrap text-[0px] pl-[0.5rem]` +
+                    `w-[90%] items-center overflow-x-auto whitespace-nowrap pl-[0.5rem] text-[0px]` +
                     (imagesToUpload && imagesToUpload.length ? ' h-[30%]' : ' hidden')
                 }
             >
@@ -129,9 +132,7 @@ export function UploadImageModal({
                                         className="absolute right-[-0.8rem] top-[-0.8rem] cursor-pointer text-[1.6rem]"
                                         onClick={() => {
                                             setImagesToUpload(
-                                                imagesToUpload.filter(
-                                                    (_, i) => i !== index
-                                                )
+                                                imagesToUpload.filter((_, i) => i !== index)
                                             );
                                         }}
                                     />
@@ -149,7 +150,7 @@ export function UploadImageModal({
                 displayMessage="Upload image(s)"
                 onClick={async () => {
                     await uploadImages();
-                    setShowUploadImageModal(false);
+                    setShowUploadModalInfo({ documentId: '', status: false });
                 }}
             />
         </div>

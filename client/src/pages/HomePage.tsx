@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { NavBar } from '../components/Navbar';
 
-import { getNeighbouringDocuments } from '../apis/documentApi';
 import { CreateDocumentForm } from '../components/CreateDocumentForm';
 import { Flipbook } from '../components/Flipbook';
+import { UploadImageModal } from '../components/Modals/UploadImageModal';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
@@ -12,17 +12,14 @@ export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const [documents, setDocuments] = useState<DocumentData[]>([]);
-    
-    const [imageNames, setImageNames] = useState<string[]>([]);
-    const [user, setUser] = useState<User>(useLocation().state);
-    const [showForm, setShowForm] = useState<boolean>(false);
-    const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
-    const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
-    
-    let numOfPapers = documents.length + 1;
-    let maxLocation = numOfPapers + 1;
 
-    
+    const [user, setUser] = useState<User>(useLocation().state);
+    const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
+    const [showUploadModalInfo, setShowUploadModalInfo] = useState<{
+        documentId: string;
+        status: boolean;
+    }>({ documentId: '', status: false });
+    const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -37,18 +34,30 @@ export function HomePage(props: IHomePageProps) {
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
-            {showForm && user && (
+            {showCreateDocumentForm && user && (
                 <CreateDocumentForm
                     user={user}
-                    setShowForm={setShowForm}
+                    setShowCreateDocumentForm={setShowCreateDocumentForm}
                     setRefetchTrigger={setRefetchTrigger}
                 />
             )}
-            <NavBar setShowForm={setShowForm} />
+            {showUploadModalInfo.status && user && (
+                <UploadImageModal
+                    collabToken={user.collabToken}
+                    documentId={''}
+                    showUploadModalInfo={showUploadModalInfo}
+                    setShowUploadModalInfo={setShowUploadModalInfo}
+                    imageNames={[]}
+                    setImageNames={()=> {}}
+                />
+            )}
+            <NavBar setShowCreateDocumentForm={setShowCreateDocumentForm} />
             <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
                 <Flipbook
                     user={user}
                     setRefetchTrigger={setRefetchTrigger}
+                    showUploadModalInfo={showUploadModalInfo}
+                    setShowUploadModalInfo={setShowUploadModalInfo}
                 />
                 {/* <div className="flex h-full w-[50%] items-center justify-center p-[2rem]">
                     {user && user.collabToken && documents.length ? (
