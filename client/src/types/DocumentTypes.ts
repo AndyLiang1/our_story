@@ -30,3 +30,10 @@ export type DocumentsWithFlags = {
     firstDocumentFlag: boolean;
     lastDocumentFlag: boolean;
 };
+
+
+export type UploadImageModalInfo = {
+    documentId: string, 
+    status: boolean,
+    currentImageNamesWGuidForDocument: string[]
+}

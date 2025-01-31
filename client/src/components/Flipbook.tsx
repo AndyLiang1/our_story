@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
-import { DocumentData } from '../types/DocumentTypes';
+import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
@@ -11,8 +11,8 @@ import { TipTapCollab } from './TipTapCollab';
 export interface IFlipbookProps {
     user: User;
     setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
-    showUploadModalInfo: { documentId: string; status: boolean };
-    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<{documentId: string, status: boolean}>>
+    showUploadModalInfo: UploadImageModalInfo;
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {

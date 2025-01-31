@@ -5,20 +5,19 @@ import { NavBar } from '../components/Navbar';
 import { CreateDocumentForm } from '../components/CreateDocumentForm';
 import { Flipbook } from '../components/Flipbook';
 import { UploadImageModal } from '../components/Modals/UploadImageModal';
-import { DocumentData } from '../types/DocumentTypes';
+import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
-    const [documents, setDocuments] = useState<DocumentData[]>([]);
-
     const [user, setUser] = useState<User>(useLocation().state);
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
-    const [showUploadModalInfo, setShowUploadModalInfo] = useState<{
-        documentId: string;
-        status: boolean;
-    }>({ documentId: '', status: false });
+    const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
+        documentId: '',
+        status: false,
+        currentImageNamesWGuidForDocument: []
+    });
     const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
 
     useEffect(() => {
@@ -44,11 +43,8 @@ export function HomePage(props: IHomePageProps) {
             {showUploadModalInfo.status && user && (
                 <UploadImageModal
                     collabToken={user.collabToken}
-                    documentId={''}
                     showUploadModalInfo={showUploadModalInfo}
                     setShowUploadModalInfo={setShowUploadModalInfo}
-                    imageNames={[]}
-                    setImageNames={()=> {}}
                 />
             )}
             <NavBar setShowCreateDocumentForm={setShowCreateDocumentForm} />

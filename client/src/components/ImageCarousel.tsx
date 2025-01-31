@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
+import { UploadImageModalInfo } from '../types/DocumentTypes';
 import { GenericFormButton } from './GenericFormButton';
 
 export interface IImageCarouselProps {
     collabToken: string;
     documentId: string;
-    showUploadModalInfo: { documentId: string; status: boolean };
-
-    setShowUploadModalInfo: React.Dispatch<
-        React.SetStateAction<{ documentId: string; status: boolean }>
-    >;
+    showUploadModalInfo: UploadImageModalInfo;
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 enum DIRECTION {
@@ -94,7 +92,7 @@ export function ImageCarousel({
                 <GenericFormButton
                     // className="flex h-full w-[50%] items-center justify-start  pl-2"
                     onClick={() => {
-                        setShowUploadModalInfo({ documentId, status: true });
+                        setShowUploadModalInfo({ documentId, status: true, currentImageNamesWGuidForDocument: [] });
                     }}
                     displayMessage={
                         signedImageUrls && signedImageUrls.length > 0 ? (
@@ -124,16 +122,6 @@ export function ImageCarousel({
                     </div>
                 )}
             </div>
-
-            {/* {showUploadImageModal && (
-                <UploadImageModal
-                    setShowUploadImageModal={setShowUploadImageModal}
-                    collabToken={collabToken}
-                    documentId={documentId}
-                    imageNames={imageNames}
-                    setImageNames={setImageNames}
-                />
-            )} */}
         </div>
     );
 }

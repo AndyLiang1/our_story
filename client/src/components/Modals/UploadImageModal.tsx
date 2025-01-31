@@ -1,33 +1,29 @@
 import axios from 'axios';
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
 import { editDocumentImages } from '../../apis/documentApi';
 import { getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
 import { GenericFormButton } from '../GenericFormButton';
+import { UploadImageModalInfo } from '../../types/DocumentTypes';
 
 export interface IUploadImageModalProps {
     collabToken: string;
-    documentId: string;
-    imageNames: string[];
-    showUploadModalInfo: { documentId: string; status: boolean };
-    setShowUploadModalInfo: React.Dispatch<
-        React.SetStateAction<{ documentId: string; status: boolean }>
-    >;
-    setImageNames: React.Dispatch<React.SetStateAction<string[]>>;
+    showUploadModalInfo: UploadImageModalInfo;
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 export function UploadImageModal({
     collabToken,
-    documentId,
-    imageNames,
+    showUploadModalInfo,
     setShowUploadModalInfo,
-    setImageNames
 }: IUploadImageModalProps) {
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const {currentImageNamesWGuidForDocument} = showUploadModalInfo
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const {documentId} = showUploadModalInfo
 
     const selectFiles = () => {
         if (fileInputRef.current) fileInputRef.current.click();
@@ -51,10 +47,10 @@ export function UploadImageModal({
         }
         await editDocumentImages(
             collabToken,
-            [...imageNames, ...newImageNamesWithGuid],
+            [...currentImageNamesWGuidForDocument, ...newImageNamesWithGuid],
             documentId
         );
-        setImageNames([...imageNames, ...newImageNamesWithGuid]);
+        // setImageNames([...currentImageNamesWGuidForDocument, ...newImageNamesWithGuid]);
     };
 
     const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -79,7 +75,7 @@ export function UploadImageModal({
         <div className="center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowUploadModalInfo({documentId: "", status: false})}
+                onClick={() => setShowUploadModalInfo({ documentId: '', status: false, currentImageNamesWGuidForDocument: [] })}
             ></IoIosClose>
             <div className="flex h-[10%] w-full items-center justify-center text-center text-[1.5rem] font-bold">
                 Upload your images
@@ -150,7 +146,7 @@ export function UploadImageModal({
                 displayMessage="Upload image(s)"
                 onClick={async () => {
                     await uploadImages();
-                    setShowUploadModalInfo({ documentId: '', status: false });
+                    setShowUploadModalInfo({ documentId: '', status: false, currentImageNamesWGuidForDocument: [] });
                 }}
             />
         </div>
