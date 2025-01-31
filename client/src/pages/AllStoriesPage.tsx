@@ -13,7 +13,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     const [user, setUser] = useState<User>(useLocation().state);
     const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
-    const [showForm, setShowForm] = useState<boolean>(false);
+    // const [showForm, setShowForm] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,14 +27,14 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
 
     return (
         <div className="v-screen relative h-screen flex-wrap items-center">
-            {showForm && user && (
+            {/* {showForm && user && (
                 <CreateDocumentForm
                     user={user}
                     setShowForm={setShowForm}
                     setRefetchTrigger={setRefetchTrigger}
                 />
             )}
-            <NavBar setShowForm={setShowForm} />
+            <NavBar setShowForm={setShowForm} /> */}
             {/* {documents.length ? <div>Docs</div> : <div>Loading</div>} */}
             <div className="h-[10%] bg-red-500"></div>
             <div className="grid h-[80%] w-full bg-pink-500 grid-cols-[repeat(auto-fit,12rem)] gap-[3rem] justify-center">

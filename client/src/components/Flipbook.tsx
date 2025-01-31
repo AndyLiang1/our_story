@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
-import { DocumentData } from '../types/DocumentTypes';
+import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
@@ -11,6 +11,8 @@ import { TipTapCollab } from './TipTapCollab';
 export interface IFlipbookProps {
     user: User;
     setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
+    showUploadModalInfo: UploadImageModalInfo;
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {
@@ -46,7 +48,7 @@ const loadingSpinnerPages = [
     </div>
 ];
 
-export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
+export function Flipbook({ user, setRefetchTrigger, showUploadModalInfo, setShowUploadModalInfo }: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
@@ -351,8 +353,8 @@ export function Flipbook({ user, setRefetchTrigger }: IFlipbookProps) {
                                             <ImageCarousel
                                                 collabToken={user.collabToken}
                                                 documentId={documentsFlipBook[index - 1].documentId}
-                                                imageNames={[]}
-                                                setImageNames={() => {}}
+                                                showUploadModalInfo={showUploadModalInfo}
+                                                setShowUploadModalInfo={setShowUploadModalInfo}
                                             />
                                         )}
                                     </div>

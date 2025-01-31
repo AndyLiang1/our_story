@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
-import { getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
+import { UploadImageModalInfo } from '../types/DocumentTypes';
 import { GenericFormButton } from './GenericFormButton';
-import { UploadImageModal } from './Modals/UploadImageModal';
 
 export interface IImageCarouselProps {
     collabToken: string;
     documentId: string;
-    setImageNames: React.Dispatch<React.SetStateAction<string[]>>;
-    imageNames: string[];
+    showUploadModalInfo: UploadImageModalInfo;
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 enum DIRECTION {
@@ -20,23 +19,21 @@ enum DIRECTION {
 export function ImageCarousel({
     collabToken,
     documentId,
-    imageNames,
-    setImageNames
+    showUploadModalInfo,
+    setShowUploadModalInfo
 }: IImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [signedImageUrls, setSignedImageUrls] = useState<string[]>([]);
-    const [showUploadImageModal, setShowUploadImageModal] = useState<boolean>(false);
-    const [backgroundStyle, setBackgroundStyle] = useState<string>('');
-    useEffect(() => {
-        const getSignedImageUrls = async () => {
-            const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
-                collabToken,
-                imageNames
-            );
-            setSignedImageUrls(signedDownloadUrls);
-        };
-        getSignedImageUrls();
-    }, [imageNames]);
+    // useEffect(() => {
+    //     const getSignedImageUrls = async () => {
+    //         const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
+    //             collabToken,
+    //             imageNames
+    //         );
+    //         setSignedImageUrls(signedDownloadUrls);
+    //     };
+    //     getSignedImageUrls();
+    // }, [imageNames]);
 
     const changeIndex = (direction: DIRECTION) => {
         if (direction === DIRECTION.LEFT) {
@@ -95,7 +92,7 @@ export function ImageCarousel({
                 <GenericFormButton
                     // className="flex h-full w-[50%] items-center justify-start  pl-2"
                     onClick={() => {
-                        setShowUploadImageModal(true);
+                        setShowUploadModalInfo({ documentId, status: true, currentImageNamesWGuidForDocument: [] });
                     }}
                     displayMessage={
                         signedImageUrls && signedImageUrls.length > 0 ? (
@@ -125,16 +122,6 @@ export function ImageCarousel({
                     </div>
                 )}
             </div>
-
-            {showUploadImageModal && (
-                <UploadImageModal
-                    setShowUploadImageModal={setShowUploadImageModal}
-                    collabToken={collabToken}
-                    documentId={documentId}
-                    imageNames={imageNames}
-                    setImageNames={setImageNames}
-                />
-            )}
         </div>
     );
 }

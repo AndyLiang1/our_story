@@ -6,25 +6,24 @@ import { IoIosClose } from 'react-icons/io';
 import { editDocumentImages } from '../../apis/documentApi';
 import { getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
 import { GenericFormButton } from '../GenericFormButton';
+import { UploadImageModalInfo } from '../../types/DocumentTypes';
 
 export interface IUploadImageModalProps {
     collabToken: string;
-    documentId: string;
-    imageNames: string[];
-    setShowUploadImageModal: React.Dispatch<React.SetStateAction<boolean>>;
-    setImageNames: React.Dispatch<React.SetStateAction<string[]>>;
+    showUploadModalInfo: UploadImageModalInfo;
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 export function UploadImageModal({
     collabToken,
-    documentId,
-    imageNames,
-    setShowUploadImageModal,
-    setImageNames
+    showUploadModalInfo,
+    setShowUploadModalInfo,
 }: IUploadImageModalProps) {
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const {currentImageNamesWGuidForDocument} = showUploadModalInfo
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const {documentId} = showUploadModalInfo
 
     const selectFiles = () => {
         if (fileInputRef.current) fileInputRef.current.click();
@@ -48,10 +47,10 @@ export function UploadImageModal({
         }
         await editDocumentImages(
             collabToken,
-            [...imageNames, ...newImageNamesWithGuid],
+            [...currentImageNamesWGuidForDocument, ...newImageNamesWithGuid],
             documentId
         );
-        setImageNames([...imageNames, ...newImageNamesWithGuid]);
+        // setImageNames([...currentImageNamesWGuidForDocument, ...newImageNamesWithGuid]);
     };
 
     const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -76,7 +75,7 @@ export function UploadImageModal({
         <div className="center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowUploadImageModal(false)}
+                onClick={() => setShowUploadModalInfo({ documentId: '', status: false, currentImageNamesWGuidForDocument: [] })}
             ></IoIosClose>
             <div className="flex h-[10%] w-full items-center justify-center text-center text-[1.5rem] font-bold">
                 Upload your images
@@ -116,7 +115,7 @@ export function UploadImageModal({
             </div>
             <div
                 className={
-                    `w-[90%] items-center overflow-x-auto whitespace-nowrap text-[0px] pl-[0.5rem]` +
+                    `w-[90%] items-center overflow-x-auto whitespace-nowrap pl-[0.5rem] text-[0px]` +
                     (imagesToUpload && imagesToUpload.length ? ' h-[30%]' : ' hidden')
                 }
             >
@@ -129,9 +128,7 @@ export function UploadImageModal({
                                         className="absolute right-[-0.8rem] top-[-0.8rem] cursor-pointer text-[1.6rem]"
                                         onClick={() => {
                                             setImagesToUpload(
-                                                imagesToUpload.filter(
-                                                    (_, i) => i !== index
-                                                )
+                                                imagesToUpload.filter((_, i) => i !== index)
                                             );
                                         }}
                                     />
@@ -149,7 +146,7 @@ export function UploadImageModal({
                 displayMessage="Upload image(s)"
                 onClick={async () => {
                     await uploadImages();
-                    setShowUploadImageModal(false);
+                    setShowUploadModalInfo({ documentId: '', status: false, currentImageNamesWGuidForDocument: [] });
                 }}
             />
         </div>
