@@ -105,19 +105,3 @@ export const editDocumentTitle = async (collabToken: string, title: string, docu
         }
     );
 };
-
-export const editDocumentImages = async (
-    collabToken: string,
-    imageNames: string[],
-    documentId: string
-) => {
-    await axios.put(
-        `${config.baseUrl}/api/documents/${documentId}`,
-        { images: imageNames },
-        {
-            headers: {
-                Authorization: `Bearer ${collabToken}`
-            }
-        }
-    );
-};

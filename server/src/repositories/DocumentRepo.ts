@@ -48,9 +48,7 @@ export class DocumentRepo {
     }
 
     async getDocument(documentId: string) {
-        const doc = await Document.findByPk(documentId, {
-            raw: true
-        });
+        const doc = await Document.findByPk(documentId);
         return doc as unknown as DocumentData | null;
     }
 

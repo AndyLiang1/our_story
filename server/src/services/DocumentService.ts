@@ -52,7 +52,7 @@ export class DocumentService {
                 createdByUserId: docFromDB.createdByUserId
             };
         }
-        return data;
+        return data as DocumentData;
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
@@ -119,5 +119,29 @@ export class DocumentService {
 
     async deleteOwner(data: DocumentOwnerData) {
         await this.documentOwnerRepo.deleteDocumentOwner(data);
+    }
+
+    async addImages(documentId: string, newImageNamesWithGuid: string[]) {
+        try {
+            const docInfo: DocumentData | null = await this.getDocument(documentId);
+            if (docInfo) {
+                const documentData: PartialDocumentUpdateAttributes = {
+                    title: docInfo.title,
+                    documentContent: docInfo.documentContent,
+                    // hasUpdatedInTipTap: docInfo?.hasUpdatedInTipTap,
+                    images: [...docInfo.images, ...newImageNamesWithGuid]
+                };
+                const data = await this.documentRepo.updateDocument(documentId, documentData);
+                return data;
+            } else {
+                return null;
+            }
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                console.error('Error updating document:', e.message);
+            } else {
+                console.error('Unknown error occurred:', e);
+            }
+        }
     }
 }

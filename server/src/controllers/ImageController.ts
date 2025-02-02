@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { config } from '../config/config';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { s3Client } from '../s3';
+import { services } from '../services/services';
 
 export class ImageController {
     router: Router;
@@ -13,6 +14,7 @@ export class ImageController {
         this.router.use(JwtVerifier.verifyCollabToken);
         this.router.post('/uploadUrls', this.generateUploadURLs.bind(this));
         this.router.post('/downloadUrls', this.generateDownloadURLs.bind(this));
+        this.router.post('/:documentId', this.addImages.bind(this));
     }
 
     initRoutes(apiRouter: Router) {
@@ -45,6 +47,7 @@ export class ImageController {
                 signedUploadUrls: signedUrls
             });
         } catch (error) {
+            console.error(error);
             next(error);
         }
     }
@@ -68,6 +71,20 @@ export class ImageController {
                 signedDownloadUrls: signedUrls
             });
         } catch (error) {
+            console.error(error);
+            next(error);
+        }
+    }
+
+    async addImages(req: Request, res: Response, next: NextFunction) {
+        const { documentId } = req.params;
+        console.log(documentId);
+        const { newImageNamesWithGuid } = req.body;
+        try {
+            await services.documentService.addImages(documentId, newImageNamesWithGuid);
+            res.status(201).json(documentId);
+        } catch (error) {
+            console.error(error);
             next(error);
         }
     }
