@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
-import { editDocumentImages } from '../../apis/documentApi';
+import { addDocumentImages } from '../../apis/imageApi';
 import { getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
 import { GenericFormButton } from '../GenericFormButton';
 import { UploadImageModalInfo } from '../../types/DocumentTypes';
@@ -21,7 +21,6 @@ export function UploadImageModal({
 }: IUploadImageModalProps) {
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
-    const {currentImageNamesWGuidForDocument} = showUploadModalInfo
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const {documentId} = showUploadModalInfo
 
@@ -31,27 +30,35 @@ export function UploadImageModal({
 
     const uploadImages = async () => {
         if (!imagesToUpload) return;
-        const imageToUploadNames = imagesToUpload.map((image: File) => image.name);
-        const signedUrlsAndImageNamesWithGuid = await getGeneratedUploadImageSignedUrls(
-            collabToken,
-            imageToUploadNames
-        );
-        const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
-        const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
-        for (const [index, signedUrl] of signedUploadUrls.entries()) {
-            const res = await axios.put(signedUrl, imagesToUpload[index], {
+        try {
+            const imageToUploadNames = imagesToUpload.map((image: File) => image.name);
+            const signedUrlsAndImageNamesWithGuid = await getGeneratedUploadImageSignedUrls(
+                collabToken,
+                imageToUploadNames
+            );
+            const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
+            const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
+            await uploadImageToAWSUsingSignedUrls(signedUploadUrls)
+            await addDocumentImages(
+                collabToken,
+                [...newImageNamesWithGuid],
+                documentId
+            );
+        } catch (error) {
+            console.log("Error during uploading images: ", error)
+        }
+        
+    };
+
+    const uploadImageToAWSUsingSignedUrls = async(signedUploadUrls: string[]) => {
+        for (const [index, signedUrl] of Array.from(signedUploadUrls.entries())) {
+            await axios.put(signedUrl, imagesToUpload[index], {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data'   
                 }
             });
         }
-        await editDocumentImages(
-            collabToken,
-            [...currentImageNamesWGuidForDocument, ...newImageNamesWithGuid],
-            documentId
-        );
-        // setImageNames([...currentImageNamesWGuidForDocument, ...newImageNamesWithGuid]);
-    };
+    }
 
     const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();

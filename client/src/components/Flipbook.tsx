@@ -12,7 +12,7 @@ export interface IFlipbookProps {
     user: User;
     setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
     showUploadModalInfo: UploadImageModalInfo;
-    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>
+    setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {
@@ -48,7 +48,12 @@ const loadingSpinnerPages = [
     </div>
 ];
 
-export function Flipbook({ user, setRefetchTrigger, showUploadModalInfo, setShowUploadModalInfo }: IFlipbookProps) {
+export function Flipbook({
+    user,
+    setRefetchTrigger,
+    showUploadModalInfo,
+    setShowUploadModalInfo
+}: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
@@ -71,8 +76,8 @@ export function Flipbook({ user, setRefetchTrigger, showUploadModalInfo, setShow
     } | null>(null);
     const [documentId, setDocumentId] = useState('');
     const documentsFlipBook = documentsWindow ? documentsWindow.documents : [];
-    const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true
-    const lastDocumentFlag = documentsWindow ? documentsWindow.lastDocumentFlag : true
+    const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true;
+    const lastDocumentFlag = documentsWindow ? documentsWindow.lastDocumentFlag : true;
     const [arrowClickPause, setArrowClickPause] = useState(false);
 
     const fetchData = async (documentId: string | null) => {
@@ -129,7 +134,10 @@ export function Flipbook({ user, setRefetchTrigger, showUploadModalInfo, setShow
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 styles.push({
                     flipped: i !== 0 ? false : true,
-                    regularZIndex: i === 0 ? documentsFlipBook.length - i + 1 : documentsFlipBook.length - i + 2, // mocking one flip for the others
+                    regularZIndex:
+                        i === 0
+                            ? documentsFlipBook.length - i + 1
+                            : documentsFlipBook.length - i + 2, // mocking one flip for the others
                     flippedZIndex: i + 1,
                     goToPageTriggered: true
                 });
@@ -352,13 +360,13 @@ export function Flipbook({ user, setRefetchTrigger, showUploadModalInfo, setShow
                                         {user && documentsFlipBook.length && (
                                             <ImageCarousel
                                                 collabToken={user.collabToken}
-                                                documentId={documentsFlipBook[index - 1].documentId}
+                                                document={documentsFlipBook[index - 1]}
                                                 showUploadModalInfo={showUploadModalInfo}
                                                 setShowUploadModalInfo={setShowUploadModalInfo}
                                             />
                                         )}
                                     </div>
-                                    <div className="h-[2%] w-full">{index}</div>
+                                    <div className="h-[2%] w-full"></div>
                                     <div className="h-[45%] w-full">
                                         {documentsFlipBook && documentsFlipBook.length && (
                                             <DateCalendar
@@ -405,33 +413,43 @@ export function Flipbook({ user, setRefetchTrigger, showUploadModalInfo, setShow
 
     return (
         <div className="flex h-full w-full items-center justify-center">
-            {!(firstDocumentFlag && currentLocationFlipbook === 2) && <button
-                className={"absolute left-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] " + (arrowClickPause ? "text-gray-300" : "text-white")}
-                onClick={async () => {
-                    if (arrowClickPause) return;
-                    setArrowClickPause(true);
-                    goPrevPage();
-                    setTimeout(() => {
-                        setArrowClickPause(false);
-                    }, 1500);
-                }}
-            >
-                <FaChevronLeft />
-            </button>}
-            {!(lastDocumentFlag && currentLocationFlipbook === maxLocation - 1) &&  <button
-                onClick={async () => {
-                    if (arrowClickPause) return
-                    setArrowClickPause(true);
-                    setNextPageTriggered(true);
-                    setTimeout(() => {
-                        setArrowClickPause(false);
-                    }, 1500);
-                }}
-                className={"absolute right-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] " + (arrowClickPause ? "text-gray-300" : "text-white")}
-                disabled={arrowClickPause}
-            >
-                <FaChevronRight />
-            </button>}
+            {!(firstDocumentFlag && currentLocationFlipbook === 2) && (
+                <button
+                    className={
+                        'absolute left-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] ' +
+                        (arrowClickPause ? 'text-gray-300' : 'text-white')
+                    }
+                    onClick={async () => {
+                        if (arrowClickPause) return;
+                        setArrowClickPause(true);
+                        goPrevPage();
+                        setTimeout(() => {
+                            setArrowClickPause(false);
+                        }, 1500);
+                    }}
+                >
+                    <FaChevronLeft />
+                </button>
+            )}
+            {!(lastDocumentFlag && currentLocationFlipbook === maxLocation - 1) && (
+                <button
+                    onClick={async () => {
+                        if (arrowClickPause) return;
+                        setArrowClickPause(true);
+                        setNextPageTriggered(true);
+                        setTimeout(() => {
+                            setArrowClickPause(false);
+                        }, 1500);
+                    }}
+                    className={
+                        'absolute right-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] ' +
+                        (arrowClickPause ? 'text-gray-300' : 'text-white')
+                    }
+                    disabled={arrowClickPause}
+                >
+                    <FaChevronRight />
+                </button>
+            )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book h-[80%] w-[30%] translate-x-[50%]`}>
                     {pageStylesState && pageStylesState.styles.length && renderedPapers()}

@@ -76,7 +76,6 @@ export function DateCalendar({ userId, collabToken, disabled }: IDateCalendarPro
                     userId,
                     collabToken
                 );
-                console.log('Docs', documents);
                 setEventsInMonth(
                     documents.map((doc: DocumentData) => {
                         return { id: doc.documentId, name: doc.title, date: doc.eventDate };
