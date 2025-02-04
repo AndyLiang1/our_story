@@ -5,7 +5,7 @@ import { NavBar } from '../components/Navbar';
 import { CreateDocumentForm } from '../components/CreateDocumentForm';
 import { Flipbook } from '../components/Flipbook';
 import { UploadImageModal } from '../components/Modals/UploadImageModal';
-import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
+import { UploadImageModalInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
 export interface IHomePageProps {}
@@ -16,7 +16,7 @@ export function HomePage(props: IHomePageProps) {
     const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
         documentId: '',
         status: false,
-        currentImageNamesWGuidForDocument: []
+        refetch: false
     });
     const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
 
@@ -42,6 +42,7 @@ export function HomePage(props: IHomePageProps) {
             )}
             {showUploadModalInfo.status && user && (
                 <UploadImageModal
+                    userId={user.userId}
                     collabToken={user.collabToken}
                     showUploadModalInfo={showUploadModalInfo}
                     setShowUploadModalInfo={setShowUploadModalInfo}

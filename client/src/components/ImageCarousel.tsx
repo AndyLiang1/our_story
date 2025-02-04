@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
+import { getDocument } from '../apis/documentApi';
 import { getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
 import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
 import { GenericFormButton } from './GenericFormButton';
 
 export interface IImageCarouselProps {
+    userId: string;
     collabToken: string;
     document: DocumentData;
     showUploadModalInfo: UploadImageModalInfo;
@@ -18,6 +20,7 @@ enum DIRECTION {
 }
 
 export function ImageCarousel({
+    userId,
     collabToken,
     document,
     showUploadModalInfo,
@@ -27,15 +30,37 @@ export function ImageCarousel({
     const [signedImageUrls, setSignedImageUrls] = useState<string[]>([]);
 
     useEffect(() => {
-        const getSignedImageUrls = async () => {
-            const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
-                collabToken,
-                document.images
-            );
-            setSignedImageUrls(signedDownloadUrls);
-        };
         getSignedImageUrls();
     }, []);
+
+    const getSignedImageUrls = async (imagesNameWGuid?: string[]) => {
+        const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
+            collabToken,
+            imagesNameWGuid ? imagesNameWGuid : document.images
+        );
+        setSignedImageUrls(signedDownloadUrls);
+    };
+
+    const resetUploadImageModalStateToInitial = () => {
+        setShowUploadModalInfo({ documentId: '', status: false, refetch: false });
+    };
+
+    useEffect(() => {
+        // only refetch the images for a single imageCarousel, as opposed to all 8 carousels
+        const fetchDocumentAndPopulateImagesForCurrentCarousel = async () => {
+            if (
+                showUploadModalInfo.documentId === document.documentId &&
+                showUploadModalInfo.refetch
+            ) {
+                const indexToBe = signedImageUrls.length;
+                const doc = await getDocument(document.documentId, collabToken, userId);
+                getSignedImageUrls(doc.images);
+                resetUploadImageModalStateToInitial();
+                setCurrentIndex(indexToBe);
+            }
+        };
+        fetchDocumentAndPopulateImagesForCurrentCarousel();
+    }, [showUploadModalInfo]);
 
     const changeIndex = (direction: DIRECTION) => {
         if (direction === DIRECTION.LEFT) {
@@ -97,7 +122,7 @@ export function ImageCarousel({
                         setShowUploadModalInfo({
                             documentId: document.documentId,
                             status: true,
-                            currentImageNamesWGuidForDocument: []
+                            refetch: false
                         });
                     }}
                     displayMessage={

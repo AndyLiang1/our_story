@@ -45,9 +45,10 @@ export class DocumentController {
     }
 
     async getDocument(req: Request, res: Response, next: NextFunction) {
+        const userId = req.query.userId ? (req.query.userId as string) : null;
         const { documentId } = req.params;
-        if (documentId) {
-            const doc = await services.documentService.getDocument(documentId);
+        if (documentId && userId) {
+            const doc = await services.documentService.getDocument(userId, documentId);
             if (doc === null) {
                 res.status(404).json({
                     message: `Document with ID ${documentId} does not exist.`
@@ -57,7 +58,7 @@ export class DocumentController {
             }
         } else {
             res.status(400).json({
-                message: 'documentId must be provided.'
+                message: 'documentId and userId must be provided.'
             });
         }
     }
@@ -79,6 +80,7 @@ export class DocumentController {
         res.status(201).json(doc);
     }
 
+    // TODO MAKE SURE USERID IS USED TOO
     async updateDocument(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
         const reqBody = req.body;
@@ -99,6 +101,7 @@ export class DocumentController {
         }
     }
 
+    // TODO MAKE SURE USERID IS USED TOO
     async deleteDocument(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
         if (documentId) {

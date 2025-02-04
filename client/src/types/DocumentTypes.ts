@@ -4,13 +4,13 @@ export type EventMetaData = {
     date: Date;
 };
 
-export interface DocumentCreationAttributes  {
+export interface DocumentCreationAttributes {
     title: string;
     createdByUserId: string;
     eventDate: Date;
-};
+}
 
-export interface DocumentData extends DocumentCreationAttributes  {
+export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
     title: string;
     documentContent: DocumentContent;
@@ -23,7 +23,7 @@ export interface DocumentData extends DocumentCreationAttributes  {
 type DocumentContent = {
     type: string;
     content: any;
-}
+};
 
 export type DocumentsWithFlags = {
     documents: DocumentData[];
@@ -31,9 +31,8 @@ export type DocumentsWithFlags = {
     lastDocumentFlag: boolean;
 };
 
-
 export type UploadImageModalInfo = {
-    documentId: string, 
-    status: boolean,
-    currentImageNamesWGuidForDocument: string[]
-}
+    documentId: string;
+    status: boolean;
+    refetch: boolean;
+};
