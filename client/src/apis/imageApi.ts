@@ -40,13 +40,14 @@ export const getGeneratedDownloadImageSignedUrls = async (
 };
 
 export const addDocumentImages = async (
+    userId: string,
     collabToken: string,
     newImageNamesWithGuid: string[],
     documentId: string
 ) => {
     await axios.post(
         `${config.baseUrl}/api/images/${documentId}`,
-        { newImageNamesWithGuid },
+        { userId, newImageNamesWithGuid },
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`

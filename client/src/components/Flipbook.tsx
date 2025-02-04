@@ -359,6 +359,7 @@ export function Flipbook({
                                     <div className="h-[52%] w-full">
                                         {user && documentsFlipBook.length && (
                                             <ImageCarousel
+                                                userId={user.userId}
                                                 collabToken={user.collabToken}
                                                 document={documentsFlipBook[index - 1]}
                                                 showUploadModalInfo={showUploadModalInfo}

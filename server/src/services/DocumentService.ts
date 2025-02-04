@@ -34,13 +34,13 @@ export class DocumentService {
         return doc;
     }
 
-    async getDocument(documentId: string) {
+    async getDocument(userId: string, documentId: string) {
         if (!documentId) return null;
-        const docFromDB: DocumentData | null = await this.documentRepo.getDocument(documentId);
-
-        const docFromTipTap = await services.tiptapDocumentService.getDocument(documentId);
         let data = null;
+        const docFromDB: DocumentData | null = await this.documentRepo.getDocument(userId, documentId);
         if (docFromDB) {
+            const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
+
             data = {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,
@@ -56,7 +56,7 @@ export class DocumentService {
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
-        const currDocument: DocumentData | null = (await this.getDocument(documentId as string)) as unknown as DocumentData | null;
+        const currDocument: DocumentData | null = (await this.getDocument(userId, documentId as string)) as unknown as DocumentData | null;
         const eventDate = currDocument ? currDocument.eventDate : new Date();
         const createdAt = currDocument ? currDocument.createdAt : null;
         const docsFromDBAndFlags: DocumentsWithFlags = await this.documentRepo.getNeighbouringDocuments(userId, eventDate, createdAt);
@@ -121,9 +121,9 @@ export class DocumentService {
         await this.documentOwnerRepo.deleteDocumentOwner(data);
     }
 
-    async addImages(documentId: string, newImageNamesWithGuid: string[]) {
+    async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
         try {
-            const docInfo: DocumentData | null = await this.getDocument(documentId);
+            const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
             if (docInfo) {
                 const documentData: PartialDocumentUpdateAttributes = {
                     title: docInfo.title,

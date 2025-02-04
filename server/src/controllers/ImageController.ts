@@ -78,10 +78,9 @@ export class ImageController {
 
     async addImages(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
-        console.log(documentId);
-        const { newImageNamesWithGuid } = req.body;
+        const { userId, newImageNamesWithGuid } = req.body;
         try {
-            await services.documentService.addImages(documentId, newImageNamesWithGuid);
+            await services.documentService.addImages(userId, documentId, newImageNamesWithGuid);
             res.status(201).json(documentId);
         } catch (error) {
             console.error(error);

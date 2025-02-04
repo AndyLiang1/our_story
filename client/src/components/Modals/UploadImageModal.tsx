@@ -1,31 +1,36 @@
 import axios from 'axios';
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
-import { addDocumentImages } from '../../apis/imageApi';
-import { getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
-import { GenericFormButton } from '../GenericFormButton';
+import { addDocumentImages, getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
 import { UploadImageModalInfo } from '../../types/DocumentTypes';
+import { GenericFormButton } from '../GenericFormButton';
 
 export interface IUploadImageModalProps {
+    userId: string;
     collabToken: string;
     showUploadModalInfo: UploadImageModalInfo;
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 export function UploadImageModal({
+    userId,
     collabToken,
     showUploadModalInfo,
-    setShowUploadModalInfo,
+    setShowUploadModalInfo
 }: IUploadImageModalProps) {
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const {documentId} = showUploadModalInfo
+    const { documentId } = showUploadModalInfo;
 
     const selectFiles = () => {
         if (fileInputRef.current) fileInputRef.current.click();
+    };
+
+    const closeModalAndTriggerRefetch = () => {
+        setShowUploadModalInfo({ documentId, status: false, refetch: true });
     };
 
     const uploadImages = async () => {
@@ -38,27 +43,23 @@ export function UploadImageModal({
             );
             const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
             const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
-            await uploadImageToAWSUsingSignedUrls(signedUploadUrls)
-            await addDocumentImages(
-                collabToken,
-                [...newImageNamesWithGuid],
-                documentId
-            );
+            await uploadImageToAWSUsingSignedUrls(signedUploadUrls);
+            await addDocumentImages(userId, collabToken, [...newImageNamesWithGuid], documentId);
+            closeModalAndTriggerRefetch();
         } catch (error) {
-            console.log("Error during uploading images: ", error)
+            console.log('Error during uploading images: ', error);
         }
-        
     };
 
-    const uploadImageToAWSUsingSignedUrls = async(signedUploadUrls: string[]) => {
+    const uploadImageToAWSUsingSignedUrls = async (signedUploadUrls: string[]) => {
         for (const [index, signedUrl] of Array.from(signedUploadUrls.entries())) {
             await axios.put(signedUrl, imagesToUpload[index], {
                 headers: {
-                    'Content-Type': 'multipart/form-data'   
+                    'Content-Type': 'multipart/form-data'
                 }
             });
         }
-    }
+    };
 
     const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -82,7 +83,13 @@ export function UploadImageModal({
         <div className="center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowUploadModalInfo({ documentId: '', status: false, currentImageNamesWGuidForDocument: [] })}
+                onClick={() =>
+                    setShowUploadModalInfo({
+                        documentId: '',
+                        status: false,
+                        refetch: false
+                    })
+                }
             ></IoIosClose>
             <div className="flex h-[10%] w-full items-center justify-center text-center text-[1.5rem] font-bold">
                 Upload your images
@@ -153,7 +160,6 @@ export function UploadImageModal({
                 displayMessage="Upload image(s)"
                 onClick={async () => {
                     await uploadImages();
-                    setShowUploadModalInfo({ documentId: '', status: false, currentImageNamesWGuidForDocument: [] });
                 }}
             />
         </div>

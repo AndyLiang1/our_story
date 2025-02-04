@@ -29,6 +29,21 @@ export const getAllDocuments = async (
     return documents;
 };
 
+export const getDocument = async (documentId: string, collabToken: string, userId: string) => {
+    const url = `${config.baseUrl}/api/documents/${documentId}?userId=${userId}`;
+    const { data } = await axios.get(url, {
+        headers: {
+            Authorization: `Bearer ${collabToken}`
+        }
+    });
+    const document: DocumentData = {
+        ...data,
+        eventDate: new Date(data.eventDate)
+    };
+
+    return document;
+};
+
 export const getDocumentsInMonth = async (
     dateWhoseMonthToSearchFor: Date,
     userId: string,

@@ -47,8 +47,23 @@ export class DocumentRepo {
         return doc[0];
     }
 
-    async getDocument(documentId: string) {
-        const doc = await Document.findByPk(documentId);
+    async getDocument(userId: string, documentId: string) {
+        const doc = await Document.findOne({
+            where: {
+                documentId
+            },
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    where: { userId: userId },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: []
+                }
+            ]
+        });
         return doc as unknown as DocumentData | null;
     }
 
