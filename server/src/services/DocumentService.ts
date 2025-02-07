@@ -144,4 +144,28 @@ export class DocumentService {
             }
         }
     }
+    async deleteImage(userId: string, documentId: string, imageNameWithGuidToDelete: string) {
+        try {
+            const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
+            if (docInfo) {
+                const filteredImages = docInfo.images.filter((imageNameWithGuid) => imageNameWithGuid !== imageNameWithGuidToDelete);
+                const documentData: PartialDocumentUpdateAttributes = {
+                    title: docInfo.title,
+                    documentContent: docInfo.documentContent,
+                    // hasUpdatedInTipTap: docInfo?.hasUpdatedInTipTap,
+                    images: filteredImages
+                };
+                const data = await this.documentRepo.updateDocument(documentId, documentData);
+                return data;
+            } else {
+                return null;
+            }
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                console.error('Error updating document:', e.message);
+            } else {
+                console.error('Unknown error occurred:', e);
+            }
+        }
+    }
 }
