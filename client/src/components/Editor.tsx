@@ -24,24 +24,13 @@ import { MenuBar } from './MenuBar';
 export interface IEditorProps {
     ydoc?: any;
     provider?: any;
-    styles: string;
     collabToken: string;
     documentId: string;
     documentTitle: string;
-    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
     collabFlag?: boolean;
 }
 
-const Editor = ({
-    ydoc,
-    provider,
-    styles,
-    collabToken,
-    documentId,
-    documentTitle,
-    setRefetchTrigger,
-    collabFlag = true
-}: IEditorProps) => {
+const Editor = ({ ydoc, provider, collabToken, documentId, documentTitle }: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
     const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');
@@ -59,7 +48,6 @@ const Editor = ({
     useEffect(() => {
         const updateDocumentTitle = async () => {
             await editDocumentTitle(collabToken, title, documentId);
-            setRefetchTrigger({});
         };
         if (debouncedValue && title !== documentTitle) {
             updateDocumentTitle();
@@ -139,7 +127,7 @@ const Editor = ({
                           Code,
                           CodeBlock,
                           HardBreak
-                      ],
+                      ]
         },
         [ydoc, provider]
     );

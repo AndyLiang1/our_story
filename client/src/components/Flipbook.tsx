@@ -10,7 +10,6 @@ import { TipTapCollab } from './TipTapCollab';
 
 export interface IFlipbookProps {
     user: User;
-    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
     showUploadModalInfo: UploadImageModalInfo;
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
@@ -48,12 +47,7 @@ const loadingSpinnerPages = [
     </div>
 ];
 
-export function Flipbook({
-    user,
-    setRefetchTrigger,
-    showUploadModalInfo,
-    setShowUploadModalInfo
-}: IFlipbookProps) {
+export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
@@ -398,9 +392,7 @@ export function Flipbook({
                                     key={documentsFlipBook[index].documentId}
                                     documentId={documentsFlipBook[index].documentId}
                                     documentTitle={documentsFlipBook[index].title}
-                                    setRefetchTrigger={setRefetchTrigger}
                                     collabToken={user.collabToken}
-                                    styles="h-full w-full"
                                     collabFlag={index === currentLocationFlipbook - 2}
                                 />
                             )}
