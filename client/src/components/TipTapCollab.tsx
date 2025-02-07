@@ -9,33 +9,25 @@ export interface ITipTapCollabProps {
     documentId: string;
     documentTitle: string;
     collabToken: string;
-    styles: string;
-    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
     collabFlag?: boolean;
-    index?: number;
-    desiredLoc?: number;
 }
 
 export function TipTapCollab({
     documentId,
     documentTitle,
     collabToken,
-    styles,
-    setRefetchTrigger,
-    collabFlag = true,
-    index,
-    desiredLoc
+    collabFlag = true
 }: ITipTapCollabProps) {
     const [providerAndDoc, setProviderAndDoc] = useState<any>(null);
-   
+
     useEffect(() => {
         const debug = false;
-        const doc: any = (collabFlag) ? new Y.Doc() : null;
+        const doc: any = collabFlag ? new Y.Doc() : null;
         let provider: any = null;
         if (collabFlag) {
             provider = new TiptapCollabProvider({
-                name: documentId, 
-                appId: `${config.tiptapProvider.appId}`, 
+                name: documentId,
+                appId: `${config.tiptapProvider.appId}`,
                 token: collabToken,
                 document: doc,
                 // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
@@ -52,7 +44,6 @@ export function TipTapCollab({
                     if (debug) console.log('Auth failed.');
                 }
             });
-            
         }
 
         setProviderAndDoc({
@@ -70,11 +61,9 @@ export function TipTapCollab({
             <Editor
                 provider={providerAndDoc.provider}
                 ydoc={providerAndDoc.doc}
-                styles={styles}
                 collabToken={collabToken}
                 documentId={documentId}
                 documentTitle={documentTitle}
-                setRefetchTrigger={setRefetchTrigger}
             />
         )
     );

@@ -85,13 +85,12 @@ export function ImageCarousel({
     const handleDeleteImageButtonClicked = async () => {
         const imageNameWithGuidToDelete =
             signedImageUrlsWithGuidNames[currentIndex].imageNameWithGuid;
-        console.log(imageNameWithGuidToDelete);
         const updatedSignedImageUrlsWithGuidNames = signedImageUrlsWithGuidNames.filter(
             (signedImageUrlWImageGuidName) =>
                 signedImageUrlWImageGuidName.imageNameWithGuid !== imageNameWithGuidToDelete
         );
         setSignedImageUrlsWithGuidNames(updatedSignedImageUrlsWithGuidNames);
-        setCurrentIndex(currentIndex - 1);
+        setCurrentIndex(currentIndex > 0 ? currentIndex - 1 : 0);
         await deleteDocumentImages(
             userId,
             collabToken,
@@ -132,7 +131,7 @@ export function ImageCarousel({
                     />
                 </div>
             ) : (
-                <div className="relative h-[90%] w-full overflow-hidden rounded-[2.5rem] border border-none">
+                <div className="relative h-[90%] w-full overflow-hidden rounded-t-[2.5rem] border-l border-r border-t">
                     <img
                         src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
                         className="absolute z-[2] h-full w-full object-contain"

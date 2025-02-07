@@ -11,7 +11,6 @@ import { GenericFormInput } from './GenericFormInput';
 export interface ICreateDocumentFormProps {
     user: User;
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
-    setRefetchTrigger: React.Dispatch<React.SetStateAction<Object>>;
 }
 
 type CreateDocumentFormData = {
@@ -19,7 +18,7 @@ type CreateDocumentFormData = {
     eventDate: Date;
 };
 
-export function CreateDocumentForm({ user, setShowCreateDocumentForm, setRefetchTrigger }: ICreateDocumentFormProps) {
+export function CreateDocumentForm({ user, setShowCreateDocumentForm }: ICreateDocumentFormProps) {
     const [formErrorMessage, setFormErrorMessage] = useState('');
 
     const CreateDocumentSchema = Yup.object().shape({
@@ -28,12 +27,11 @@ export function CreateDocumentForm({ user, setShowCreateDocumentForm, setRefetch
     });
 
     const handleSubmit = async (formData: CreateDocumentFormData) => {
-        await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId, });
+        await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId });
         setShowCreateDocumentForm(false);
-        setRefetchTrigger({})
     };
     return (
-        <div className="center-of-page h-[50%] w-[30%] bg-white z-10 flex justify-center">
+        <div className="center-of-page z-10 flex h-[50%] w-[30%] justify-center bg-white">
             <IoIosClose
                 className="absolute right-2 top-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowCreateDocumentForm(false)}
@@ -60,7 +58,13 @@ export function CreateDocumentForm({ user, setShowCreateDocumentForm, setRefetch
                             label="Title"
                             component={GenericFormInput}
                         />
-                        <Field name="eventDate" type="date" label="Date" max="9999-12-31" component={GenericFormInput} />
+                        <Field
+                            name="eventDate"
+                            type="date"
+                            label="Date"
+                            max="9999-12-31"
+                            component={GenericFormInput}
+                        />
 
                         {formErrorMessage && (
                             <GenericFormErrorMessage errorMessage={formErrorMessage} />
