@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaTrashAlt } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
 import { getDocument } from '../apis/documentApi';
-import { getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
+import { deleteDocumentImages, getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
 import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
 import { GenericFormButton } from './GenericFormButton';
 
@@ -27,18 +27,26 @@ export function ImageCarousel({
     setShowUploadModalInfo
 }: IImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [signedImageUrls, setSignedImageUrls] = useState<string[]>([]);
+    const [signedImageUrlsWithGuidNames, setSignedImageUrlsWithGuidNames] = useState<
+        { signedImageUrl: string; imageNameWithGuid: string }[]
+    >([]);
 
     useEffect(() => {
         getSignedImageUrls();
     }, []);
 
     const getSignedImageUrls = async (imagesNameWGuid?: string[]) => {
+        const listOfImageNamesWithGuid = imagesNameWGuid ? imagesNameWGuid : document.images;
         const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
             collabToken,
-            imagesNameWGuid ? imagesNameWGuid : document.images
+            listOfImageNamesWithGuid
         );
-        setSignedImageUrls(signedDownloadUrls);
+
+        const result = listOfImageNamesWithGuid.map((imageNameWithGuid: string, index: number) => ({
+            signedImageUrl: signedDownloadUrls[index],
+            imageNameWithGuid
+        }));
+        setSignedImageUrlsWithGuidNames(result);
     };
 
     const resetUploadImageModalStateToInitial = () => {
@@ -52,9 +60,9 @@ export function ImageCarousel({
                 showUploadModalInfo.documentId === document.documentId &&
                 showUploadModalInfo.refetch
             ) {
-                const indexToBe = signedImageUrls.length;
+                const indexToBe = signedImageUrlsWithGuidNames.length;
                 const doc = await getDocument(document.documentId, collabToken, userId);
-                getSignedImageUrls(doc.images);
+                await getSignedImageUrls(doc.images);
                 resetUploadImageModalStateToInitial();
                 setCurrentIndex(indexToBe);
             }
@@ -64,16 +72,38 @@ export function ImageCarousel({
 
     const changeIndex = (direction: DIRECTION) => {
         if (direction === DIRECTION.LEFT) {
-            setCurrentIndex(currentIndex !== 0 ? currentIndex - 1 : signedImageUrls.length - 1);
+            setCurrentIndex(
+                currentIndex !== 0 ? currentIndex - 1 : signedImageUrlsWithGuidNames.length - 1
+            );
         } else {
-            setCurrentIndex(currentIndex !== signedImageUrls.length - 1 ? currentIndex + 1 : 0);
+            setCurrentIndex(
+                currentIndex !== signedImageUrlsWithGuidNames.length - 1 ? currentIndex + 1 : 0
+            );
         }
+    };
+
+    const handleDeleteImageButtonClicked = async () => {
+        const imageNameWithGuidToDelete =
+            signedImageUrlsWithGuidNames[currentIndex].imageNameWithGuid;
+        console.log(imageNameWithGuidToDelete);
+        const updatedSignedImageUrlsWithGuidNames = signedImageUrlsWithGuidNames.filter(
+            (signedImageUrlWImageGuidName) =>
+                signedImageUrlWImageGuidName.imageNameWithGuid !== imageNameWithGuidToDelete
+        );
+        setSignedImageUrlsWithGuidNames(updatedSignedImageUrlsWithGuidNames);
+        setCurrentIndex(currentIndex - 1);
+        await deleteDocumentImages(
+            userId,
+            collabToken,
+            imageNameWithGuidToDelete,
+            document.documentId
+        );
     };
 
     return (
         <div className={`relative h-full w-full flex-col items-center justify-evenly text-center`}>
-            {signedImageUrls && signedImageUrls.length > 0 ? (
-                <div className="relative h-[90%] w-full rounded-[2.5rem] border">
+            {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
+                <div className="relative h-[90%] w-full overflow-hidden rounded-t-[2.5rem] border-l border-r border-t">
                     <button
                         onClick={() => {
                             changeIndex(DIRECTION.LEFT);
@@ -91,13 +121,13 @@ export function ImageCarousel({
                         <FaChevronRight />
                     </button>
                     <img
-                        src={signedImageUrls[currentIndex]}
+                        src={signedImageUrlsWithGuidNames[currentIndex].signedImageUrl}
                         className="absolute z-[2] h-full w-full object-contain"
                         alt=""
                     />
                     <img
-                        src={signedImageUrls[currentIndex]}
-                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-[2.5rem] border bg-center object-cover opacity-70 blur-sm"
+                        src={signedImageUrlsWithGuidNames[currentIndex].signedImageUrl}
+                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-t-[2.5rem] bg-center object-cover opacity-70 blur-sm"
                         alt=""
                     />
                 </div>
@@ -110,12 +140,12 @@ export function ImageCarousel({
                     />
                     <img
                         src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
-                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-[2.5rem] border bg-center object-cover opacity-70 blur-sm"
+                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-t-[2.5rem] bg-center object-cover opacity-70 blur-sm"
                         alt=""
                     />
                 </div>
             )}
-            <div className="flex h-[10%] w-full items-center justify-between px-2">
+            <div className="flex h-[10%] w-full items-center justify-between bg-red-200">
                 <GenericFormButton
                     // className="flex h-full w-[50%] items-center justify-start  pl-2"
                     onClick={() => {
@@ -126,7 +156,7 @@ export function ImageCarousel({
                         });
                     }}
                     displayMessage={
-                        signedImageUrls && signedImageUrls.length > 0 ? (
+                        signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
                             <>
                                 Upload images&nbsp;
                                 <IoMdCloudUpload />
@@ -139,19 +169,33 @@ export function ImageCarousel({
                         )
                     }
                     styles={
-                        'h-[90%] ' +
-                        (signedImageUrls && signedImageUrls.length > 0 ? 'w-[10rem]' : 'w-full')
+                        'h-full ' +
+                        (signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0
+                            ? 'w-[10rem]'
+                            : 'w-full') +
+                        ' ' +
+                        'transition duration-200 hover:bg-white'
                     }
                     bold={false}
-                    backgroundColor="bg-[pink]"
+                    backgroundColor="bg-red-200"
                     fontSize="text-[0.9rem]"
+                    textColor="text-black"
                     padding="p-[0.6rem]"
+                    rounded={false}
                 ></GenericFormButton>
-                {signedImageUrls && signedImageUrls.length > 0 && (
-                    <div className="flex h-full w-[40%] items-center justify-end">
-                        {currentIndex + 1 + '/' + signedImageUrls.length}
-                    </div>
-                )}
+                <div className="flex h-full w-[30%] justify-center">
+                    <button
+                        onClick={handleDeleteImageButtonClicked}
+                        className="flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-white"
+                    >
+                        <FaTrashAlt />
+                    </button>
+                    {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 && (
+                        <div className="flex h-full w-[40%] items-center justify-end">
+                            {currentIndex + 1 + '/' + signedImageUrlsWithGuidNames.length}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
