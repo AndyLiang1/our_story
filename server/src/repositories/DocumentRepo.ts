@@ -117,7 +117,7 @@ export class DocumentRepo {
                     ['eventDate', 'DESC'],
                     ['createdAt', 'DESC']
                 ],
-                limit: 3
+                limit: 7
             };
 
             const nextAndCurrDocumentsQueryObject = {
@@ -141,8 +141,8 @@ export class DocumentRepo {
             const previousDocuments = [...previousDocsInReversedChronologicalOrder].reverse();
             const nextAndCurrDocuments = await Document.findAll(nextAndCurrDocumentsQueryObject);
             documents = [...previousDocuments, ...nextAndCurrDocuments] as unknown as DocumentData[];
-            firstDocumentFlag = previousDocuments.length < 3;
-            lastDocumentFlag = nextAndCurrDocuments.length < 4;
+            firstDocumentFlag = previousDocuments.length < 7;
+            lastDocumentFlag = nextAndCurrDocuments.length < 8;
         }
 
         return {

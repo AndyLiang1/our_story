@@ -252,9 +252,6 @@ export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: 
         if (nextPageTriggered) {
             setNextPageTriggered(false);
         }
-    }, [currentLocationFlipbook]);
-
-    useEffect(() => {
         if (documentsWindow) {
             if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
                 setDocumentId(documentsFlipBook[currentLocationFlipbook - 2].documentId);
