@@ -76,8 +76,8 @@ export class DocumentController {
             eventDate: reqBody.eventDate,
             images: []
         };
-        const doc = await services.documentService.createDocument(documentData);
-        res.status(201).json(doc);
+        const newDocId = await services.documentService.createDocument(documentData);
+        res.status(201).json(newDocId);
     }
 
     // TODO MAKE SURE USERID IS USED TOO

@@ -98,7 +98,7 @@ export const createDocument = async (
     collabToken: string,
     documentData: DocumentCreationAttributes
 ) => {
-    await axios.post(
+    const { data } = await axios.post(
         `${config.baseUrl}/api/documents`,
         { ...documentData, eventDate: new Date(documentData.eventDate) },
         {
@@ -107,6 +107,8 @@ export const createDocument = async (
             }
         }
     );
+    console.log("Created: ", data)
+    return data;
 };
 
 export const editDocumentTitle = async (collabToken: string, title: string, documentId: string) => {
