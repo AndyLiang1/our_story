@@ -18,6 +18,7 @@ export function HomePage(props: IHomePageProps) {
         status: false,
         refetch: false
     });
+    const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('')
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -36,6 +37,7 @@ export function HomePage(props: IHomePageProps) {
                 <CreateDocumentForm
                     user={user}
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
+                    setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
                 />
             )}
             {showUploadModalInfo.status && user && (
@@ -52,6 +54,8 @@ export function HomePage(props: IHomePageProps) {
                     user={user}
                     showUploadModalInfo={showUploadModalInfo}
                     setShowUploadModalInfo={setShowUploadModalInfo}
+                    triggerFlipBookRefetch={triggerFlipBookRefetch}
+                    setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
                 />
             </div>
         </div>

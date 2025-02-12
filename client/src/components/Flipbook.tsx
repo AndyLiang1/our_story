@@ -12,6 +12,8 @@ export interface IFlipbookProps {
     user: User;
     showUploadModalInfo: UploadImageModalInfo;
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
+    triggerFlipBookRefetch: string;
+    setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {
@@ -47,7 +49,13 @@ const loadingSpinnerPages = [
     </div>
 ];
 
-export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: IFlipbookProps) {
+export function Flipbook({
+    user,
+    showUploadModalInfo,
+    setShowUploadModalInfo,
+    triggerFlipBookRefetch,
+    setTriggerFlipBookRefetch
+}: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
@@ -68,7 +76,8 @@ export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: 
         firstDocumentFlag: boolean;
         lastDocumentFlag: boolean;
     } | null>(null);
-    const [documentId, setDocumentId] = useState('');
+    // const [documentId, setDocumentId] = useState('');
+    const documentId = triggerFlipBookRefetch ? triggerFlipBookRefetch : '';
     const documentsFlipBook = documentsWindow ? documentsWindow.documents : [];
     const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true;
     const lastDocumentFlag = documentsWindow ? documentsWindow.lastDocumentFlag : true;
@@ -83,6 +92,7 @@ export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: 
                 documentId
             );
             setDocumentsWindow(documentsWindow);
+            // setTriggerFlipBookRefetch('')
         }
     };
 
@@ -90,7 +100,7 @@ export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: 
         if (documentId) {
             fetchData(documentId);
         }
-    }, [documentId]);
+    }, [triggerFlipBookRefetch]);
 
     useEffect(() => {
         if (user) fetchData(null);
@@ -254,11 +264,13 @@ export function Flipbook({ user, showUploadModalInfo, setShowUploadModalInfo }: 
         }
         if (documentsWindow) {
             if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
-                setDocumentId(documentsFlipBook[currentLocationFlipbook - 2].documentId);
+                setTriggerFlipBookRefetch(
+                    documentsFlipBook[currentLocationFlipbook - 2].documentId
+                );
                 return;
             }
             if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
-                setDocumentId(documentsFlipBook[0].documentId);
+                setTriggerFlipBookRefetch(documentsFlipBook[0].documentId);
                 return;
             }
         }
