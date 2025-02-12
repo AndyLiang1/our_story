@@ -11,6 +11,7 @@ import { GenericFormInput } from './GenericFormInput';
 export interface ICreateDocumentFormProps {
     user: User;
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
+    setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type CreateDocumentFormData = {
@@ -18,7 +19,11 @@ type CreateDocumentFormData = {
     eventDate: Date;
 };
 
-export function CreateDocumentForm({ user, setShowCreateDocumentForm }: ICreateDocumentFormProps) {
+export function CreateDocumentForm({
+    user,
+    setShowCreateDocumentForm,
+    setTriggerFlipBookRefetch
+}: ICreateDocumentFormProps) {
     const [formErrorMessage, setFormErrorMessage] = useState('');
 
     const CreateDocumentSchema = Yup.object().shape({
@@ -27,8 +32,12 @@ export function CreateDocumentForm({ user, setShowCreateDocumentForm }: ICreateD
     });
 
     const handleSubmit = async (formData: CreateDocumentFormData) => {
-        await createDocument(user.collabToken, { ...formData, createdByUserId: user.userId });
+        const documentId = await createDocument(user.collabToken, {
+            ...formData,
+            createdByUserId: user.userId
+        });
         setShowCreateDocumentForm(false);
+        setTriggerFlipBookRefetch(documentId);
     };
     return (
         <div className="center-of-page z-10 flex h-[50%] w-[30%] justify-center bg-white">
