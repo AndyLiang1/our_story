@@ -21,7 +21,15 @@ export function ShareDocumentForm({
 }: IShareDocumentFormProps) {
     const handleSubmit = async (partnerEmail: string) => {
         await addDocumentOwner(collabToken, userId, showShareDocumentForm.documentId, partnerEmail);
+        closeForm()
     };
+    const closeForm = () => {
+        setShowShareDocumentForm({
+            documentId: '',
+            documentTitle: '', 
+            status: false
+        })
+    }
     const ShareDocumentFormSchema = Yup.object().shape({
         documentTitle: Yup.string().required('Title is required.'),
         partnerEmail: Yup.string().email().required('Partner email is required.')
