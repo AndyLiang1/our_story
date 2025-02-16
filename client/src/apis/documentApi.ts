@@ -107,7 +107,6 @@ export const createDocument = async (
             }
         }
     );
-    console.log("Created: ", data)
     return data;
 };
 
@@ -121,4 +120,22 @@ export const editDocumentTitle = async (collabToken: string, title: string, docu
             }
         }
     );
+};
+
+export const addDocumentOwner = async (
+    collabToken: string,
+    userId: string,
+    documentId: string,
+    partnerEmail: string
+) => {
+    const { data } = await axios.put(
+        `${config.baseUrl}/api/documents/${documentId}/owners`,
+        { userId, partnerEmail }, // only allow one partner for now
+        {
+            headers: {
+                Authorization: `Bearer ${collabToken}`
+            }
+        }
+    );
+    return data;
 };

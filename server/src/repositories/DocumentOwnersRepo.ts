@@ -5,7 +5,7 @@ import { DocumentOwnerData } from '../types/DocumentTypes';
 export class DocumentOwnersRepo {
     constructor() {}
 
-    async creatDocumentOwner(data: DocumentOwnerData, transaction?: Transaction) {
+    async createDocumentOwner(data: DocumentOwnerData, transaction?: Transaction) {
         const docOwner = await DocumentOwners.create(
             {
                 documentId: data.documentId,
@@ -26,15 +26,15 @@ export class DocumentOwnersRepo {
         return docIds;
     }
 
-    async getOwnersByDocumentId(documentId: string) {
-        const owners = await DocumentOwners.findAll({
-            where: {
-                documentId
-            },
-            attributes: ['userId']
-        });
-        return owners;
-    }
+    // async getOwnersByDocumentId(documentId: string) {
+    //     const owners = await DocumentOwners.findAll({
+    //         where: {
+    //             documentId
+    //         },
+    //         attributes: ['userId']
+    //     });
+    //     return owners;
+    // }
 
     async deleteDocumentOwner(data: DocumentOwnerData) {
         await DocumentOwners.destroy({

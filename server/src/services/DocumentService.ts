@@ -1,15 +1,18 @@
 import sequelize from '../db';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
+import { UserRepo } from '../repositories/UserRepo';
 import { DocumentCreationAttributes, DocumentData, DocumentOwnerData, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import { services } from './services';
 export class DocumentService {
     documentRepo: DocumentRepo;
     documentOwnerRepo: DocumentOwnersRepo;
+    userRepo: UserRepo;
 
     constructor() {
         this.documentRepo = new DocumentRepo();
         this.documentOwnerRepo = new DocumentOwnersRepo();
+        this.userRepo = new UserRepo();
     }
 
     async getDocuments(
@@ -67,7 +70,7 @@ export class DocumentService {
         return await sequelize.transaction(async (transaction) => {
             const newDocId: string = await this.documentRepo.createDocument({ ...documentData }, transaction);
 
-            const owner = await this.documentOwnerRepo.creatDocumentOwner(
+            await this.documentOwnerRepo.createDocumentOwner(
                 {
                     documentId: newDocId,
                     userId: documentData.createdByUserId
@@ -105,16 +108,20 @@ export class DocumentService {
         return docsThatNeedUpdating.length;
     }
 
-    async addOwners(documentId: string, owners: string[]) {
-        var result = [];
-        for (var userId of owners) {
-            const data = await this.documentOwnerRepo.creatDocumentOwner({
+    async addOwners(documentId: string, userIdOfPersonSharing: string, partnerEmail: string) {
+        const partner = await this.userRepo.getUserByEmail(partnerEmail);
+        const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
+        const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
+        const userActuallyOwnsDocument = userDocs.includes(documentId);
+        let data = null;
+        if (userActuallyOwnsDocument && partner) {
+            data = await this.documentOwnerRepo.createDocumentOwner({
                 documentId,
-                userId
+                userId: partner.getDataValue('userId')
             });
-            result.push(data);
         }
-        return result;
+
+        return data;
     }
 
     async deleteOwner(data: DocumentOwnerData) {

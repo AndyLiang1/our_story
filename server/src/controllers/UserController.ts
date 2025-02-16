@@ -3,7 +3,7 @@ import express, { NextFunction, Request, Response, Router } from 'express';
 import { config } from '../config/config';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
-import { UserData } from '../types/UserTypes';
+import { UserCreationData } from '../types/UserTypes';
 
 export class UserController {
     router: Router;
@@ -43,7 +43,7 @@ export class UserController {
 
     async createUser(req: Request, res: Response, next: NextFunction) {
         const requestBody = req.body;
-        const userData: UserData = {
+        const userData: UserCreationData = {
             cognitoId: requestBody.cognitoId,
             email: requestBody.email,
             firstName: requestBody.givenName,

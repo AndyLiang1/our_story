@@ -31,8 +31,14 @@ export type DocumentsWithFlags = {
     lastDocumentFlag: boolean;
 };
 
-export type UploadImageModalInfo = {
+export interface UploadImageModalInfo {
     documentId: string;
     status: boolean;
     refetch: boolean;
-};
+}
+
+export interface ShareDocumentFormInfo {
+    documentId: string;
+    documentTitle: string;
+    status: boolean;
+}

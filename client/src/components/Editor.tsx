@@ -19,6 +19,7 @@ import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 import { editDocumentTitle } from '../apis/documentApi';
 import { useEditor } from '../hooks/useEditor';
+import { ShareDocumentFormInfo } from '../types/DocumentTypes';
 import { MenuBar } from './MenuBar';
 
 export interface IEditorProps {
@@ -28,9 +29,17 @@ export interface IEditorProps {
     documentId: string;
     documentTitle: string;
     collabFlag?: boolean;
+    setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
 }
 
-const Editor = ({ ydoc, provider, collabToken, documentId, documentTitle }: IEditorProps) => {
+const Editor = ({
+    ydoc,
+    provider,
+    collabToken,
+    documentId,
+    documentTitle,
+    setShowShareDocumentForm
+}: IEditorProps) => {
     const [status, setStatus] = useState('connecting');
     const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');
@@ -153,7 +162,14 @@ const Editor = ({ ydoc, provider, collabToken, documentId, documentTitle }: IEdi
 
     return (
         <div className="h-full w-full">
-            {editor && <MenuBar editor={editor} />}
+            {editor && (
+                <MenuBar
+                    editor={editor}
+                    documentId={documentId}
+                    documentTitle={documentTitle}
+                    setShowShareDocumentForm={setShowShareDocumentForm}
+                />
+            )}
             {editor && (
                 <div className="flex h-[95%] w-full flex-col pl-[1.5rem]">
                     <input

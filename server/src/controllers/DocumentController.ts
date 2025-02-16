@@ -130,9 +130,9 @@ export class DocumentController {
 
     async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
-        const owners = req.body.owners;
+        const { userId, partnerEmail } = req.body;
         if (documentId) {
-            const docOwners = await services.documentService.addOwners(documentId, owners);
+            const docOwners = await services.documentService.addOwners(documentId, userId, partnerEmail);
             res.status(200).json(docOwners);
         } else {
             res.status(400).json({

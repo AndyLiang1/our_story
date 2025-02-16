@@ -1,11 +1,11 @@
 import { Document } from '../models/Document';
 import { User } from '../models/User';
-import { UserData } from '../types/UserTypes';
+import { UserCreationData } from '../types/UserTypes';
 
 export class UserRepo {
     constructor() {}
 
-    async addUser(userData: UserData) {
+    async addUser(userData: UserCreationData) {
         const user = await User.create({ ...userData });
         return user;
     }

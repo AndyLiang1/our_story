@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
-import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
+import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
@@ -14,6 +14,7 @@ export interface IFlipbookProps {
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
     triggerFlipBookRefetch: string;
     setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
+    setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {
@@ -54,7 +55,8 @@ export function Flipbook({
     showUploadModalInfo,
     setShowUploadModalInfo,
     triggerFlipBookRefetch,
-    setTriggerFlipBookRefetch
+    setTriggerFlipBookRefetch,
+    setShowShareDocumentForm
 }: IFlipbookProps) {
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
@@ -403,6 +405,7 @@ export function Flipbook({
                                     documentTitle={documentsFlipBook[index].title}
                                     collabToken={user.collabToken}
                                     collabFlag={index === currentLocationFlipbook - 2}
+                                    setShowShareDocumentForm={setShowShareDocumentForm}
                                 />
                             )}
                         </div>

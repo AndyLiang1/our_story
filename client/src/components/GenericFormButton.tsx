@@ -31,7 +31,7 @@ export function GenericFormButton({
             onClick={onClick}
             type={type ? type : undefined}
             className={
-                `flex items-center justify-center text-center ${styles} ` +
+                `mt-4 flex items-center justify-center text-center ${styles} ` +
                 (rounded ? 'rounded-[3rem]' : '') +
                 ' ' +
                 (backgroundColor ? backgroundColor : 'bg-[black]') +
