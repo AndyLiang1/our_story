@@ -2,11 +2,11 @@ import { Field, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import * as Yup from 'yup';
-import { createDocument } from '../apis/documentApi';
-import { User } from '../types/UserTypes';
-import { GenericFormButton } from './GenericFormButton';
-import { GenericFormErrorMessage } from './GenericFormErrorMessage';
-import { GenericFormInput } from './GenericFormInput';
+import { createDocument } from '../../apis/documentApi';
+import { User } from '../../types/UserTypes';
+import { GenericFormButton } from '../GenericFormButton';
+import { GenericFormErrorMessage } from '../GenericFormErrorMessage';
+import { GenericFormInput } from '../GenericFormInput';
 
 export interface ICreateDocumentFormProps {
     user: User;

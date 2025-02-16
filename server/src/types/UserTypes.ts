@@ -1,4 +1,4 @@
-export type UserData = {
+export type UserCreationData = {
     cognitoId: string;
     email: string;
     firstName: string;

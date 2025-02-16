@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAllDocuments } from '../apis/documentApi';
 import { Card } from '../components/Card';
-import { CreateDocumentForm } from '../components/CreateDocumentForm';
-import { NavBar } from '../components/Navbar';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
@@ -37,7 +35,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
             <NavBar setShowForm={setShowForm} /> */}
             {/* {documents.length ? <div>Docs</div> : <div>Loading</div>} */}
             <div className="h-[10%] bg-red-500"></div>
-            <div className="grid h-[80%] w-full bg-pink-500 grid-cols-[repeat(auto-fit,12rem)] gap-[3rem] justify-center">
+            <div className="grid h-[80%] w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[3rem] bg-pink-500">
                 <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
                 <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
                 <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />

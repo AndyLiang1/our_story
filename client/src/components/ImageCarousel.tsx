@@ -4,7 +4,6 @@ import { IoMdCloudUpload } from 'react-icons/io';
 import { getDocument } from '../apis/documentApi';
 import { deleteDocumentImages, getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
 import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
-import { GenericFormButton } from './GenericFormButton';
 
 export interface IImageCarouselProps {
     userId: string;
@@ -145,8 +144,7 @@ export function ImageCarousel({
                 </div>
             )}
             <div className="flex h-[10%] w-full items-center justify-between bg-red-200">
-                <GenericFormButton
-                    // className="flex h-full w-[50%] items-center justify-start  pl-2"
+                <button
                     onClick={() => {
                         setShowUploadModalInfo({
                             documentId: document.documentId,
@@ -154,34 +152,27 @@ export function ImageCarousel({
                             refetch: false
                         });
                     }}
-                    displayMessage={
-                        signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
-                            <>
-                                Upload images&nbsp;
-                                <IoMdCloudUpload />
-                            </>
-                        ) : (
-                            <>
-                                Add your first image&nbsp;
-                                <IoMdCloudUpload />
-                            </>
-                        )
-                    }
-                    styles={
-                        'h-full ' +
+                    className={
+                        'mt-0 h-full ' +
                         (signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0
                             ? 'w-[10rem]'
                             : 'w-full') +
-                        ' ' +
-                        'transition duration-200 hover:bg-white'
+                        ' bg-red-200 p-[0.6rem] text-[0.9rem] transition duration-200 hover:bg-white' +
+                        ' flex items-center justify-center text-center'
                     }
-                    bold={false}
-                    backgroundColor="bg-red-200"
-                    fontSize="text-[0.9rem]"
-                    textColor="text-black"
-                    padding="p-[0.6rem]"
-                    rounded={false}
-                ></GenericFormButton>
+                >
+                    {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
+                        <div className="flex items-center justify-center text-center">
+                            Upload images&nbsp;
+                            <IoMdCloudUpload />
+                        </div>
+                    ) : (
+                        <div className="flex items-center justify-center text-center">
+                            Add your first image&nbsp;
+                            <IoMdCloudUpload />
+                        </div>
+                    )}
+                </button>
                 <div className="flex h-full w-[30%] justify-center">
                     <button
                         onClick={handleDeleteImageButtonClicked}

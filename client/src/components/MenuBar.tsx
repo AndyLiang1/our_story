@@ -8,142 +8,161 @@ import {
     FaItalic,
     FaListOl,
     FaListUl,
-    FaParagraph
+    FaParagraph,
+    FaShareSquare
 } from 'react-icons/fa';
 import { LuHeading1, LuHeading2, LuHeading3 } from 'react-icons/lu';
+import { ShareDocumentFormInfo } from '../types/DocumentTypes';
 
 export interface IMenuBarProps {
     editor: any;
+    documentId: string;
+    documentTitle: string;
+    setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
 }
 
-export function MenuBar({ editor }: IMenuBarProps) {
+export function MenuBar({
+    editor,
+    documentId,
+    documentTitle,
+    setShowShareDocumentForm
+}: IMenuBarProps) {
     if (!editor) {
         return null;
     }
 
+    const handleShareButtonClicked = () => {
+        setShowShareDocumentForm({
+            documentId,
+            documentTitle,
+            status: true
+        });
+    };
+
     return (
-        <div className="flex h-[5%] w-full justify-start bg-gray-100 pl-[1.5rem]">
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                disabled={!editor.can().chain().focus().toggleBold().run()}
-            >
-                <FaBold />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                disabled={!editor.can().chain().focus().toggleItalic().run()}
-            >
-                <FaItalic />
-            </button>
-            {/* <button
+        <div className="flex h-[5%] w-full bg-gray-100 px-[1.5rem]">
+            <div className="flex h-full w-[90%] justify-start">
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    disabled={!editor.can().chain().focus().toggleBold().run()}
+                >
+                    <FaBold />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    disabled={!editor.can().chain().focus().toggleItalic().run()}
+                >
+                    <FaItalic />
+                </button>
+                {/* <button
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 className={editor.isActive('strike') ? 'is-active' : ''}
             >
                 strike
             </button> */}
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleCode().run()}
-                disabled={!editor.can().chain().focus().toggleCode().run()}
-            >
-                <FaCode />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            >
-                <FaAlignLeft />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            >
-                <FaAlignCenter />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            >
-                <FaAlignRight />
-            </button>
-            {/* <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleCode().run()}
+                    disabled={!editor.can().chain().focus().toggleCode().run()}
+                >
+                    <FaCode />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                >
+                    <FaAlignLeft />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                >
+                    <FaAlignCenter />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                >
+                    <FaAlignRight />
+                </button>
+                {/* <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
                 clear marks
             </button> */}
-            {/* <button onClick={() => editor.chain().focus().clearNodes().run()}>clear nodes</button> */}
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().setParagraph().run()}
-            >
-                <FaParagraph />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            >
-                <LuHeading1 />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            >
-                <LuHeading2 />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            >
-                <LuHeading3 />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-            >
-                <FaListUl />
-            </button>
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            >
-                <FaListOl />
-            </button>
-            {/* <button
+                {/* <button onClick={() => editor.chain().focus().clearNodes().run()}>clear nodes</button> */}
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().setParagraph().run()}
+                >
+                    <FaParagraph />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                >
+                    <LuHeading1 />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                >
+                    <LuHeading2 />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                >
+                    <LuHeading3 />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                >
+                    <FaListUl />
+                </button>
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                >
+                    <FaListOl />
+                </button>
+                {/* <button
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                 className={editor.isActive('codeBlock') ? 'is-active' : ''}
             >
                 code block
             </button> */}
-            {/* <button onClick={() => editor.chain().focus().toggleBlockquote().run()} className={editor.isActive('blockquote') ? 'is-active' : ''}>
+                {/* <button onClick={() => editor.chain().focus().toggleBlockquote().run()} className={editor.isActive('blockquote') ? 'is-active' : ''}>
                 blockquote
             </button> */}
-            {/* <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>horizontal rule</button> */}
-            {/* <button
+                {/* <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>horizontal rule</button> */}
+                {/* <button
                 className={
                     'flex aspect-square h-full items-center justify-center bg-gray-100 hover:bg-gray-200 transition duration-200 text-center'
                 }
@@ -151,8 +170,8 @@ export function MenuBar({ editor }: IMenuBarProps) {
             >
                 hard break
             </button> */}
-            {/* <button onClick={() => addImage()}>Image</button> */}
-            {/* <button
+                {/* <button onClick={() => addImage()}>Image</button> */}
+                {/* <button
                 onClick={() => editor.chain().focus().undo().run()}
                 disabled={!editor.can().chain().focus().undo().run()}
             >
@@ -164,15 +183,15 @@ export function MenuBar({ editor }: IMenuBarProps) {
             >
                 redo
             </button> */}
-            <button
-                className={
-                    'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
-                }
-                onClick={() => editor.chain().focus().toggleHighlight().run()} // Highlight styling set by index.css
-            >
-                <FaHighlighter />
-            </button>
-            {/* <button
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={() => editor.chain().focus().toggleHighlight().run()} // Highlight styling set by index.css
+                >
+                    <FaHighlighter />
+                </button>
+                {/* <button
                 className={
                     'flex aspect-square h-full items-center justify-center bg-gray-100 hover:bg-gray-200 transition duration-200 text-center'
                 }
@@ -180,6 +199,17 @@ export function MenuBar({ editor }: IMenuBarProps) {
             >
                 <FaHighlighter />
             </button> */}
+            </div>
+            <div className="flex h-full w-[10%] justify-end">
+                <button
+                    className={
+                        'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
+                    }
+                    onClick={handleShareButtonClicked} // Highlight styling set by index.css
+                >
+                    <FaShareSquare className={'h-full'} color="#52cdff" />
+                </button>
+            </div>
         </div>
     );
 }
