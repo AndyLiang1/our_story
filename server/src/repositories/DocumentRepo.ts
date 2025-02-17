@@ -2,7 +2,8 @@ import { Op } from '@sequelize/core';
 import { Transaction } from 'sequelize';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
-import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
+import { DocumentOwners } from '../models/DocumentOwners';
+import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes, DocumentDataKeys } from '../types/DocumentTypes';
 
 export class DocumentRepo {
     constructor() {}
@@ -81,9 +82,10 @@ export class DocumentRepo {
                     through: {
                         attributes: []
                     },
-                    attributes: []
-                }
-            ]
+                    attributes: ["userId"]
+                },
+            ],
+            // attributes: this.getDocumentDataKeys(),
         };
         if (isInitialLoad) {
             const mostRecentQueryObject = {
@@ -175,5 +177,24 @@ export class DocumentRepo {
             },
             transaction
         });
+    }
+
+    getDocumentDataKeys() {
+        const documentDataOb: DocumentData = {
+            documentId: '',
+            users: [],
+            title: '',
+            documentContent: {
+                type: '',
+                content: undefined
+            },
+            eventDate: new Date(),
+            images: [],
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            createdByUserId: ''
+        }
+        return Object.keys(documentDataOb)
+
     }
 }
