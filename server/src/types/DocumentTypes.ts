@@ -1,9 +1,13 @@
-// Schema of document from a get
+import {User} from "../types/UserTypes"
+
 export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
     createdAt: Date;
     updatedAt: Date;
+    users: User[]
 }
+
+export type DocumentDataKeys = keyof DocumentData;
 
 export interface DocumentCreationAttributes {
     title: string;
