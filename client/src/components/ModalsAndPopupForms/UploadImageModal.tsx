@@ -4,22 +4,21 @@ import { useRef, useState } from 'react';
 import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
 import { addDocumentImages, getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
+import { useUserContext } from '../../context/userContext';
 import { UploadImageModalInfo } from '../../types/DocumentTypes';
 import { GenericFormButton } from '../GenericFormButton';
 
 export interface IUploadImageModalProps {
-    userId: string;
-    collabToken: string;
     showUploadModalInfo: UploadImageModalInfo;
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
 }
 
 export function UploadImageModal({
-    userId,
-    collabToken,
     showUploadModalInfo,
     setShowUploadModalInfo
 }: IUploadImageModalProps) {
+    const user = useUserContext();
+    const { collabToken, userId } = user;
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);

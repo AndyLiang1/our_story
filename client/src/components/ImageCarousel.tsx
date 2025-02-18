@@ -3,11 +3,10 @@ import { FaChevronLeft, FaChevronRight, FaTrashAlt } from 'react-icons/fa';
 import { IoMdCloudUpload } from 'react-icons/io';
 import { getDocument } from '../apis/documentApi';
 import { deleteDocumentImages, getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
+import { useUserContext } from '../context/userContext';
 import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
 
 export interface IImageCarouselProps {
-    userId: string;
-    collabToken: string;
     document: DocumentData;
     showUploadModalInfo: UploadImageModalInfo;
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
@@ -19,12 +18,12 @@ enum DIRECTION {
 }
 
 export function ImageCarousel({
-    userId,
-    collabToken,
     document,
     showUploadModalInfo,
     setShowUploadModalInfo
 }: IImageCarouselProps) {
+    const user = useUserContext();
+    const { collabToken, userId } = user;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [signedImageUrlsWithGuidNames, setSignedImageUrlsWithGuidNames] = useState<
         { signedImageUrl: string; imageNameWithGuid: string }[]

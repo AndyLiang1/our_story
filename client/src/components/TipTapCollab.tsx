@@ -3,13 +3,13 @@ import * as Y from 'yjs';
 
 import { useEffect, useState } from 'react';
 import { config } from '../config/config';
+import { useUserContext } from '../context/userContext';
 import { ShareDocumentFormInfo } from '../types/DocumentTypes';
 import Editor from './Editor';
 
 export interface ITipTapCollabProps {
     documentId: string;
     documentTitle: string;
-    collabToken: string;
     collabFlag?: boolean;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
 }
@@ -17,10 +17,11 @@ export interface ITipTapCollabProps {
 export function TipTapCollab({
     documentId,
     documentTitle,
-    collabToken,
     collabFlag = true,
     setShowShareDocumentForm
 }: ITipTapCollabProps) {
+    const user = useUserContext();
+    const { collabToken } = user;
     const [providerAndDoc, setProviderAndDoc] = useState<any>(null);
 
     useEffect(() => {
@@ -64,7 +65,6 @@ export function TipTapCollab({
             <Editor
                 provider={providerAndDoc.provider}
                 ydoc={providerAndDoc.doc}
-                collabToken={collabToken}
                 documentId={documentId}
                 documentTitle={documentTitle}
                 setShowShareDocumentForm={setShowShareDocumentForm}

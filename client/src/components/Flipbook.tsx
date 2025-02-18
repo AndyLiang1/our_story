@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
+import { useUserContext } from '../context/userContext';
 import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
-import { User } from '../types/UserTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
 
 export interface IFlipbookProps {
-    user: User;
     showUploadModalInfo: UploadImageModalInfo;
     setShowUploadModalInfo: React.Dispatch<React.SetStateAction<UploadImageModalInfo>>;
     triggerFlipBookRefetch: string;
@@ -51,13 +50,14 @@ const loadingSpinnerPages = [
 ];
 
 export function Flipbook({
-    user,
     showUploadModalInfo,
     setShowUploadModalInfo,
     triggerFlipBookRefetch,
     setTriggerFlipBookRefetch,
     setShowShareDocumentForm
 }: IFlipbookProps) {
+    const user = useUserContext();
+    const { collabToken, userId } = user;
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
@@ -88,8 +88,8 @@ export function Flipbook({
     const fetchData = async (documentId: string | null) => {
         if (user && user.collabToken) {
             const documentsWindow = await getNeighbouringDocuments(
-                user.userId,
-                user.collabToken,
+                userId,
+                collabToken,
                 new Date(),
                 documentId
             );
@@ -364,8 +364,6 @@ export function Flipbook({
                                     <div className="h-[52%] w-full">
                                         {user && documentsFlipBook.length && (
                                             <ImageCarousel
-                                                userId={user.userId}
-                                                collabToken={user.collabToken}
                                                 document={documentsFlipBook[index - 1]}
                                                 showUploadModalInfo={showUploadModalInfo}
                                                 setShowUploadModalInfo={setShowUploadModalInfo}
@@ -376,8 +374,6 @@ export function Flipbook({
                                     <div className="h-[45%] w-full">
                                         {documentsFlipBook && documentsFlipBook.length && (
                                             <DateCalendar
-                                                userId={user.userId}
-                                                collabToken={user.collabToken}
                                                 disabled={index !== currentLocationFlipbook - 1}
                                             />
                                         )}
@@ -403,7 +399,6 @@ export function Flipbook({
                                     key={documentsFlipBook[index].documentId}
                                     documentId={documentsFlipBook[index].documentId}
                                     documentTitle={documentsFlipBook[index].title}
-                                    collabToken={user.collabToken}
                                     collabFlag={index === currentLocationFlipbook - 2}
                                     setShowShareDocumentForm={setShowShareDocumentForm}
                                 />

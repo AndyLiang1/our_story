@@ -18,6 +18,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 import { editDocumentTitle } from '../apis/documentApi';
+import { useUserContext } from '../context/userContext';
 import { useEditor } from '../hooks/useEditor';
 import { ShareDocumentFormInfo } from '../types/DocumentTypes';
 import { MenuBar } from './MenuBar';
@@ -25,7 +26,6 @@ import { MenuBar } from './MenuBar';
 export interface IEditorProps {
     ydoc?: any;
     provider?: any;
-    collabToken: string;
     documentId: string;
     documentTitle: string;
     collabFlag?: boolean;
@@ -35,11 +35,12 @@ export interface IEditorProps {
 const Editor = ({
     ydoc,
     provider,
-    collabToken,
     documentId,
     documentTitle,
     setShowShareDocumentForm
 }: IEditorProps) => {
+    const user = useUserContext();
+    const { collabToken } = user;
     const [status, setStatus] = useState('connecting');
     const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');

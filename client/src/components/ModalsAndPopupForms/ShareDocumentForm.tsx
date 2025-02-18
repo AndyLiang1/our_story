@@ -2,34 +2,33 @@ import { Field, Form, Formik } from 'formik';
 import { IoIosClose } from 'react-icons/io';
 import * as Yup from 'yup';
 import { addDocumentOwner } from '../../apis/documentApi';
+import { useUserContext } from '../../context/userContext';
 import { ShareDocumentFormInfo } from '../../types/DocumentTypes';
 import { GenericFormButton } from '../GenericFormButton';
 import { GenericFormInput } from '../GenericFormInput';
 
 export interface IShareDocumentFormProps {
-    userId: string;
-    collabToken: string;
     showShareDocumentForm: ShareDocumentFormInfo;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
 }
 
 export function ShareDocumentForm({
-    userId,
-    collabToken,
     showShareDocumentForm,
     setShowShareDocumentForm
 }: IShareDocumentFormProps) {
+    const user = useUserContext();
+    const { collabToken, userId } = user;
     const handleSubmit = async (partnerEmail: string) => {
         await addDocumentOwner(collabToken, userId, showShareDocumentForm.documentId, partnerEmail);
-        closeForm()
+        closeForm();
     };
     const closeForm = () => {
         setShowShareDocumentForm({
             documentId: '',
-            documentTitle: '', 
+            documentTitle: '',
             status: false
-        })
-    }
+        });
+    };
     const ShareDocumentFormSchema = Yup.object().shape({
         documentTitle: Yup.string().required('Title is required.'),
         partnerEmail: Yup.string().email().required('Partner email is required.')
@@ -69,7 +68,7 @@ export function ShareDocumentForm({
                             type="text"
                             label="Title"
                             component={GenericFormInput}
-                            onChange={()=>{}}
+                            onChange={() => {}}
                             disabled={showShareDocumentForm.documentTitle !== ''}
                         />
                         <Field
