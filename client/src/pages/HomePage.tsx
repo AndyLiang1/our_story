@@ -6,6 +6,7 @@ import { Flipbook } from '../components/Flipbook';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
 import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
 import { UploadImageModal } from '../components/ModalsAndPopupForms/UploadImageModal';
+import { UserContext } from '../context/userContext';
 import { ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
@@ -39,43 +40,39 @@ export function HomePage(props: IHomePageProps) {
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
-            {showCreateDocumentForm && user && (
-                <CreateDocumentForm
-                    user={user}
+            <UserContext.Provider value={user}>
+                {showCreateDocumentForm && user && (
+                    <CreateDocumentForm
+                        setShowCreateDocumentForm={setShowCreateDocumentForm}
+                        setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
+                    />
+                )}
+                {showUploadModalInfo.status && user && (
+                    <UploadImageModal
+                        showUploadModalInfo={showUploadModalInfo}
+                        setShowUploadModalInfo={setShowUploadModalInfo}
+                    />
+                )}
+                {showShareDocumentForm.status && user && (
+                    <ShareDocumentForm
+                        showShareDocumentForm={showShareDocumentForm}
+                        setShowShareDocumentForm={setShowShareDocumentForm}
+                    />
+                )}
+                <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
-                    setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
-                />
-            )}
-            {showUploadModalInfo.status && user && (
-                <UploadImageModal
-                    userId={user.userId}
-                    collabToken={user.collabToken}
-                    showUploadModalInfo={showUploadModalInfo}
-                    setShowUploadModalInfo={setShowUploadModalInfo}
-                />
-            )}
-            {showShareDocumentForm.status && user && (
-                <ShareDocumentForm
-                    userId={user.userId}
-                    collabToken={user.collabToken}
-                    showShareDocumentForm={showShareDocumentForm}
                     setShowShareDocumentForm={setShowShareDocumentForm}
                 />
-            )}
-            <NavBar
-                setShowCreateDocumentForm={setShowCreateDocumentForm}
-                setShowShareDocumentForm={setShowShareDocumentForm}
-            />
-            <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
-                <Flipbook
-                    user={user}
-                    showUploadModalInfo={showUploadModalInfo}
-                    setShowUploadModalInfo={setShowUploadModalInfo}
-                    triggerFlipBookRefetch={triggerFlipBookRefetch}
-                    setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
-                    setShowShareDocumentForm={setShowShareDocumentForm}
-                />
-            </div>
+                <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
+                    <Flipbook
+                        showUploadModalInfo={showUploadModalInfo}
+                        setShowUploadModalInfo={setShowUploadModalInfo}
+                        triggerFlipBookRefetch={triggerFlipBookRefetch}
+                        setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
+                        setShowShareDocumentForm={setShowShareDocumentForm}
+                    />
+                </div>
+            </UserContext.Provider>
         </div>
     );
 }

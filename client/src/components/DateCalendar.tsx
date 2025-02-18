@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { getDocumentsInMonth } from '../apis/documentApi';
+import { useUserContext } from '../context/userContext';
 import { DocumentData, EventMetaData } from '../types/DocumentTypes';
 import { GenericCalendarEvents } from './GenericCalendarEvents';
 
@@ -10,10 +11,7 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export interface IDateCalendarProps {
-    events?: EventMetaData[];
     goToEvent?: Function;
-    userId: string;
-    collabToken: string;
     disabled: boolean;
 }
 
@@ -32,7 +30,9 @@ const nextLabel = (
 const formatShortWeekday = (locale: any, date: Date) =>
     ['S', 'M', 'T', 'W', 'T', 'F', 'S'][date.getDay()];
 
-export function DateCalendar({ userId, collabToken, disabled }: IDateCalendarProps) {
+export function DateCalendar({ disabled }: IDateCalendarProps) {
+    const user = useUserContext();
+    const { collabToken, userId } = user;
     const [selectedDate, setSelectedDate] = useState<Value>(new Date());
     const [events, setEventsInMonth] = useState<EventMetaData[]>([]);
 

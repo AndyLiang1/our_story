@@ -3,13 +3,12 @@ import { useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import * as Yup from 'yup';
 import { createDocument } from '../../apis/documentApi';
-import { User } from '../../types/UserTypes';
+import { useUserContext } from '../../context/userContext';
 import { GenericFormButton } from '../GenericFormButton';
 import { GenericFormErrorMessage } from '../GenericFormErrorMessage';
 import { GenericFormInput } from '../GenericFormInput';
 
 export interface ICreateDocumentFormProps {
-    user: User;
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
     setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -20,10 +19,10 @@ type CreateDocumentFormData = {
 };
 
 export function CreateDocumentForm({
-    user,
     setShowCreateDocumentForm,
     setTriggerFlipBookRefetch
 }: ICreateDocumentFormProps) {
+    const user = useUserContext();
     const [formErrorMessage, setFormErrorMessage] = useState('');
 
     const CreateDocumentSchema = Yup.object().shape({
