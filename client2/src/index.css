@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Handlee&family=Tangerine:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@reference "tailwindcss";
+
+html,
+body {
+    @apply m-0 p-0 font-sans;
+}
+
+@layer components {
+    code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    }
+
+    .rotate-y-neg-180deg {
+        transform: rotateY(-180deg);
+    }
+
+    .book {
+        position: relative;
+        transition: transform 0.5s;
+    }
+
+    .paper {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        perspective: 1500px;
+        transform-origin: left;
+    }
+
+    .front,
+    .back {
+        background-color: white;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform-origin: left;
+        /* transition: transform 1s; */
+    }
+
+    .front {
+        z-index: 1;
+        backface-visibility: hidden;
+        border-left: 3px solid powderblue;
+    }
+
+    .back {
+        z-index: 0;
+    }
+
+    .front-content,
+    .back-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .back-content {
+        transform: rotateY(180deg);
+    }
+
+    /* Paper flip effect */
+    /* .flipped .front,
+    .flipped .back {
+        transform: rotateY(-180deg);
+    } */
+
+    .center-of-page {
+        @apply fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 transform;
+    }
+
+    .editor__content {
+        @apply font-['Handlee'];
+    }
+
+    .editor__content mark {
+        background-color: rgba(224, 246, 255, 0.7);
+    }
+
+    .editor__content .collaboration-cursor__caret {
+        border-left: 1px solid #0d0d0d;
+        border-right: 1px solid #0d0d0d;
+        margin-left: -1px;
+        margin-right: -1px;
+        pointer-events: none;
+        position: relative;
+        word-break: normal;
+    }
+
+    .editor__content .tiptap.ProseMirror:focus {
+        outline: none;
+    }
+
+    /* Render the username above the caret */
+    .editor__content .collaboration-cursor__label {
+        border-radius: 3px 3px 3px 0;
+        color: #0d0d0d;
+        font-size: 12px;
+        font-style: normal;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 600;
+        left: -1px;
+        line-height: normal;
+        padding: 0.1rem 0.3rem;
+        position: absolute;
+        top: -1.4em;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    .bg-pogo {
+        background-image: url('../public/pogo.jpg');
+        background-size: cover;
+        background-position: bottom;
+    }
+
+    .react-calendar {
+        @apply h-full w-full rounded-[2rem] bg-[url("../public/calendar_bg2.jpg")] bg-cover bg-center p-2;
+    }
+
+    /* The entire first row, with the buttons and month selector */
+    .react-calendar .react-calendar__navigation {
+        @apply relative flex h-[15%] w-full items-center justify-center text-center;
+    }
+
+    /* The month selector part */
+    .react-calendar .react-calendar__navigation__label {
+        @apply h-full w-full;
+    }
+
+    .react-calendar
+        .react-calendar__navigation__label
+        .react-calendar__navigation__label__labelText--from {
+        @apply flex h-full w-full items-center justify-center pt-[0.4rem] text-center font-['Tangerine'] text-[2rem] font-bold;
+    }
+
+    .react-calendar .react-calendar__navigation__prev-button {
+        @apply absolute left-0 z-10 h-full w-[30%] pl-[1.5rem];
+    }
+    .react-calendar .react-calendar__navigation__next-button {
+        @apply absolute right-0 z-10 h-full w-[30%] pr-[1.5rem];
+    }
+
+    .react-calendar .react-calendar__navigation__prev2-button,
+    .react-calendar .react-calendar__navigation__next2-button {
+        @apply hidden;
+    }
+
+    /* The container for the week day categories and the actual days of the month */
+    .react-calendar .react-calendar__viewContainer {
+        @apply h-[85%] w-full;
+    }
+
+    /* The sub container for the week day categories and the actual days of the month */
+    .react-calendar .react-calendar__month-view {
+        @apply h-full w-full overflow-auto;
+    }
+
+    .react-calendar .react-calendar__month-view * {
+        @apply h-full w-full;
+    }
+
+    /* The container for the week day categories in the calendar: Mon, Tues... etc */
+    .react-calendar .react-calendar__month-view__weekdays {
+        @apply h-[12%] w-full font-[450] italic;
+    }
+
+    /* The actual week day categories in the calendar: Mon, Tues... etc */
+    .react-calendar .react-calendar__month-view__weekdays__weekday,
+    .react-calendar .react-calendar__month-view__weekdays--weekend {
+        @apply flex h-full w-[14.2857143%] justify-center text-center;
+    }
+
+    .react-calendar .react-calendar__month-view__weekdays__weekday abbr[aria-label],
+    .react-calendar .react-calendar__month-view__weekdays--weekend abbr[aria-label] {
+        @apply text-[1rem] no-underline;
+    }
+
+    /* The grid for the actual days in the calendar */
+    .react-calendar .react-calendar__month-view__days {
+        @apply h-[17.6%] w-full;
+    }
+
+    /* The actual days in the calendar */
+    .react-calendar .react-calendar__month-view__days__day {
+        @apply flex flex-col items-center justify-start text-center text-[0.5rem];
+    }
+
+    .react-calendar .react-calendar__month-view__days__day abbr[aria-label] {
+        @apply flex h-[60%] min-h-[60%] w-full items-center justify-center text-center text-[1rem];
+    }
+
+    .react-calendar .react-calendar__month-view__days__day--neighboringMonth {
+        @apply opacity-30;
+    }
+
+    .react-calendar .react-calendar__tile--now {
+        @apply font-bold text-blue-700;
+    }
+}
