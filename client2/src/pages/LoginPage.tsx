@@ -57,7 +57,7 @@ export function LoginPage(props: ILoginPageProps) {
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">
-            <div className="float-right flex h-full w-[45%] items-center justify-center bg-blue-200">
+            <div className="float-right flex h-full w-[45%] items-center justify-center">
                 <Formik
                     className="h-full w-full"
                     initialValues={{ email: '', password: '' }}
@@ -70,7 +70,7 @@ export function LoginPage(props: ILoginPageProps) {
                     }}
                 >
                     {(props) => (
-                        <Form className="flex h-full w-[90%] flex-col items-center justify-center bg-red-200">
+                        <Form className="flex h-full w-[90%] flex-col items-center justify-center">
                             <div className="text-[1.5rem] font-bold">Log in</div>
                             <Field
                                 name="email"
@@ -98,14 +98,12 @@ export function LoginPage(props: ILoginPageProps) {
                             <GenericFormButton
                                 displayMessage="Need an account? Sign Up"
                                 disabled={false}
-                                // onClick={() => navigate('/signup')}
-                                onClick={() => {}}
+                                onClick={() => navigate('/signup')}
                                 styles="h-12 w-[30%]"
                             ></GenericFormButton>
                         </Form>
                     )}
                 </Formik>
-                {/* hellooo */}
             </div>
         </div>
     );

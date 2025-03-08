@@ -19,7 +19,7 @@ export function GenericFormButton({
     onClick,
     type,
     styles,
-    bold = true,
+    bold = false,
     backgroundColor,
     textColor = 'text-white',
     fontSize,
@@ -39,7 +39,7 @@ export function GenericFormButton({
                 textColor +
                 ' ' +
                 (bold ? 'font-bold' : '') +
-                (fontSize ? fontSize : 'text-[1rem]') +
+                (fontSize ? fontSize : ' text-[1rem]') +
                 ' ' +
                 (padding ? padding : 'p-[1rem]')
             }

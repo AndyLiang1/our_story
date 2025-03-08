@@ -71,6 +71,7 @@ export function CreateDocumentForm({
                             type="date"
                             label="Date"
                             max="9999-12-31"
+                            styles={"font-bold"}
                             component={GenericFormInput}
                         />
 
