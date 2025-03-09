@@ -125,6 +125,11 @@ body {
         background-position: bottom;
     }
 
+    /* Unsure why we have to put it here and not in the div itself but okay...*/
+    .form__input{
+        @apply font-sans
+    }
+
     .react-calendar {
         @apply h-full w-full rounded-[2rem] bg-[url("../public/calendar_bg2.jpg")] bg-cover bg-center p-2;
     }
