@@ -201,8 +201,10 @@ body {
         @apply flex h-[60%] min-h-[60%] w-full items-center justify-center text-center text-[1rem];
     }
 
-    .react-calendar .react-calendar__month-view__days__day--neighboringMonth {
-        @apply opacity-30;
+    /* DO NOT SET OPACITY TO ANY VALUE IN (0,1). Opacity will conflict with z-index values in the flipbook */
+    /* https://stackoverflow.com/questions/2837057/what-has-bigger-priority-opacity-or-z-index-in-browsers */
+    .react-calendar .react-calendar__month-view__days__day--neighboringMonth abbr[aria-label] {
+        @apply text-black/30;
     }
 
     .react-calendar .react-calendar__tile--now {
