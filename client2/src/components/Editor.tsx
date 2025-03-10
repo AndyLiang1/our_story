@@ -172,7 +172,7 @@ const Editor = ({
                 />
             )}
             {editor && (
-                <div className="flex h-[95%] w-full flex-col pl-[1.5rem]">
+                <div className="flex h-[95%] w-full flex-col pl-[1.5rem] box-border">
                     <input
                         className="h-[5%] w-full border-none bg-transparent text-center"
                         value={title}

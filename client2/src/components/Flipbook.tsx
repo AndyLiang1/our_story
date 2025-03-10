@@ -358,9 +358,10 @@ export function Flipbook({
                             }
                         }}
                     >
-                        <div className="front-content">
+                        <div className="front-content h-full w-full">
                             {index > 0 && (
-                                <div className="flex h-full w-full flex-col items-center justify-evenly p-[2rem]">
+                                // need box-border: https://teamtreehouse.com/community/why-did-the-div-width-increase-when-padding-was-added-with-a-max-width-shouldnt-it-have-stayed-the-same#:~:text=By%20default%20the%20width%20of,the%20behavior%20you're%20witnessing.
+                                <div className="box-border flex h-full w-full flex-col items-center justify-evenly p-[2rem]">
                                     <div className="h-[52%] w-full">
                                         {user && documentsFlipBook.length && (
                                             <ImageCarousel
@@ -416,7 +417,7 @@ export function Flipbook({
             {!(firstDocumentFlag && currentLocationFlipbook === 2) && (
                 <button
                     className={
-                        'absolute left-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] ' +
+                        'absolute top-[50%] left-[5rem] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] flex items-center ' +
                         (arrowClickPause ? 'text-gray-300' : 'text-white')
                     }
                     onClick={async () => {
@@ -428,7 +429,7 @@ export function Flipbook({
                         }, 1500);
                     }}
                 >
-                    <FaChevronLeft />
+                    <FaChevronLeft/>
                 </button>
             )}
             {!(lastDocumentFlag && currentLocationFlipbook === maxLocation - 1) && (
@@ -436,13 +437,13 @@ export function Flipbook({
                     onClick={async () => {
                         if (arrowClickPause) return;
                         setArrowClickPause(true);
-                        setNextPageTriggered(true);
+                        setNextPageTriggered(true); 
                         setTimeout(() => {
                             setArrowClickPause(false);
                         }, 1500);
                     }}
                     className={
-                        'absolute right-[5rem] top-[50%] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] ' +
+                        'absolute top-[50%] right-[5rem] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] flex items-center ' +
                         (arrowClickPause ? 'text-gray-300' : 'text-white')
                     }
                     disabled={arrowClickPause}

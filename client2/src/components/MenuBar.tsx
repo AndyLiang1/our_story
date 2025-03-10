@@ -40,7 +40,7 @@ export function MenuBar({
     };
 
     return (
-        <div className="flex h-[5%] w-full bg-gray-100 px-[1.5rem]">
+        <div className="box-border flex h-[5%] w-full bg-gray-100 px-[1.5rem]">
             <div className="flex h-full w-[90%] justify-start">
                 <button
                     className={
@@ -49,7 +49,7 @@ export function MenuBar({
                     onClick={() => editor.chain().focus().toggleBold().run()}
                     disabled={!editor.can().chain().focus().toggleBold().run()}
                 >
-                    <FaBold />
+                    <FaBold className="border-0 bg-transparent" />
                 </button>
                 <button
                     className={
