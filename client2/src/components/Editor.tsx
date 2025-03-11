@@ -172,14 +172,14 @@ const Editor = ({
                 />
             )}
             {editor && (
-                <div className="flex h-[95%] w-full flex-col pl-[1.5rem] box-border">
+                <div className="flex h-[95%] w-full flex-col">
                     <input
-                        className="h-[5%] w-full border-none bg-transparent text-center"
+                        className="h-[5%] w-full border-none bg-transparent text-center text-[1.3rem] font-['Handlee'] mt-1 focus:outline-none"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     <EditorContent
-                        className="editor__content h-[95%] w-full pt-2"
+                        className="editor__content h-[95%] w-full px-[1.5rem] box-border overflow-auto"
                         editor={editor}
                     />
                 </div>

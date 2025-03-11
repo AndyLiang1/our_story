@@ -100,14 +100,14 @@ export function ImageCarousel({
     return (
         <div className={`relative h-full w-full flex-col items-center justify-evenly text-center`}>
             {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
-                <div className="relative h-[90%] w-full overflow-hidden rounded-t-[2.5rem] flex items-center text-center">
+                <div className="relative box-border flex h-[90%] w-full items-center overflow-hidden rounded-t-[2.5rem] border-x-2 border-t-2 border-gray-100 text-center">
                     <button
                         onClick={() => {
                             changeIndex(DIRECTION.LEFT);
                         }}
                         className="absolute top-[50%] left-2 z-[3] translate-x-0 translate-y-[-50%] transform"
                     >
-                        <FaChevronLeft />
+                        <FaChevronLeft className="text-[2rem]" />
                     </button>
                     <button
                         onClick={() => {
@@ -115,7 +115,7 @@ export function ImageCarousel({
                         }}
                         className="absolute top-[50%] right-2 z-[3] translate-x-0 translate-y-[-50%] transform"
                     >
-                        <FaChevronRight />
+                        <FaChevronRight className="text-[2rem]" />
                     </button>
                     <img
                         src={signedImageUrlsWithGuidNames[currentIndex].signedImageUrl}
@@ -129,7 +129,7 @@ export function ImageCarousel({
                     />
                 </div>
             ) : (
-                <div className="relative h-[90%] w-full overflow-hidden rounded-t-[2.5rem] flex items-center text-center">
+                <div className="relative box-border flex h-[90%] w-full items-center overflow-hidden rounded-t-[2.5rem] border-x-2 border-t-2 border-gray-100 text-center">
                     <img
                         src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
                         className="absolute z-[2] h-full w-full object-contain"
@@ -163,12 +163,12 @@ export function ImageCarousel({
                     {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
                         <div className="flex items-center justify-center text-center">
                             Upload images&nbsp;
-                            <IoMdCloudUpload className="text-[1rem]"/>
+                            <IoMdCloudUpload className="text-[1rem]" />
                         </div>
                     ) : (
                         <div className="flex items-center justify-center text-center">
                             Add your first image&nbsp;
-                            <IoMdCloudUpload className="text-[1rem]"/>
+                            <IoMdCloudUpload className="text-[1rem]" />
                         </div>
                     )}
                 </button>
@@ -177,7 +177,7 @@ export function ImageCarousel({
                         onClick={handleDeleteImageButtonClicked}
                         className="flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-white"
                     >
-                        <FaTrashAlt className="text-[1rem]"/>
+                        <FaTrashAlt className="text-[1rem]" />
                     </button>
                     {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 && (
                         <div className="flex h-full w-[40%] items-center justify-end">
