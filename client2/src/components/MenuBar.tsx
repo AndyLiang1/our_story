@@ -49,7 +49,7 @@ export function MenuBar({
                     onClick={() => editor.chain().focus().toggleBold().run()}
                     disabled={!editor.can().chain().focus().toggleBold().run()}
                 >
-                    <FaBold className="border-0 bg-transparent" />
+                    <FaBold className="text-[1rem]" />
                 </button>
                 <button
                     className={
@@ -58,7 +58,7 @@ export function MenuBar({
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     disabled={!editor.can().chain().focus().toggleItalic().run()}
                 >
-                    <FaItalic />
+                    <FaItalic className="text-[1rem]"/>
                 </button>
                 {/* <button
                 onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -74,7 +74,7 @@ export function MenuBar({
                     onClick={() => editor.chain().focus().toggleCode().run()}
                     disabled={!editor.can().chain().focus().toggleCode().run()}
                 >
-                    <FaCode />
+                    <FaCode className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -82,7 +82,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().setTextAlign('left').run()}
                 >
-                    <FaAlignLeft />
+                    <FaAlignLeft className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -90,7 +90,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().setTextAlign('center').run()}
                 >
-                    <FaAlignCenter />
+                    <FaAlignCenter className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -98,7 +98,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().setTextAlign('right').run()}
                 >
-                    <FaAlignRight />
+                    <FaAlignRight className="text-[1rem]"/>
                 </button>
                 {/* <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
                 clear marks
@@ -110,7 +110,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().setParagraph().run()}
                 >
-                    <FaParagraph />
+                    <FaParagraph className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -118,7 +118,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                 >
-                    <LuHeading1 />
+                    <LuHeading1 className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -126,7 +126,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                 >
-                    <LuHeading2 />
+                    <LuHeading2 className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -134,7 +134,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                 >
-                    <LuHeading3 />
+                    <LuHeading3 className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -142,7 +142,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().toggleBulletList().run()}
                 >
-                    <FaListUl />
+                    <FaListUl className="text-[1rem]"/>
                 </button>
                 <button
                     className={
@@ -150,7 +150,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 >
-                    <FaListOl />
+                    <FaListOl className="text-[1rem]"/>
                 </button>
                 {/* <button
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -189,7 +189,7 @@ export function MenuBar({
                     }
                     onClick={() => editor.chain().focus().toggleHighlight().run()} // Highlight styling set by index.css
                 >
-                    <FaHighlighter />
+                    <FaHighlighter className="text-[1rem]"/>
                 </button>
                 {/* <button
                 className={
@@ -207,7 +207,7 @@ export function MenuBar({
                     }
                     onClick={handleShareButtonClicked} // Highlight styling set by index.css
                 >
-                    <FaShareSquare className={'h-full'} color="#52cdff" />
+                    <FaShareSquare className="h-full text-[1.2rem]" color="#52cdff" />
                 </button>
             </div>
         </div>
