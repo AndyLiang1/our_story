@@ -1,10 +1,10 @@
-import {User} from "../types/UserTypes"
+import {UserCreationData} from "../types/UserTypes"
 
 export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
     createdAt: Date;
     updatedAt: Date;
-    users: User[]
+    users: UserCreationData[]
 }
 
 export type DocumentDataKeys = keyof DocumentData;
