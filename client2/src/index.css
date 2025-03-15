@@ -12,7 +12,7 @@ body {
 }
 
 button {
-    @apply border-0 bg-transparent;
+    @apply border-0 bg-transparent cursor-pointer;
 }
 
 @layer components {
