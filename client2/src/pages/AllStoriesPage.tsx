@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAllDocuments } from '../apis/documentApi';
+import { getDocumentsAllStories } from '../apis/documentApi';
 import { Card } from '../components/Card';
-import { DocumentData } from '../types/DocumentTypes';
+import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
+import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
+import { NavBar } from '../components/Navbar';
+import { UserContext } from '../context/userContext';
+import { DocumentData, ShareDocumentFormInfo } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
 export interface IAllStoriesPageProps {}
@@ -10,48 +14,65 @@ export interface IAllStoriesPageProps {}
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const [user, setUser] = useState<User>(useLocation().state);
     const [documents, setDocuments] = useState<DocumentData[]>([]);
-    const [refetchTrigger, setRefetchTrigger] = useState<Object>({});
-    // const [showForm, setShowForm] = useState<boolean>(false);
+    const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
+    const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
+    const [showShareDocumentForm, setShowShareDocumentForm] = useState<ShareDocumentFormInfo>({
+        documentId: '',
+        documentTitle: '',
+        status: false
+    });
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (user.collabToken) {
-                const documents = await getAllDocuments(user.userId, user.collabToken, null, null);
-                setDocuments(documents);
+        if (!user.collabToken) {
+            const collabToken = sessionStorage.getItem('our_story_collabToken');
+            if (collabToken) {
+                const userWithCollabToken = {
+                    ...user,
+                    collabToken: collabToken
+                };
+                setUser(userWithCollabToken);
             }
+        }
+        const fetchData = async () => {
+            const data = await getDocumentsAllStories(user.userId, user.collabToken, 1);
+            setDocuments(data.documents);
         };
-        fetchData();
-    }, [user, refetchTrigger]);
+        if (user && user.collabToken) fetchData();
+    }, [user, triggerStoriesListRefetch]);
 
     return (
         <div className="v-screen relative h-screen flex-wrap items-center">
-            {/* {showForm && user && (
-                <CreateDocumentForm
-                    user={user}
-                    setShowForm={setShowForm}
-                    setRefetchTrigger={setRefetchTrigger}
+            <UserContext.Provider value={user}>
+                {showCreateDocumentForm && user && (
+                    <CreateDocumentForm
+                        setShowCreateDocumentForm={setShowCreateDocumentForm}
+                        setTriggerStoriesListRefetch={setTriggerStoriesListRefetch}
+                    />
+                )}
+                {showShareDocumentForm.status && user && (
+                    <ShareDocumentForm
+                        showShareDocumentForm={showShareDocumentForm}
+                        setShowShareDocumentForm={setShowShareDocumentForm}
+                    />
+                )}
+                <NavBar
+                    setShowCreateDocumentForm={setShowCreateDocumentForm}
+                    setShowShareDocumentForm={setShowShareDocumentForm}
                 />
-            )}
-            <NavBar setShowForm={setShowForm} /> */}
-            {/* {documents.length ? <div>Docs</div> : <div>Loading</div>} */}
-            <div className="h-[10%] bg-red-500"></div>
-            <div className="grid h-[80%] w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[3rem] bg-pink-500">
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-                <Card title="hey" date={new Date()} image="/Light_Blue_Circle.png" />
-            </div>
+                <div className="bg-pogo box-border grid h-[90%] w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] pt-[1.5rem]">
+                    {documents.length &&
+                        documents.map((doc: DocumentData) => {
+                            return (
+                                <Card
+                                    title={doc.title}
+                                    date={doc.eventDate}
+                                    image={doc.firstImageWSignedUrl}
+                                    defaultImage=""
+                                />
+                            );
+                        })}
+                </div>
+            </UserContext.Provider>
         </div>
     );
 }

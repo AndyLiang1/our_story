@@ -5,28 +5,20 @@ import {
     DocumentData,
     DocumentsWithFlags
 } from '../types/DocumentTypes';
-export const getAllDocuments = async (
-    userId: string,
-    collabToken: string,
-    startDate: Date | null,
-    endDate: Date | null
-) => {
-    let documentUrl = `${config.baseUrl}/api/documents?userId=${userId}`;
-
-    if (startDate != null && endDate != null)
-        documentUrl += `&startDate=${startDate}&endDate=${endDate}`;
+export const getDocumentsAllStories = async (userId: string, collabToken: string, page: number) => {
+    let documentUrl = `${config.baseUrl}/api/documents?userId=${userId}&page=${page}`;
     const { data } = await axios.get(documentUrl, {
         headers: {
             Authorization: `Bearer ${collabToken}`
         }
     });
-    const documents: DocumentData[] = data.map((document: DocumentData) => {
+    data.documents = data.documents.map((document: DocumentData) => {
         return {
             ...document,
             eventDate: new Date(document.eventDate)
         };
     });
-    return documents;
+    return data;
 };
 
 export const getDocument = async (documentId: string, collabToken: string, userId: string) => {

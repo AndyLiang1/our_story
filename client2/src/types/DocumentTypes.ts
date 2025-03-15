@@ -18,6 +18,7 @@ export interface DocumentData extends DocumentCreationAttributes {
     createdAt: string;
     updatedAt: string;
     eventDate: Date;
+    firstImageWSignedUrl?: string;
 }
 
 type DocumentContent = {

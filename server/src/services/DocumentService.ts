@@ -2,7 +2,8 @@ import sequelize from '../db';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { UserRepo } from '../repositories/UserRepo';
-import { DocumentCreationAttributes, DocumentData, DocumentOwnerData, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
+import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
+import { DocumentCreationAttributes, DocumentData, DocumentOwnerData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import { services } from './services';
 export class DocumentService {
     documentRepo: DocumentRepo;
@@ -15,19 +16,50 @@ export class DocumentService {
         this.userRepo = new UserRepo();
     }
 
-    async getDocuments(
-        userId: string | null = null,
-        startDate: Date | null = null,
-        endDate: Date | null = null,
-        neighbouringDocuments: boolean | null = null,
-        documentId: string | null = null,
-        hasUpdated: boolean | null = null
-    ) {
-        let docs: DocumentData[] | DocumentsWithFlags;
-        if (neighbouringDocuments && userId) {
-            docs = await this.getNeighbouringDocuments(userId, documentId);
-        } else {
-            docs = await this.documentRepo.getDocuments(userId, startDate, endDate, hasUpdated);
+    async getDocuments(userId: string | null = null, queryObject: any) {
+        let docsInfo: DocumentData[] | DocumentsWithFlags | DocumentsWithCount = [];
+
+        if (userId) {
+            if (queryObject) {
+                switch (queryObject.type) {
+                    case GET_DOCUMENTS_QUERY_OBJECT_TYPE.NEIGHBOURS:
+                        const { documentId } = queryObject;
+                        docsInfo = await this.getNeighbouringDocuments(userId, documentId);
+                        break;
+                    case GET_DOCUMENTS_QUERY_OBJECT_TYPE.CALENDAR:
+                        const { startDate, endDate } = queryObject;
+                        docsInfo = await this.documentRepo.getDocumentsBetweenDates(userId, startDate, endDate);
+                        break;
+                    case GET_DOCUMENTS_QUERY_OBJECT_TYPE.ALLSTORIES:
+                        const { page } = queryObject;
+                        docsInfo = await this.documentRepo.getAllStoriesPaginated(userId, page);
+                        const images: (string | null)[] = [];
+                        for (const doc of docsInfo.documents) {
+                            images.push(doc.images.length ? doc.images[0] : null);
+                        }
+                        const documentsWithFirstImage = await this.setFirstImagesOfImages(docsInfo.documents);
+                        console.log(documentsWithFirstImage);
+                        docsInfo.documents = documentsWithFirstImage;
+                        break;
+                    default:
+                        docsInfo = [];
+                        break;
+                }
+            } else {
+                docsInfo = await this.documentRepo.getDocuments(userId);
+            }
+        }
+        return docsInfo;
+    }
+
+    async setFirstImagesOfImages(docs: any[]) {
+        const firstImages = [];
+        for (const doc of docs) {
+            firstImages.push(doc.images.length ? doc.images[0] : null);
+        }
+        const firstImagesSigned = await services.imageService.generateDownloadURLs(firstImages);
+        for (const [index, doc] of docs.entries()) {
+            doc.setDataValue('firstImageWSignedUrl', firstImagesSigned.signedDownloadUrls[index]);
         }
         return docs;
     }
@@ -96,7 +128,7 @@ export class DocumentService {
     }
 
     async syncDocuments() {
-        const docsThatNeedUpdating = await this.documentRepo.getDocuments(null, null, null, true);
+        const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSync();
 
         for (const docThatNeedsUpdated of docsThatNeedUpdating) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId);
