@@ -1,10 +1,11 @@
-import {UserCreationData} from "../types/UserTypes"
+import { UserCreationData } from '../types/UserTypes';
 
 export interface DocumentData extends DocumentCreationAttributes {
     documentId: string;
     createdAt: Date;
     updatedAt: Date;
-    users: UserCreationData[]
+    users: UserCreationData[];
+    firstImageWSignedUrl?: string | null;
 }
 
 export type DocumentDataKeys = keyof DocumentData;
@@ -14,7 +15,7 @@ export interface DocumentCreationAttributes {
     documentContent: DocumentContent;
     createdByUserId: string;
     eventDate: Date; // YYYY-MM-DD
-    images: string[]
+    images: string[];
 }
 
 interface DocumentUpdateAttributes {
@@ -46,4 +47,11 @@ export type DocumentsWithFlags = {
     documents: DocumentData[];
     firstDocumentFlag: boolean;
     lastDocumentFlag: boolean;
+};
+
+export type DocumentsWithCount = {
+    documents: DocumentData[];
+    total: number;
+    page: number;
+    totalPages: number;
 };

@@ -2,29 +2,106 @@ import { Op } from '@sequelize/core';
 import { Transaction } from 'sequelize';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
-import { DocumentOwners } from '../models/DocumentOwners';
-import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes, DocumentDataKeys } from '../types/DocumentTypes';
+import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 
 export class DocumentRepo {
     constructor() {}
 
-    async getDocuments(userId: string | null, startDate: Date | null, endDate: Date | null, hasUpdated: boolean | null) {
-        let whereObjectForDocuments: any = {};
-        let whereObjectForUsers: any = {};
-        if (startDate != null && endDate != null) {
-            whereObjectForDocuments.eventDate = {
-                [Op.gte]: new Date(startDate),
-                [Op.lte]: new Date(endDate)
-            };
-        }
-        if (userId != null) whereObjectForUsers.userId = userId;
-        if (hasUpdated != null) whereObjectForDocuments.hasUpdated = hasUpdated;
+    // async getDocuments(userId: string | null, startDate: Date | null, endDate: Date | null, hasUpdated: boolean | null) {
+    //     let whereObjectForDocuments: any = {};
+    //     let whereObjectForUsers: any = {};
+    //     if (startDate != null && endDate != null) {
+    //         whereObjectForDocuments.eventDate = {
+    //             [Op.gte]: new Date(startDate),
+    //             [Op.lte]: new Date(endDate)
+    //         };
+    //     }
+    //     if (userId != null) whereObjectForUsers.userId = userId;
+    //     if (hasUpdated != null) whereObjectForDocuments.hasUpdated = hasUpdated;
+    //     const docs = await Document.findAll({
+    //         include: [
+    //             {
+    //                 model: User,
+    //                 required: true,
+    //                 where: whereObjectForUsers,
+    //                 through: {
+    //                     attributes: []
+    //                 },
+    //                 attributes: []
+    //             }
+    //         ],
+    //         where: whereObjectForDocuments,
+    //         order: [['createdAt', 'DESC']]
+    //     });
+    //     return docs as unknown as DocumentData[];
+    // }
+
+    async getAllStoriesPaginated(userId: string, page: number) {
+        const limit = 20;
+        const offset = (page - 1) * limit;
+
+        const docs = await Document.findAndCountAll({
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    where: { userId },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: []
+                }
+            ],
+            order: [
+                ['eventDate', 'DESC'],
+                ['createdAt', 'DESC']
+            ],
+            limit,
+            offset
+        });
+
+        return {
+            documents: docs.rows as unknown as DocumentData[],
+            total: docs.count,
+            page,
+            totalPages: Math.ceil(docs.count / limit)
+        };
+    }
+
+    async getDocumentsToSync() {
         const docs = await Document.findAll({
             include: [
                 {
                     model: User,
                     required: true,
-                    where: whereObjectForUsers,
+                    through: {
+                        attributes: []
+                    },
+                    attributes: []
+                }
+            ],
+            where: { hasUpdated: true },
+            order: [
+                ['eventDate', 'DESC'],
+                ['createdAt', 'DESC']
+            ]
+        });
+        return docs as unknown as DocumentData[];
+    }
+
+    async getDocumentsBetweenDates(userId: string, startDate: Date, endDate: Date) {
+        const whereObjectForDocuments = {
+            eventDate: {
+                [Op.gte]: new Date(startDate),
+                [Op.lte]: new Date(endDate)
+            }
+        };
+        const docs = await Document.findAll({
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    where: { userId },
                     through: {
                         attributes: []
                     },
@@ -32,20 +109,47 @@ export class DocumentRepo {
                 }
             ],
             where: whereObjectForDocuments,
-            order: [['createdAt', 'DESC']]
+            order: [
+                ['eventDate', 'DESC'],
+                ['createdAt', 'DESC']
+            ]
         });
         return docs as unknown as DocumentData[];
     }
 
     async getLatestDocument() {
         const doc = await Document.findAll({
-            order: [['createdAt', 'DESC']],
+            order: [
+                ['eventDate', 'DESC'],
+                ['createdAt', 'DESC']
+            ],
             limit: 1
         });
         if (doc.length == 0) {
             return null;
         }
         return doc[0];
+    }
+
+    async getDocuments(userId: string) {
+        const docs = await Document.findAll({
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    where: { userId },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: []
+                }
+            ],
+            order: [
+                ['eventDate', 'DESC'],
+                ['createdAt', 'DESC']
+            ]
+        });
+        return docs as unknown as DocumentData[];
     }
 
     async getDocument(userId: string, documentId: string) {
@@ -82,9 +186,9 @@ export class DocumentRepo {
                     through: {
                         attributes: []
                     },
-                    attributes: ["userId"]
-                },
-            ],
+                    attributes: ['userId']
+                }
+            ]
             // attributes: this.getDocumentDataKeys(),
         };
         if (isInitialLoad) {
@@ -193,8 +297,7 @@ export class DocumentRepo {
             createdAt: new Date(),
             updatedAt: new Date(),
             createdByUserId: ''
-        }
-        return Object.keys(documentDataOb)
-
+        };
+        return Object.keys(documentDataOb);
     }
 }

@@ -10,7 +10,8 @@ import { GenericFormInput } from '../GenericFormInput';
 
 export interface ICreateDocumentFormProps {
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
-    setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
+    setTriggerFlipBookRefetch?: React.Dispatch<React.SetStateAction<string>>;
+    setTriggerStoriesListRefetch?: React.Dispatch<React.SetStateAction<object>>;
 }
 
 type CreateDocumentFormData = {
@@ -20,7 +21,8 @@ type CreateDocumentFormData = {
 
 export function CreateDocumentForm({
     setShowCreateDocumentForm,
-    setTriggerFlipBookRefetch
+    setTriggerFlipBookRefetch,
+    setTriggerStoriesListRefetch
 }: ICreateDocumentFormProps) {
     const user = useUserContext();
     const [formErrorMessage, setFormErrorMessage] = useState('');
@@ -36,12 +38,13 @@ export function CreateDocumentForm({
             createdByUserId: user.userId
         });
         setShowCreateDocumentForm(false);
-        setTriggerFlipBookRefetch(documentId);
+        if (setTriggerFlipBookRefetch) setTriggerFlipBookRefetch(documentId);
+        if (setTriggerStoriesListRefetch) setTriggerStoriesListRefetch({});
     };
     return (
         <div className="center-of-page z-10 flex h-[50%] w-[30%] justify-center bg-white">
             <IoIosClose
-                className="absolute right-2 top-2 cursor-pointer text-[2rem]"
+                className="absolute top-2 right-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowCreateDocumentForm(false)}
             ></IoIosClose>
             <Formik
@@ -71,7 +74,7 @@ export function CreateDocumentForm({
                             type="date"
                             label="Date"
                             max="9999-12-31"
-                            styles={"font-bold"}
+                            styles={'font-bold'}
                             component={GenericFormInput}
                         />
 
