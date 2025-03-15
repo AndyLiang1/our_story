@@ -12,7 +12,7 @@ body {
 }
 
 button {
-    @apply border-0 bg-transparent cursor-pointer;
+    @apply cursor-pointer border-0 bg-transparent;
 }
 
 @layer components {
@@ -124,14 +124,15 @@ button {
     }
 
     .bg-pogo {
+        position: fixed;
         background-image: url('../public/pogo.jpg');
         background-size: cover;
         background-position: bottom;
     }
 
     /* Unsure why we have to put it here and not in the div itself but okay...*/
-    .form__input{
-        @apply font-sans
+    .form__input {
+        @apply font-sans;
     }
 
     .react-calendar {

@@ -48,7 +48,7 @@ export class ImageService {
                     };
 
                     const command = new GetObjectCommand(params);
-                    return getSignedUrl(s3Client, command, { expiresIn: 3600 });
+                    return getSignedUrl(s3Client, command, { expiresIn: 86400 });
                 })
             );
             return {
