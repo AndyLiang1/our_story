@@ -31,7 +31,7 @@ export function Card({ title, date, image }: ICardProps) {
         </div>
     );
     return (
-        <div className="mr-2 h-[13rem] w-[12rem] rounded-[1rem] bg-white">
+        <div className="mr-2 h-[13rem] w-[12rem] cursor-pointer rounded-[1rem] bg-white transition duration-200 hover:scale-105">
             {image ? imageComponent : defaultImage}
             {/* <img src={image ? image : '/autumn-landscape-building-city-blue-600nw-2174533935.png'} className="h-[70%] w-full" alt="" /> */}
             <div className="h-[30%] w-full">
