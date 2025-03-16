@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { getDocumentsInMonth } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
 import { DocumentData, EventMetaData } from '../types/DocumentTypes';
@@ -32,9 +33,18 @@ const formatShortWeekday = (locale: any, date: Date) =>
 
 export function DateCalendar({ disabled }: IDateCalendarProps) {
     const user = useUserContext();
+    const navigate = useNavigate();
     const { collabToken, userId } = user;
     const [selectedDate, setSelectedDate] = useState<Value>(new Date());
     const [events, setEventsInMonth] = useState<EventMetaData[]>([]);
+
+    const goToFlipBook = (documentIdToGoTo: string) => {
+        navigate(`/home/${documentIdToGoTo}`, {
+            state: {
+                user
+            }
+        });
+    };
 
     useEffect(() => {
         if (!disabled) {
@@ -65,7 +75,9 @@ export function DateCalendar({ disabled }: IDateCalendarProps) {
             }
         }
 
-        return eventsOnThisDay.length ? <GenericCalendarEvents events={eventsOnThisDay} /> : null;
+        return eventsOnThisDay.length ? (
+            <GenericCalendarEvents events={eventsOnThisDay} handleClick={goToFlipBook} />
+        ) : null;
     };
 
     const handleMonthChange = ({ action, activeStartDate, value, view }: any) => {
