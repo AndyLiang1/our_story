@@ -19,6 +19,8 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
+    // need this state to destroy the trigger div, otherwise, the grid will interpret it as another element
+    const [keepTriggerFetchDiv, setKeepTriggerFetchDiv] = useState<boolean>(true);
     const [showShareDocumentForm, setShowShareDocumentForm] = useState<ShareDocumentFormInfo>({
         documentId: '',
         documentTitle: '',
@@ -41,13 +43,15 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     const { ref, inView } = useInView({});
 
     useEffect(() => {
-        if (inView && user.collabToken && page * LIMIT < total) {
+        if (page * LIMIT >= total) {
+            setKeepTriggerFetchDiv(false);
+            return;
+        }
+        if (inView && user.collabToken) {
             const fetchData = async () => {
-                console.log('Page is: ', page);
                 const data = await getDocumentsAllStories(user.userId, user.collabToken, page);
                 setPage(page + 1);
                 setTotal(data.total);
-                console.log('Page is now: ', page);
                 setDocuments([...documents, ...data.documents]);
             };
             fetchData();
@@ -86,8 +90,11 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
                     setShowShareDocumentForm={setShowShareDocumentForm}
                 />
+                {(showCreateDocumentForm || showShareDocumentForm.status) && (
+                    <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
+                )}
                 <div className="bg-pogo absolute h-[90%] w-full">
-                    <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem]">
+                    <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
                         {documents.length &&
                             documents.map((doc: DocumentData) => {
                                 return (
@@ -99,7 +106,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                                     />
                                 );
                             })}
-                        <div ref={ref}>&nbsp</div>
+                        {keepTriggerFetchDiv && <div ref={ref}></div>}
                     </div>
                 </div>
             </UserContext.Provider>
