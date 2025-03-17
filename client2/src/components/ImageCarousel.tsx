@@ -28,6 +28,7 @@ export function ImageCarousel({
     const [signedImageUrlsWithGuidNames, setSignedImageUrlsWithGuidNames] = useState<
         { signedImageUrl: string; imageNameWithGuid: string }[]
     >([]);
+    const DEFAULT_IMG_URL = '/autumn-landscape-building-city-blue-600nw-2174533935.png';
 
     useEffect(() => {
         getSignedImageUrls();
@@ -99,8 +100,8 @@ export function ImageCarousel({
 
     return (
         <div className={`relative h-full w-full flex-col items-center justify-evenly text-center`}>
-            {signedImageUrlsWithGuidNames && signedImageUrlsWithGuidNames.length > 0 ? (
-                <div className="relative box-border flex h-[90%] w-full items-center overflow-hidden rounded-t-[2.5rem] border-x-2 border-t-2 border-gray-100 text-center">
+            <div className="relative box-border flex h-[90%] w-full items-center overflow-hidden rounded-t-[2.5rem] border-x-2 border-t-2 border-gray-100 text-center">
+                {signedImageUrlsWithGuidNames.length && (
                     <button
                         onClick={() => {
                             changeIndex(DIRECTION.LEFT);
@@ -109,6 +110,8 @@ export function ImageCarousel({
                     >
                         <FaChevronLeft className="text-[2rem]" />
                     </button>
+                )}
+                {signedImageUrlsWithGuidNames.length && (
                     <button
                         onClick={() => {
                             changeIndex(DIRECTION.RIGHT);
@@ -117,31 +120,27 @@ export function ImageCarousel({
                     >
                         <FaChevronRight className="text-[2rem]" />
                     </button>
-                    <img
-                        src={signedImageUrlsWithGuidNames[currentIndex].signedImageUrl}
-                        className="absolute z-[2] h-full w-full object-contain"
-                        alt=""
-                    />
-                    <img
-                        src={signedImageUrlsWithGuidNames[currentIndex].signedImageUrl}
-                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-t-[2.5rem] bg-center object-cover opacity-70 blur-sm"
-                        alt=""
-                    />
-                </div>
-            ) : (
-                <div className="relative box-border flex h-[90%] w-full items-center overflow-hidden rounded-t-[2.5rem] border-x-2 border-t-2 border-gray-100 text-center">
-                    <img
-                        src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
-                        className="absolute z-[2] h-full w-full object-contain"
-                        alt=""
-                    />
-                    <img
-                        src="/autumn-landscape-building-city-blue-600nw-2174533935.png"
-                        className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-t-[2.5rem] bg-center object-cover opacity-70 blur-sm"
-                        alt=""
-                    />
-                </div>
-            )}
+                )}
+                <img
+                    src={
+                        signedImageUrlsWithGuidNames.length
+                            ? signedImageUrlsWithGuidNames[currentIndex].signedImageUrl
+                            : DEFAULT_IMG_URL
+                    }
+                    className="absolute z-[2] h-full w-full object-contain"
+                    alt=""
+                />
+                <img
+                    src={
+                        signedImageUrlsWithGuidNames.length
+                            ? signedImageUrlsWithGuidNames[currentIndex].signedImageUrl
+                            : DEFAULT_IMG_URL
+                    }
+                    className="absolute inset-0 z-[1] h-full w-full overflow-hidden rounded-t-[2.5rem] bg-center object-cover opacity-70 blur-sm"
+                    alt=""
+                />
+            </div>
+
             <div className="flex h-[10%] w-full items-center justify-between bg-red-200">
                 <button
                     onClick={() => {

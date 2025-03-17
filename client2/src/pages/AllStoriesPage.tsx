@@ -15,7 +15,6 @@ export interface IAllStoriesPageProps {}
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const LIMIT = 20;
     const [user, setUser] = useState<User>(useLocation().state);
-
     const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
@@ -28,6 +27,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     });
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(Number.POSITIVE_INFINITY);
+    const DEFAULT_IMG_URL = '/autumn-landscape-building-city-blue-600nw-2174533935.png';
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -102,7 +102,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                                         title={doc.title}
                                         date={doc.eventDate}
                                         image={doc.firstImageWSignedUrl}
-                                        defaultImage=""
+                                        defaultImage={DEFAULT_IMG_URL}
                                     />
                                 );
                             })}
