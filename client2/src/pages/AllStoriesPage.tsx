@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 import { getDocumentsAllStories } from '../apis/documentApi';
-import { Card } from '../components/Card';
+import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
 import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
 import { NavBar } from '../components/Navbar';
@@ -98,7 +98,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                         {documents.length &&
                             documents.map((doc: DocumentData) => {
                                 return (
-                                    <Card
+                                    <GenericCard
                                         title={doc.title}
                                         date={doc.eventDate}
                                         image={doc.firstImageWSignedUrl}

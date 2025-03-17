@@ -1,11 +1,11 @@
-export interface ICardProps {
+export interface IGenericCardProps {
     title: string;
     date: Date;
     image: string | undefined;
     defaultImage: string;
 }
 
-export function Card({ title, date, image, defaultImage }: ICardProps) {
+export function GenericCard({ title, date, image, defaultImage }: IGenericCardProps) {
     const imageComponent = (
         <div className="relative box-border flex h-[70%] w-full items-center overflow-hidden text-center">
             <img
