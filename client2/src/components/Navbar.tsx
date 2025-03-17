@@ -13,9 +13,9 @@ export function NavBar({ setShowCreateDocumentForm, setShowShareDocumentForm }: 
     const [user, setUser] = useState<User>(useLocation().state);
 
     return (
-        <div className="flex h-[10%] w-full justify-start bg-white">
+        <div className="flex h-[10%] w-full bg-pink-100">
             <div
-                className="flex h-full w-[20%] cursor-pointer items-center justify-start bg-red-200 text-[3rem]"
+                className="flex h-full w-[15%] cursor-pointer items-center justify-center text-center font-['Tangerine'] text-[3.5rem] hover:bg-red-200"
                 onClick={() => {
                     navigate('/home', { state: user });
                 }}
@@ -23,7 +23,7 @@ export function NavBar({ setShowCreateDocumentForm, setShowShareDocumentForm }: 
                 Our Story
             </div>
             <div
-                className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem]"
+                className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem] hover:bg-white"
                 onClick={() => {
                     navigate('/stories', { state: user });
                 }}
@@ -31,7 +31,7 @@ export function NavBar({ setShowCreateDocumentForm, setShowShareDocumentForm }: 
                 Stories
             </div>
             <div
-                className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem]"
+                className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem] hover:bg-white"
                 onClick={() => {
                     setShowCreateDocumentForm(true);
                 }}

@@ -65,6 +65,11 @@ export function HomePage(props: IHomePageProps) {
                         setShowShareDocumentForm={setShowShareDocumentForm}
                     />
                 )}
+                {(showCreateDocumentForm ||
+                    showUploadModalInfo.status ||
+                    showShareDocumentForm.status) && (
+                    <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
+                )}
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
                     setShowShareDocumentForm={setShowShareDocumentForm}

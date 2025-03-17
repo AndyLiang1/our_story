@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 import { getDocumentsAllStories } from '../apis/documentApi';
-import { Card } from '../components/Card';
+import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
 import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
 import { NavBar } from '../components/Navbar';
@@ -15,10 +15,11 @@ export interface IAllStoriesPageProps {}
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const LIMIT = 20;
     const [user, setUser] = useState<User>(useLocation().state);
-
     const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
+    // need this state to destroy the trigger div, otherwise, the grid will interpret it as another element
+    const [keepTriggerFetchDiv, setKeepTriggerFetchDiv] = useState<boolean>(true);
     const [showShareDocumentForm, setShowShareDocumentForm] = useState<ShareDocumentFormInfo>({
         documentId: '',
         documentTitle: '',
@@ -26,6 +27,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     });
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(Number.POSITIVE_INFINITY);
+    const DEFAULT_IMG_URL = '/autumn-landscape-building-city-blue-600nw-2174533935.png';
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
@@ -41,13 +43,15 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     const { ref, inView } = useInView({});
 
     useEffect(() => {
-        if (inView && user.collabToken && page * LIMIT < total) {
+        if (page * LIMIT >= total) {
+            setKeepTriggerFetchDiv(false);
+            return;
+        }
+        if (inView && user.collabToken) {
             const fetchData = async () => {
-                console.log('Page is: ', page);
                 const data = await getDocumentsAllStories(user.userId, user.collabToken, page);
                 setPage(page + 1);
                 setTotal(data.total);
-                console.log('Page is now: ', page);
                 setDocuments([...documents, ...data.documents]);
             };
             fetchData();
@@ -86,20 +90,23 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
                     setShowShareDocumentForm={setShowShareDocumentForm}
                 />
+                {(showCreateDocumentForm || showShareDocumentForm.status) && (
+                    <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
+                )}
                 <div className="bg-pogo absolute h-[90%] w-full">
-                    <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem]">
+                    <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
                         {documents.length &&
                             documents.map((doc: DocumentData) => {
                                 return (
-                                    <Card
+                                    <GenericCard
                                         title={doc.title}
                                         date={doc.eventDate}
                                         image={doc.firstImageWSignedUrl}
-                                        defaultImage=""
+                                        defaultImage={DEFAULT_IMG_URL}
                                     />
                                 );
                             })}
-                        <div ref={ref}>&nbsp</div>
+                        {keepTriggerFetchDiv && <div ref={ref}></div>}
                     </div>
                 </div>
             </UserContext.Provider>
