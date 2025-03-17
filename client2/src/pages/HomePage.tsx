@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { NavBar } from '../components/Navbar';
 
 import { Flipbook } from '../components/Flipbook';
@@ -14,6 +14,7 @@ export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const [user, setUser] = useState<User>(useLocation().state);
+    const { documentIdToGoTo } = useParams();
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
         documentId: '',
@@ -25,7 +26,12 @@ export function HomePage(props: IHomePageProps) {
         documentTitle: '',
         status: false
     });
+
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
+
+    useEffect(() => {
+        if (documentIdToGoTo) setTriggerFlipBookRefetch(documentIdToGoTo);
+    }, [documentIdToGoTo]);
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');

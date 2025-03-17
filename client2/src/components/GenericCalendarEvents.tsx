@@ -3,14 +3,18 @@ import { Tooltip } from './Tooltip';
 
 export interface IGenericCalendarEventsProps {
     events: EventMetaData[];
+    handleClick: (id: string) => void;
 }
 
-export function GenericCalendarEvents({ events }: IGenericCalendarEventsProps) {
+export function GenericCalendarEvents({ events, handleClick }: IGenericCalendarEventsProps) {
     return (
         <div className="flex h-[45%] w-full items-center justify-evenly">
             {events.map((event) => {
                 return (
-                    <div className="flex h-2 w-2 items-center justify-center">
+                    <div
+                        className="flex h-2 w-2 items-center justify-center"
+                        onClick={() => handleClick(event.id)}
+                    >
                         <Tooltip tooltipContent={event.name}>
                             <img
                                 src="/Light_Blue_Circle.png"

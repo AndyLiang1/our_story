@@ -417,7 +417,7 @@ export function Flipbook({
             {!(firstDocumentFlag && currentLocationFlipbook === 2) && (
                 <button
                     className={
-                        'absolute top-[50%] left-[5rem] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] flex items-center ' +
+                        'absolute top-[50%] left-[5rem] z-[3] flex translate-x-0 translate-y-[-50%] transform items-center text-[8rem] ' +
                         (arrowClickPause ? 'text-gray-300' : 'text-white')
                     }
                     onClick={async () => {
@@ -429,7 +429,7 @@ export function Flipbook({
                         }, 1500);
                     }}
                 >
-                    <FaChevronLeft/>
+                    <FaChevronLeft />
                 </button>
             )}
             {!(lastDocumentFlag && currentLocationFlipbook === maxLocation - 1) && (
@@ -437,13 +437,13 @@ export function Flipbook({
                     onClick={async () => {
                         if (arrowClickPause) return;
                         setArrowClickPause(true);
-                        setNextPageTriggered(true); 
+                        setNextPageTriggered(true);
                         setTimeout(() => {
                             setArrowClickPause(false);
                         }, 1500);
                     }}
                     className={
-                        'absolute top-[50%] right-[5rem] z-[3] translate-x-0 translate-y-[-50%] transform text-[8rem] flex items-center ' +
+                        'absolute top-[50%] right-[5rem] z-[3] flex translate-x-0 translate-y-[-50%] transform items-center text-[8rem] ' +
                         (arrowClickPause ? 'text-gray-300' : 'text-white')
                     }
                     disabled={arrowClickPause}
@@ -452,7 +452,7 @@ export function Flipbook({
                 </button>
             )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
-                <div className={`book h-[80%] w-[30%] translate-x-[50%]`}>
+                <div className={`book h-[85%] w-[35%] translate-x-[50%]`}>
                     {pageStylesState && pageStylesState.styles.length && renderedPapers()}
                 </div>
             </div>
