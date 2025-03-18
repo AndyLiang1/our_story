@@ -39,9 +39,13 @@ export function DateCalendar({ disabled }: IDateCalendarProps) {
     const [events, setEventsInMonth] = useState<EventMetaData[]>([]);
 
     const goToFlipBook = (documentIdToGoTo: string) => {
-        navigate(`/home/${documentIdToGoTo}`, {
+        navigate(`/home`, {
             state: {
-                user
+                user,
+                documentToGoToInfo: {
+                    documentId: documentIdToGoTo,
+                    timestampToTriggerUseEffect: Date.now()
+                }
             }
         });
     };

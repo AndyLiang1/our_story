@@ -18,7 +18,6 @@ export const getDocumentsAllStories = async (userId: string, collabToken: string
             eventDate: new Date(document.eventDate)
         };
     });
-    console.log('Returning: ', data);
     return data;
 };
 

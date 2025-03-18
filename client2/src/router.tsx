@@ -15,10 +15,6 @@ export const router = createBrowserRouter([
         element: <HomePage />
     },
     {
-        path: '/home/:documentIdToGoTo',
-        element: <HomePage />
-    },
-    {
         path: '/stories',
         element: <AllStoriesPage />
     },

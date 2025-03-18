@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { NavBar } from '../components/Navbar';
 
 import { Flipbook } from '../components/Flipbook';
@@ -13,8 +13,11 @@ import { User } from '../types/UserTypes';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
-    const [user, setUser] = useState<User>(useLocation().state);
-    const { documentIdToGoTo } = useParams();
+    const { state } = useLocation();
+    const { documentToGoToInfo } = state;
+    const navigate = useNavigate();
+    const [user, setUser] = useState<User>(state.user);
+
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
         documentId: '',
@@ -30,8 +33,21 @@ export function HomePage(props: IHomePageProps) {
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
 
     useEffect(() => {
-        if (documentIdToGoTo) setTriggerFlipBookRefetch(documentIdToGoTo);
-    }, [documentIdToGoTo]);
+        if (documentToGoToInfo && documentToGoToInfo.documentId) {
+            setTriggerFlipBookRefetch(documentToGoToInfo.documentId);
+            setTimeout(() => {
+                navigate(state.basepath, {
+                    state: {
+                        user,
+                        documentToGoToInfo: {
+                            documentId: '',
+                            timestampToTriggerUseEffect: Date.now()
+                        }
+                    }
+                });
+            }, 2000);
+        }
+    }, [documentToGoToInfo]);
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');

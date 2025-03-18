@@ -38,7 +38,6 @@ export class DocumentService {
                             images.push(doc.images.length ? doc.images[0] : null);
                         }
                         const documentsWithFirstImage = await this.setFirstImagesOfImages(docsInfo.documents);
-                        console.log(documentsWithFirstImage);
                         docsInfo.documents = documentsWithFirstImage;
                         break;
                     default:

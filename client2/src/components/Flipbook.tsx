@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import { useLocation } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
@@ -22,7 +23,7 @@ enum PAGE_STYLE_POSSIBLE_STATES {
     'GO_NEXT_PAGE_1' = 'goToNextPageState1SettingZIndexZero',
     'GO_NEXT_PAGE_2' = 'goToNextPageState2RestoringZIndex',
     'GO_PREV' = 'goPrev',
-    'REFETCH' = 'refetch'
+    'REFETCH' = 'refetch',
 }
 
 const loadingSpinnerPages = [
@@ -94,7 +95,6 @@ export function Flipbook({
                 documentId
             );
             setDocumentsWindow(documentsWindow);
-            // setTriggerFlipBookRefetch('')
         }
     };
 
@@ -240,6 +240,10 @@ export function Flipbook({
                 // after this, we will go to the onTransitionEnd in the TSX below
             };
             goNextPage();
+            // reset the refetch, incase say, we click some date on calendar,
+            // then flip back, then click the first date again,
+            // triggerFlipBookRefetch will be the same document and hence won't rerender
+            if (triggerFlipBookRefetch) setTriggerFlipBookRefetch('');
         }
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
@@ -298,11 +302,19 @@ export function Flipbook({
                 styles
             });
             setCurrentLocationFlipbook(currentLocationFlipbook - 1);
+            // reset the refetch, incase say, we click some date on calendar,
+            // then flip back, then click the first date again,
+            // triggerFlipBookRefetch will be the same document and hence won't rerender
+            if (triggerFlipBookRefetch) setTriggerFlipBookRefetch('');
         }
     };
 
     const renderedPapers = () => {
         const renderedPages = [];
+        const unfinishedStates = [PAGE_STYLE_POSSIBLE_STATES.REFETCH];
+        if (unfinishedStates.includes(pageStylesState.state)) {
+            return loadingSpinnerPages;
+        }
         if (documentsFlipBook.length + 1 !== pageStylesState.styles.length) {
             return loadingSpinnerPages;
         }
