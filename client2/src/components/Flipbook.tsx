@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
-import { useUserContext } from '../context/userContext';
 import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
+import { User } from '../types/UserTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
@@ -20,10 +20,11 @@ export interface IFlipbookProps {
 enum PAGE_STYLE_POSSIBLE_STATES {
     'INITIAL' = 'initial',
     'GO_TO_PAGE_CALLED' = 'goToPageCalled',
+    'GO_TO_PAGE_CALLED_2' = 'goToPageCalled2',
     'GO_NEXT_PAGE_1' = 'goToNextPageState1SettingZIndexZero',
     'GO_NEXT_PAGE_2' = 'goToNextPageState2RestoringZIndex',
     'GO_PREV' = 'goPrev',
-    'REFETCH' = 'refetch',
+    'REFETCH' = 'refetch'
 }
 
 const loadingSpinnerPages = [
@@ -57,8 +58,17 @@ export function Flipbook({
     setTriggerFlipBookRefetch,
     setShowShareDocumentForm
 }: IFlipbookProps) {
-    const user = useUserContext();
-    const { collabToken, userId } = user;
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [user, setUser] = useState<User | null>(null);
+    let collabToken = '';
+    let userId = '';
+    if (user) {
+        collabToken = user.collabToken;
+        userId = user.userId;
+    }
+
+    let verboseLogic = false;
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
@@ -94,19 +104,71 @@ export function Flipbook({
                 new Date(),
                 documentId
             );
+            console.log('About to set doc where documentId was: ', documentId);
             setDocumentsWindow(documentsWindow);
         }
     };
 
     useEffect(() => {
-        if (documentId) {
-            fetchData(documentId);
+        console.log('Location:', location.state);
+        const collabToken = sessionStorage.getItem('our_story_collabToken');
+        if (collabToken) {
+            const userWithCollabToken = {
+                ...location.state.user,
+                collabToken: collabToken
+            };
+            setUser(userWithCollabToken);
         }
-    }, [triggerFlipBookRefetch]);
+    }, [location]);
 
     useEffect(() => {
-        if (user) fetchData(null);
+        if (
+            location.state &&
+            location.state.documentToGoToInfo &&
+            location.state.documentToGoToInfo.documentId
+        ) {
+            setTriggerFlipBookRefetch(location.state.documentToGoToInfo.documentId);
+            const newState = {
+                ...location.state,
+                documentToGoToInfo: {
+                    ...location.state.documentToGoToInfo,
+                    documentId: '',
+                    disabled: true
+                }
+            };
+            console.log('New state: ', newState);
+            navigate('/home', { replace: true, state: newState });
+            return;
+        }
+
+        const isInitialLoad = !location.state.documentToGoToInfo;
+        const dontFetchDueToClearedDocIdLocationState =
+            location.state &&
+            location.state.documentToGoToInfo &&
+            !location.state.documentToGoToInfo.disabled;
+        if (isInitialLoad || !dontFetchDueToClearedDocIdLocationState) fetchData(null);
     }, [user]);
+
+    useEffect(() => {
+        if (documentId) fetchData(documentId);
+    }, [triggerFlipBookRefetch]);
+
+    // useEffect(() => {
+    //     if (
+    //         location &&
+    //         location.state.documentToGoToInfo &&
+    //         location.state.documentToGoToInfo.documentId
+    //     ) {
+    //         return;
+    //     } else {
+    //         console.log('Shouldnt be here', location);
+    //     }
+
+    //     if (user) {
+    //         console.log('Fetching null...');
+    //         fetchData(null);
+    //     }
+    // }, [user]);
 
     /**
      * Important info:
@@ -135,6 +197,7 @@ export function Flipbook({
      */
 
     useEffect(() => {
+        console.log('Documents flipbook: ', documentsFlipBook);
         if (documentsFlipBook.length) {
             let styles = [];
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
@@ -161,6 +224,8 @@ export function Flipbook({
     let maxLocation = numOfPapers + 1;
 
     useEffect(() => {
+        if (!documentsFlipBook.length) return;
+        if (verboseLogic) console.log('GoToPageCalled: ', goToPageCalled);
         if (typeof goToPageCalled === 'number') {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
@@ -171,7 +236,7 @@ export function Flipbook({
                         ...pageStylesState.styles[i],
                         flipped: true,
                         goToPageTriggered: true,
-                        regularZIndex: pageStylesState.styles[i].regularZIndex
+                        regularZIndex: pageStylesState.styles[i]?.regularZIndex
                         // first paper never gets the +1 in regularZIndex as a result from flipping
                     });
                     continue;
@@ -181,24 +246,23 @@ export function Flipbook({
                         ...pageStylesState.styles[i],
                         flipped: true,
                         goToPageTriggered: true,
-                        regularZIndex: pageStylesState.styles[i].regularZIndex + i - 1
+                        regularZIndex: pageStylesState.styles[i]?.regularZIndex + i - 1
                         // we must adjust regular z-index as well because, well,
                         // turning a papers increments this value for all subsequent papers
                     });
                 } else {
                     styles.push({
                         ...pageStylesState.styles[i],
-                        regularZIndex: pageStylesState.styles[i].regularZIndex + goToPageCalled - 1
+                        regularZIndex: pageStylesState.styles[i]?.regularZIndex + goToPageCalled - 1
                     });
                 }
             }
             setPageStylesState({
-                state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED,
+                state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED_2,
                 styles
             });
-            setCurrentLocationFlipbook(goToPageCalled + 1);
-            setGoToPageCalled(false);
         } else {
+            if (verboseLogic) console.log('In else block, pageStyle: ', pageStylesState);
             if (pageStylesState) {
                 let styles = [];
                 for (let i = 0; i < documentsFlipBook.length + 1; i++) {
@@ -215,10 +279,14 @@ export function Flipbook({
     /* Next page useEffectchains */
 
     useEffect(() => {
+        if (!documentsFlipBook.length) return;
         if (nextPageTriggered) setTempCurrentPageStylesStateForMovingToNextPage(pageStylesState);
     }, [nextPageTriggered]);
 
     useEffect(() => {
+        if (!documentsFlipBook.length) return;
+        if (verboseLogic)
+            console.log('Temporary state: ', tempCurrentPageStylesStateForMovingToNextPage);
         if (nextPageTriggered) {
             const goNextPage = async () => {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
@@ -248,6 +316,8 @@ export function Flipbook({
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
     useEffect(() => {
+        if (!documentsFlipBook.length) return;
+        if (verboseLogic) console.log('Page style: ', pageStylesState);
         if (
             nextPageTriggered &&
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2
@@ -257,14 +327,25 @@ export function Flipbook({
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
             setGoToPageCalled(documentsFlipBook.length);
+            return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH) {
             const index = documentsFlipBook.findIndex((doc) => doc.documentId === documentId);
             setGoToPageCalled(index + 1);
+            return;
+        }
+        if (
+            pageStylesState &&
+            pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED_2
+        ) {
+            setCurrentLocationFlipbook((goToPageCalled as number) + 1);
+            return;
         }
     }, [pageStylesState]);
 
     useEffect(() => {
+        if (!documentsFlipBook.length) return;
+        if (verboseLogic) console.log('Current location: ', currentLocationFlipbook);
         if (nextPageTriggered) {
             setNextPageTriggered(false);
         }
@@ -279,6 +360,7 @@ export function Flipbook({
                 setTriggerFlipBookRefetch(documentsFlipBook[0].documentId);
                 return;
             }
+            setGoToPageCalled(false);
         }
     }, [currentLocationFlipbook]);
 
@@ -293,7 +375,7 @@ export function Flipbook({
                 else if (i > currentLocationFlipbook - 2)
                     styles.push({
                         ...pageStylesState.styles[i],
-                        regularZIndex: pageStylesState.styles[i].regularZIndex - 1
+                        regularZIndex: pageStylesState.styles[i]?.regularZIndex - 1
                     });
                 else styles.push({ ...pageStylesState.styles[i] });
             }
@@ -320,8 +402,8 @@ export function Flipbook({
         }
 
         for (let index = 0; index < documentsFlipBook.length + 1; index++) {
-            const flippedZIndex = pageStylesState.styles[index].flippedZIndex;
-            const regularZIndex = pageStylesState.styles[index].regularZIndex;
+            const flippedZIndex = pageStylesState.styles[index]?.flippedZIndex;
+            const regularZIndex = pageStylesState.styles[index]?.regularZIndex;
             renderedPages.push(
                 <div
                     className={'paper'}
@@ -357,7 +439,7 @@ export function Flipbook({
                                                 ...pageStylesState.styles[i],
                                                 regularZIndex:
                                                     tempCurrentPageStylesStateForMovingToNextPage
-                                                        .styles[i].regularZIndex + 1 // from RULE 1. Because all subsequent papers will still pull its z-indices from the regularZIndex
+                                                        .styles[i]?.regularZIndex + 1 // from RULE 1. Because all subsequent papers will still pull its z-indices from the regularZIndex
                                             });
                                         else styles.push({ ...pageStylesState.styles[i] });
                                     }

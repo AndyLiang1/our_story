@@ -14,7 +14,8 @@ export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const { state } = useLocation();
-    const { documentToGoToInfo } = state;
+    console.log("Stateee: ", state)
+    // const { documentToGoToInfo } = state;
     const navigate = useNavigate();
     const [user, setUser] = useState<User>(state.user);
 
@@ -32,22 +33,22 @@ export function HomePage(props: IHomePageProps) {
 
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
 
-    useEffect(() => {
-        if (documentToGoToInfo && documentToGoToInfo.documentId) {
-            setTriggerFlipBookRefetch(documentToGoToInfo.documentId);
-            setTimeout(() => {
-                navigate(state.basepath, {
-                    state: {
-                        user,
-                        documentToGoToInfo: {
-                            documentId: '',
-                            timestampToTriggerUseEffect: Date.now()
-                        }
-                    }
-                });
-            }, 2000);
-        }
-    }, [documentToGoToInfo]);
+    // useEffect(() => {
+        // if (documentToGoToInfo && documentToGoToInfo.documentId) {
+        //     setTriggerFlipBookRefetch(documentToGoToInfo.documentId);
+        //     setTimeout(() => {
+        //         navigate(state.basepath, {
+        //             state: {
+        //                 user,
+        //                 documentToGoToInfo: {
+        //                     documentId: '',
+        //                     timestampToTriggerUseEffect: Date.now()
+        //                 }
+        //             }
+        //         });
+        //     }, 2000);
+        // }
+    // }, [documentToGoToInfo]);
 
     useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');

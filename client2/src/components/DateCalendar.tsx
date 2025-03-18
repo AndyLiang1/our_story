@@ -44,7 +44,8 @@ export function DateCalendar({ disabled }: IDateCalendarProps) {
                 user,
                 documentToGoToInfo: {
                     documentId: documentIdToGoTo,
-                    timestampToTriggerUseEffect: Date.now()
+                    timestampToTriggerUseEffect: Date.now(),
+                    disabled: false
                 }
             }
         });

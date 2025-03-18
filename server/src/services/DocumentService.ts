@@ -74,7 +74,7 @@ export class DocumentService {
         const docFromDB: DocumentData | null = await this.documentRepo.getDocument(userId, documentId);
         if (docFromDB) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
-
+            
             data = {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,
