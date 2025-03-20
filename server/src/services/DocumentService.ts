@@ -74,7 +74,7 @@ export class DocumentService {
         const docFromDB: DocumentData | null = await this.documentRepo.getDocument(userId, documentId);
         if (docFromDB) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
-            
+
             data = {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,
@@ -153,6 +153,22 @@ export class DocumentService {
         }
 
         return data;
+    }
+
+    async addOwnersToAll(userIdOfPersonSharing: string, partnerEmail: string) {
+        const partner = await this.userRepo.getUserByEmail(partnerEmail);
+        // const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
+        // const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
+        // const userActuallyOwnsDocument = userDocs.includes(documentId);
+        // let data = null;
+        // if (userActuallyOwnsDocument && partner) {
+        //     data = await this.documentOwnerRepo.createDocumentOwner({
+        //         documentId,
+        //         userId: partner.getDataValue('userId')
+        //     });
+        // }
+
+        // return data;
     }
 
     async deleteOwner(data: DocumentOwnerData) {

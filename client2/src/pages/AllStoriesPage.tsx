@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getDocumentsAllStories } from '../apis/documentApi';
 import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
-import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
+import { ShareAllDocumentsForm } from '../components/ModalsAndPopupForms/ShareAllDocumentsForm';
 import { NavBar } from '../components/Navbar';
 import { UserContext } from '../context/userContext';
-import { DocumentData, ShareDocumentFormInfo } from '../types/DocumentTypes';
+import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
 export interface IAllStoriesPageProps {}
@@ -21,11 +21,8 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     // need this state to destroy the trigger div, otherwise, the grid will interpret it as another element
     const [keepTriggerFetchDiv, setKeepTriggerFetchDiv] = useState<boolean>(true);
-    const [showShareDocumentForm, setShowShareDocumentForm] = useState<ShareDocumentFormInfo>({
-        documentId: '',
-        documentTitle: '',
-        status: false
-    });
+    const [showShareAllDocumentsForm, setShowShareAllDocumentsForm] = useState(false);
+
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(Number.POSITIVE_INFINITY);
     const DEFAULT_IMG_URL = '/autumn-landscape-building-city-blue-600nw-2174533935.png';
@@ -80,19 +77,19 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                         setTriggerStoriesListRefetch={setTriggerStoriesListRefetch}
                     />
                 )}
-                {showShareDocumentForm.status && user && (
-                    <ShareDocumentForm
-                        showShareDocumentForm={showShareDocumentForm}
-                        setShowShareDocumentForm={setShowShareDocumentForm}
+                {showShareAllDocumentsForm && user && (
+                    <ShareAllDocumentsForm
+                        setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
                     />
                 )}
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
-                    setShowShareDocumentForm={setShowShareDocumentForm}
+                    setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
                 />
-                {(showCreateDocumentForm || showShareDocumentForm.status) && (
+                {(showCreateDocumentForm || showShareAllDocumentsForm) && (
                     <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
                 )}
+
                 <div className="bg-pogo absolute h-[90%] w-full">
                     <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
                         {documents.length > 0 &&

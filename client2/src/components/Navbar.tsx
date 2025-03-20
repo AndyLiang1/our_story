@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/userContext';
-import { ShareDocumentFormInfo } from '../types/DocumentTypes';
 
 export interface INavBarProps {
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
-    setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
+    setShowShareAllDocumentsForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function NavBar({ setShowCreateDocumentForm, setShowShareDocumentForm }: INavBarProps) {
+export function NavBar({ setShowCreateDocumentForm, setShowShareAllDocumentsForm }: INavBarProps) {
     const navigate = useNavigate();
     const user = useUserContext();
 
@@ -41,18 +40,14 @@ export function NavBar({ setShowCreateDocumentForm, setShowShareDocumentForm }: 
             >
                 Create
             </div>
-            {/* <div
-                className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem]"
+            <div
+                className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem] hover:bg-white"
                 onClick={() => {
-                    setShowShareDocumentForm({
-                        documentId: '',
-                        documentTitle: '',
-                        status: true
-                    });
+                    setShowShareAllDocumentsForm(true);
                 }}
             >
-                Share
-            </div> */}
+                Share All
+            </div>
         </div>
     );
 }

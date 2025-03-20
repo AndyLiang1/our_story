@@ -4,6 +4,7 @@ import { NavBar } from '../components/Navbar';
 
 import { Flipbook } from '../components/Flipbook';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
+import { ShareAllDocumentsForm } from '../components/ModalsAndPopupForms/ShareAllDocumentsForm';
 import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
 import { UploadImageModal } from '../components/ModalsAndPopupForms/UploadImageModal';
 import { UserContext } from '../context/userContext';
@@ -15,7 +16,6 @@ export interface IHomePageProps {}
 export function HomePage(props: IHomePageProps) {
     const location = useLocation();
     const [user, setUser] = useState<User>(location.state.user);
-
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
         documentId: '',
@@ -27,7 +27,7 @@ export function HomePage(props: IHomePageProps) {
         documentTitle: '',
         status: false
     });
-
+    const [showShareAllDocumentsForm, setShowShareAllDocumentsForm] = useState(false);
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
 
     useEffect(() => {
@@ -70,7 +70,6 @@ export function HomePage(props: IHomePageProps) {
             clearState();
             return;
         }
-        console.log('Init');
         setTriggerFlipBookRefetch('initial');
     }, [user]);
 
@@ -95,14 +94,21 @@ export function HomePage(props: IHomePageProps) {
                         setShowShareDocumentForm={setShowShareDocumentForm}
                     />
                 )}
+                {showShareAllDocumentsForm && user && (
+                    <ShareAllDocumentsForm
+                        setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
+                    />
+                )}
+
                 {(showCreateDocumentForm ||
                     showUploadModalInfo.status ||
-                    showShareDocumentForm.status) && (
+                    showShareDocumentForm.status ||
+                    showShareAllDocumentsForm) && (
                     <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
                 )}
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
-                    setShowShareDocumentForm={setShowShareDocumentForm}
+                    setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
                 />
                 <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
                     <Flipbook
