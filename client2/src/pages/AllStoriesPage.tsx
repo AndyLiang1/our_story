@@ -58,19 +58,6 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
             fetchData();
         }
     }, [inView, user]);
-    useEffect(() => {
-        // if (!user.collabToken) {
-        //     const collabToken = sessionStorage.getItem('our_story_collabToken');
-        //     if (collabToken) {
-        //         const userWithCollabToken = {
-        //             ...user,
-        //             collabToken: collabToken
-        //         };
-        //         setUser(userWithCollabToken);
-        //     }
-        // }
-        // if (user && user.collabToken) fetchData();
-    }, [user, triggerStoriesListRefetch]);
 
     const goToDocument = (documentIdToGoTo: string) => {
         navigate(`/home`, {
@@ -108,7 +95,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                 )}
                 <div className="bg-pogo absolute h-[90%] w-full">
                     <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
-                        {documents.length &&
+                        {documents.length > 0 &&
                             documents.map((doc: DocumentData) => {
                                 return (
                                     <GenericCard
