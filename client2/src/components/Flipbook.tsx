@@ -3,8 +3,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
+import { useUserContext } from '../context/userContext';
 import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
-import { User } from '../types/UserTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
@@ -58,20 +58,26 @@ export function Flipbook({
     setTriggerFlipBookRefetch,
     setShowShareDocumentForm
 }: IFlipbookProps) {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [user, setUser] = useState<User | null>(null);
+    const user = useUserContext();
     let collabToken = '';
     let userId = '';
     if (user) {
         collabToken = user.collabToken;
         userId = user.userId;
     }
-
-    let verboseLogic = false;
+    let verboseLogic = true;
+    let verboseInit = true;
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
-    const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState(2);
+    // We need the timestamp so that the useEffect for currentLocationFlipbook still runs
+    // even if the location is the same. This scenario occurs when clicking an event in the calendar,
+    // we will get setCurrLocation to likely 9, recall we typically grab (7, 1, 7) documents, where the 1
+    // would be in the 9th location. Hence, if we click on a diff event in calendar, we again setCurrLocation to 9
+    // but we need the useEffect to be re-ran.
+    const [currentLocationFlipbook, setCurrentLocationFlipbook] = useState({
+        location: 2,
+        timestamp: Date.now()
+    });
     const [pageStylesState, setPageStylesState] = useState<any>({
         state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
         styles: []
@@ -83,13 +89,11 @@ export function Flipbook({
         tempCurrentPageStylesStateForMovingToNextPage,
         setTempCurrentPageStylesStateForMovingToNextPage
     ] = useState<any>(null);
-
     const [documentsWindow, setDocumentsWindow] = useState<{
         documents: DocumentData[];
         firstDocumentFlag: boolean;
         lastDocumentFlag: boolean;
     } | null>(null);
-    // const [documentId, setDocumentId] = useState('');
     const documentId = triggerFlipBookRefetch ? triggerFlipBookRefetch : '';
     const documentsFlipBook = documentsWindow ? documentsWindow.documents : [];
     const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true;
@@ -102,73 +106,15 @@ export function Flipbook({
                 userId,
                 collabToken,
                 new Date(),
-                documentId
+                documentId === 'initial' ? null : documentId
             );
-            console.log('About to set doc where documentId was: ', documentId);
             setDocumentsWindow(documentsWindow);
         }
     };
 
     useEffect(() => {
-        console.log('Location:', location.state);
-        const collabToken = sessionStorage.getItem('our_story_collabToken');
-        if (collabToken) {
-            const userWithCollabToken = {
-                ...location.state.user,
-                collabToken: collabToken
-            };
-            setUser(userWithCollabToken);
-        }
-    }, [location]);
-
-    useEffect(() => {
-        if (
-            location.state &&
-            location.state.documentToGoToInfo &&
-            location.state.documentToGoToInfo.documentId
-        ) {
-            setTriggerFlipBookRefetch(location.state.documentToGoToInfo.documentId);
-            const newState = {
-                ...location.state,
-                documentToGoToInfo: {
-                    ...location.state.documentToGoToInfo,
-                    documentId: '',
-                    disabled: true
-                }
-            };
-            console.log('New state: ', newState);
-            navigate('/home', { replace: true, state: newState });
-            return;
-        }
-
-        const isInitialLoad = !location.state.documentToGoToInfo;
-        const dontFetchDueToClearedDocIdLocationState =
-            location.state &&
-            location.state.documentToGoToInfo &&
-            !location.state.documentToGoToInfo.disabled;
-        if (isInitialLoad || !dontFetchDueToClearedDocIdLocationState) fetchData(null);
-    }, [user]);
-
-    useEffect(() => {
         if (documentId) fetchData(documentId);
     }, [triggerFlipBookRefetch]);
-
-    // useEffect(() => {
-    //     if (
-    //         location &&
-    //         location.state.documentToGoToInfo &&
-    //         location.state.documentToGoToInfo.documentId
-    //     ) {
-    //         return;
-    //     } else {
-    //         console.log('Shouldnt be here', location);
-    //     }
-
-    //     if (user) {
-    //         console.log('Fetching null...');
-    //         fetchData(null);
-    //     }
-    // }, [user]);
 
     /**
      * Important info:
@@ -197,7 +143,7 @@ export function Flipbook({
      */
 
     useEffect(() => {
-        console.log('Documents flipbook: ', documentsFlipBook);
+        if (verboseInit) console.log('Documents flipbook: ', documentsFlipBook);
         if (documentsFlipBook.length) {
             let styles = [];
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
@@ -212,9 +158,10 @@ export function Flipbook({
                 });
             }
             setPageStylesState({
-                state: documentId
-                    ? PAGE_STYLE_POSSIBLE_STATES.REFETCH
-                    : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
+                state:
+                    documentId !== 'initial'
+                        ? PAGE_STYLE_POSSIBLE_STATES.REFETCH
+                        : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
                 styles
             });
         }
@@ -258,7 +205,7 @@ export function Flipbook({
                 }
             }
             setPageStylesState({
-                state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED_2,
+                state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED,
                 styles
             });
         } else {
@@ -269,7 +216,7 @@ export function Flipbook({
                     styles.push({ ...pageStylesState.styles[i], goToPageTriggered: false });
                 }
                 setPageStylesState({
-                    state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED,
+                    state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED_2,
                     styles
                 });
             }
@@ -293,13 +240,13 @@ export function Flipbook({
                 // just set em all to negative values.
                 let styles = [];
                 for (let i = 0; i < documentsFlipBook.length + 1; i++) {
-                    if (i === currentLocationFlipbook - 1)
+                    if (i === currentLocationFlipbook.location - 1)
                         styles.push({ ...pageStylesState.styles[i], flipped: true });
-                    else if (i > currentLocationFlipbook - 1)
+                    else if (i > currentLocationFlipbook.location - 1)
                         styles.push({ ...pageStylesState.styles[i], regularZIndex: 0 - i });
                     else styles.push(pageStylesState.styles[i]);
                 }
-                if (currentLocationFlipbook < maxLocation - 1) {
+                if (currentLocationFlipbook.location < maxLocation - 1) {
                     setPageStylesState({
                         state: PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_1,
                         styles
@@ -322,7 +269,10 @@ export function Flipbook({
             nextPageTriggered &&
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2
         ) {
-            setCurrentLocationFlipbook(currentLocationFlipbook + 1);
+            setCurrentLocationFlipbook({
+                location: currentLocationFlipbook.location + 1,
+                timestamp: Date.now()
+            });
             return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
@@ -336,27 +286,33 @@ export function Flipbook({
         }
         if (
             pageStylesState &&
-            pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED_2
+            pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED
         ) {
-            setCurrentLocationFlipbook((goToPageCalled as number) + 1);
+            setCurrentLocationFlipbook({
+                location: (goToPageCalled as number) + 1,
+                timestamp: Date.now()
+            });
             return;
         }
     }, [pageStylesState]);
 
     useEffect(() => {
-        if (!documentsFlipBook.length) return;
         if (verboseLogic) console.log('Current location: ', currentLocationFlipbook);
+        if (!documentsFlipBook.length) return;
         if (nextPageTriggered) {
             setNextPageTriggered(false);
         }
         if (documentsWindow) {
-            if (currentLocationFlipbook === maxLocation - 1 && !documentsWindow.lastDocumentFlag) {
+            if (
+                currentLocationFlipbook.location === maxLocation - 1 &&
+                !documentsWindow.lastDocumentFlag
+            ) {
                 setTriggerFlipBookRefetch(
-                    documentsFlipBook[currentLocationFlipbook - 2].documentId
+                    documentsFlipBook[currentLocationFlipbook.location - 2].documentId
                 );
                 return;
             }
-            if (currentLocationFlipbook === 2 && !documentsWindow.firstDocumentFlag) {
+            if (currentLocationFlipbook.location === 2 && !documentsWindow.firstDocumentFlag) {
                 setTriggerFlipBookRefetch(documentsFlipBook[0].documentId);
                 return;
             }
@@ -367,12 +323,12 @@ export function Flipbook({
     /* End of next page useEffect chains */
 
     const goPrevPage = () => {
-        if (currentLocationFlipbook > 2) {
+        if (currentLocationFlipbook.location > 2) {
             let styles = [];
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
-                if (i === currentLocationFlipbook - 2)
+                if (i === currentLocationFlipbook.location - 2)
                     styles.push({ ...pageStylesState.styles[i], flipped: false });
-                else if (i > currentLocationFlipbook - 2)
+                else if (i > currentLocationFlipbook.location - 2)
                     styles.push({
                         ...pageStylesState.styles[i],
                         regularZIndex: pageStylesState.styles[i]?.regularZIndex - 1
@@ -383,7 +339,10 @@ export function Flipbook({
                 state: PAGE_STYLE_POSSIBLE_STATES.GO_PREV,
                 styles
             });
-            setCurrentLocationFlipbook(currentLocationFlipbook - 1);
+            setCurrentLocationFlipbook({
+                location: currentLocationFlipbook.location - 1,
+                timestamp: Date.now()
+            });
             // reset the refetch, incase say, we click some date on calendar,
             // then flip back, then click the first date again,
             // triggerFlipBookRefetch will be the same document and hence won't rerender
@@ -434,7 +393,7 @@ export function Flipbook({
                                 const restoreZIndices = () => {
                                     let styles = [];
                                     for (let i = 0; i < documentsFlipBook.length + 1; i++) {
-                                        if (i > currentLocationFlipbook - 1)
+                                        if (i > currentLocationFlipbook.location - 1)
                                             styles.push({
                                                 ...pageStylesState.styles[i],
                                                 regularZIndex:
@@ -469,7 +428,9 @@ export function Flipbook({
                                     <div className="h-[45%] w-full">
                                         {documentsFlipBook && documentsFlipBook.length && (
                                             <DateCalendar
-                                                disabled={index !== currentLocationFlipbook - 1}
+                                                disabled={
+                                                    index !== currentLocationFlipbook.location - 1
+                                                }
                                             />
                                         )}
                                     </div>
@@ -494,7 +455,7 @@ export function Flipbook({
                                     key={documentsFlipBook[index].documentId}
                                     documentId={documentsFlipBook[index].documentId}
                                     documentTitle={documentsFlipBook[index].title}
-                                    collabFlag={index === currentLocationFlipbook - 2}
+                                    collabFlag={index === currentLocationFlipbook.location - 2}
                                     setShowShareDocumentForm={setShowShareDocumentForm}
                                 />
                             )}
@@ -508,7 +469,7 @@ export function Flipbook({
 
     return (
         <div className="flex h-full w-full items-center justify-center">
-            {!(firstDocumentFlag && currentLocationFlipbook === 2) && (
+            {!(firstDocumentFlag && currentLocationFlipbook.location === 2) && (
                 <button
                     className={
                         'absolute top-[50%] left-[5rem] z-[3] flex translate-x-0 translate-y-[-50%] transform items-center text-[8rem] ' +
@@ -522,11 +483,16 @@ export function Flipbook({
                             setArrowClickPause(false);
                         }, 1500);
                     }}
+                    disabled={
+                        arrowClickPause ||
+                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL ||
+                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH
+                    }
                 >
                     <FaChevronLeft />
                 </button>
             )}
-            {!(lastDocumentFlag && currentLocationFlipbook === maxLocation - 1) && (
+            {!(lastDocumentFlag && currentLocationFlipbook.location === maxLocation - 1) && (
                 <button
                     onClick={async () => {
                         if (arrowClickPause) return;
@@ -540,14 +506,18 @@ export function Flipbook({
                         'absolute top-[50%] right-[5rem] z-[3] flex translate-x-0 translate-y-[-50%] transform items-center text-[8rem] ' +
                         (arrowClickPause ? 'text-gray-300' : 'text-white')
                     }
-                    disabled={arrowClickPause}
+                    disabled={
+                        arrowClickPause ||
+                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL ||
+                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH
+                    }
                 >
                     <FaChevronRight />
                 </button>
             )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book h-[85%] w-[35%] translate-x-[50%]`}>
-                    {pageStylesState && pageStylesState.styles.length && renderedPapers()}
+                    {pageStylesState && pageStylesState.styles.length > 0 && renderedPapers()}
                 </div>
             </div>
         </div>

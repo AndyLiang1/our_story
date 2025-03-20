@@ -73,7 +73,6 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     }, [user, triggerStoriesListRefetch]);
 
     const goToDocument = (documentIdToGoTo: string) => {
-        console.log("All stories: ", documentIdToGoTo)
         navigate(`/home`, {
             state: {
                 user,
