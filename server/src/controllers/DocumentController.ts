@@ -21,6 +21,7 @@ export class DocumentController {
 
         this.router.get('/:documentId/owners', this.getDocumentOwners.bind(this));
         this.router.put('/:documentId/owners', this.addDocumentOwners.bind(this));
+        this.router.put('/owners', this.addDocumentOwnerToAll.bind(this));
         this.router.delete('/:documentId/owners/:userId', this.deleteDocumentOwner.bind(this));
     }
 
@@ -152,6 +153,17 @@ export class DocumentController {
         } else {
             res.status(400).json({
                 message: 'documentId must be provided.'
+            });
+        }
+    }
+    async addDocumentOwnerToAll(req: Request, res: Response, next: NextFunction) {
+        const { userId, partnerEmail } = req.body;
+        try {
+            const docOwners = await services.documentService.addOwnersToAll(userId, partnerEmail);
+            res.status(200).json(docOwners);
+        } catch (error) {
+            res.status(400).json({
+                message: 'Error with adding owner to all documents'
             });
         }
     }

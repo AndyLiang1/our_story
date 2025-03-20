@@ -131,3 +131,20 @@ export const addDocumentOwner = async (
     );
     return data;
 };
+
+export const addDocumentOwnerToAll = async (
+    collabToken: string,
+    userId: string,
+    partnerEmail: string
+) => {
+    const { data } = await axios.put(
+        `${config.baseUrl}/api/documents/owners`,
+        { userId, partnerEmail },
+        {
+            headers: {
+                Authorization: `Bearer ${collabToken}`
+            }
+        }
+    );
+    return data;
+};

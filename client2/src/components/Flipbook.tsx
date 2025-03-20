@@ -65,8 +65,8 @@ export function Flipbook({
         collabToken = user.collabToken;
         userId = user.userId;
     }
-    let verboseLogic = true;
-    let verboseInit = true;
+    let verboseLogic = false;
+    let verboseInit = false;
     // a location n is defined as where we see the FRONT of paper n. So a location of 2 is
     // where we see the front of paper 2 (not zero indexed). In reality, this is the first document.
     // We need the timestamp so that the useEffect for currentLocationFlipbook still runs
