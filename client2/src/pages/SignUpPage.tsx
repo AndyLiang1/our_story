@@ -29,7 +29,11 @@ export function SignUpPage(props: ISignUpPageProps) {
                 familyName: formData.familyName,
                 givenName: formData.givenName
             };
-            navigate('/confirm', { state: { ...userState } });
+            navigate('/confirm', {
+                state: {
+                    user: userState
+                }
+            });
         } catch (error) {
             Swal.fire({
                 title: 'Error!',

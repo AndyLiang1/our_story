@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getDocumentsAllStories } from '../apis/documentApi';
 import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
@@ -14,7 +14,8 @@ export interface IAllStoriesPageProps {}
 
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const LIMIT = 20;
-    const [user, setUser] = useState<User>(useLocation().state);
+    const navigate = useNavigate();
+    const [user, setUser] = useState<User>(useLocation().state.user);
     const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
@@ -71,6 +72,18 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         // if (user && user.collabToken) fetchData();
     }, [user, triggerStoriesListRefetch]);
 
+    const goToDocument = (documentIdToGoTo: string) => {
+        navigate(`/home`, {
+            state: {
+                user,
+                documentToGoToInfo: {
+                    documentId: documentIdToGoTo,
+                    timestampToTriggerUseEffect: Date.now()
+                }
+            }
+        });
+    };
+
     return (
         <div className="v-screen relative h-screen flex-wrap items-center">
             <UserContext.Provider value={user}>
@@ -103,6 +116,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                                         date={doc.eventDate}
                                         image={doc.firstImageWSignedUrl}
                                         defaultImage={DEFAULT_IMG_URL}
+                                        handleClick={() => goToDocument(doc.documentId)}
                                     />
                                 );
                             })}

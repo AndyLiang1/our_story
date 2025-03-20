@@ -38,7 +38,6 @@ export class DocumentService {
                             images.push(doc.images.length ? doc.images[0] : null);
                         }
                         const documentsWithFirstImage = await this.setFirstImagesOfImages(docsInfo.documents);
-                        console.log(documentsWithFirstImage);
                         docsInfo.documents = documentsWithFirstImage;
                         break;
                     default:
@@ -75,7 +74,7 @@ export class DocumentService {
         const docFromDB: DocumentData | null = await this.documentRepo.getDocument(userId, documentId);
         if (docFromDB) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
-
+            
             data = {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,

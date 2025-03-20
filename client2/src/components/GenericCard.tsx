@@ -3,9 +3,10 @@ export interface IGenericCardProps {
     date: Date;
     image: string | undefined;
     defaultImage: string;
+    handleClick?: () => void
 }
 
-export function GenericCard({ title, date, image, defaultImage }: IGenericCardProps) {
+export function GenericCard({ title, date, image, defaultImage, handleClick }: IGenericCardProps) {
     const imageComponent = (
         <div className="relative box-border flex h-[70%] w-full items-center overflow-hidden text-center">
             <img
@@ -21,7 +22,7 @@ export function GenericCard({ title, date, image, defaultImage }: IGenericCardPr
         </div>
     );
     return (
-        <div className="mr-2 h-[13rem] w-[12rem] cursor-pointer rounded-[1rem] bg-white transition duration-200 hover:scale-105">
+        <div className="mr-2 h-[13rem] w-[12rem] cursor-pointer rounded-[1rem] bg-white transition duration-200 hover:scale-105" onClick = {handleClick}>
             {imageComponent}
             <div className="h-[30%] w-full">
                 <div className="flex h-[50%] w-full items-center justify-center text-center">

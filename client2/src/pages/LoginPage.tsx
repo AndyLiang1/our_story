@@ -30,7 +30,11 @@ export function LoginPage(props: ILoginPageProps) {
                     sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken);
                     const userId = parseJwt(collabToken).userId;
                     const user = await getUserById(userId);
-                    navigate('/home', { state: user });
+                    navigate('/home', {
+                        state: {
+                            user: user
+                        }
+                    });
                 } else {
                     console.error('Session token was not set properly.');
                 }

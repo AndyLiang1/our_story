@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { NavBar } from '../components/Navbar';
 
 import { Flipbook } from '../components/Flipbook';
@@ -13,8 +13,9 @@ import { User } from '../types/UserTypes';
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
-    const [user, setUser] = useState<User>(useLocation().state);
-    const { documentIdToGoTo } = useParams();
+    const location = useLocation();
+    const [user, setUser] = useState<User>(location.state.user);
+
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
         documentId: '',
@@ -30,19 +31,48 @@ export function HomePage(props: IHomePageProps) {
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
 
     useEffect(() => {
-        if (documentIdToGoTo) setTriggerFlipBookRefetch(documentIdToGoTo);
-    }, [documentIdToGoTo]);
-
-    useEffect(() => {
         const collabToken = sessionStorage.getItem('our_story_collabToken');
         if (collabToken) {
             const userWithCollabToken = {
-                ...user,
+                ...location.state.user,
                 collabToken: collabToken
             };
             setUser(userWithCollabToken);
         }
-    }, []);
+    }, [location]);
+
+    const clearState = () => {
+        const newState = {
+            ...location.state,
+            documentToGoToInfo: {
+                ...location.state.documentToGoToInfo,
+                documentId: ''
+            },
+            ignoreUponReload: true
+        };
+        // https://github.com/remix-run/react-router/discussions/11415#discussioncomment-9179771
+        history.replaceState(
+            {
+                ...history.state,
+                usr: newState
+            },
+            ''
+        );
+    };
+
+    useEffect(() => {
+        if (
+            location.state &&
+            location.state.documentToGoToInfo &&
+            location.state.documentToGoToInfo.documentId
+        ) {
+            setTriggerFlipBookRefetch(location.state.documentToGoToInfo.documentId);
+            clearState();
+            return;
+        }
+        console.log('Init');
+        setTriggerFlipBookRefetch('initial');
+    }, [user]);
 
     return (
         <div className="v-screen h-screen flex-wrap items-center justify-between">

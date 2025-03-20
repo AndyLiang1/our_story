@@ -26,7 +26,6 @@ export const login = async (formData: LoginType) => {
     };
 
     try {
-        console.log(params)
         const command = new InitiateAuthCommand(params);
         const { AuthenticationResult } = await cognitoClient.send(command);
         if (AuthenticationResult) {
