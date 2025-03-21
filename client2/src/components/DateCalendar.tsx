@@ -12,8 +12,10 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export interface IDateCalendarProps {
-    goToEvent?: Function;
+    handleEventClick: (id: string) => void;
     disabled: boolean;
+    startDate: Date;
+    currEventId?: string;
 }
 
 const prevLabel = (
@@ -31,30 +33,23 @@ const nextLabel = (
 const formatShortWeekday = (locale: any, date: Date) =>
     ['S', 'M', 'T', 'W', 'T', 'F', 'S'][date.getDay()];
 
-export function DateCalendar({ disabled }: IDateCalendarProps) {
+export function DateCalendar({
+    handleEventClick,
+    disabled,
+    startDate,
+    currEventId
+}: IDateCalendarProps) {
     const user = useUserContext();
     const navigate = useNavigate();
     const { collabToken, userId } = user;
-    const [selectedDate, setSelectedDate] = useState<Value>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Value>(startDate);
     const [events, setEventsInMonth] = useState<EventMetaData[]>([]);
-
-    const goToFlipBook = (documentIdToGoTo: string) => {
-        navigate(`/home`, {
-            state: {
-                user,
-                documentToGoToInfo: {
-                    documentId: documentIdToGoTo,
-                    timestampToTriggerUseEffect: Date.now(),
-                }
-            }
-        });
-    };
 
     useEffect(() => {
         if (!disabled) {
             const fetchDocumentsInMonth = async () => {
                 const documents: DocumentData[] = await getDocumentsInMonth(
-                    new Date(),
+                    startDate,
                     userId,
                     collabToken
                 );
@@ -69,19 +64,37 @@ export function DateCalendar({ disabled }: IDateCalendarProps) {
     }, [disabled]);
 
     const addEventsToCalendarDay = ({ date, view }: any) => {
+        if (!events.length) return;
         if (view !== 'month') return null;
         const calendarDate = date.toISOString().split('T')[0];
-        let eventsOnThisDay: any[] = [];
-        for (let event of events) {
-            if (event.date.toISOString().split('T')[0] > calendarDate) continue;
+        const eventsOnThisDay: any[] = [];
+        for (const event of events) {
             if (event.date.toISOString().split('T')[0] === calendarDate) {
                 eventsOnThisDay.push(event);
             }
         }
 
         return eventsOnThisDay.length ? (
-            <GenericCalendarEvents events={eventsOnThisDay} handleClick={goToFlipBook} />
+            <GenericCalendarEvents
+                events={eventsOnThisDay}
+                handleClick={handleEventClick}
+                currEventId={currEventId}
+            />
         ) : null;
+    };
+
+    const addStyleToCurrEvent = ({ date, view }: any) => {
+        const calendarDate = date.toISOString().split('T')[0];
+
+        for (const event of events) {
+            if (
+                event.id === currEventId &&
+                event.date.toISOString().split('T')[0] === calendarDate
+            ) {
+                return 'curr_event_date';
+            }
+        }
+        return null;
     };
 
     const handleMonthChange = ({ action, activeStartDate, value, view }: any) => {
@@ -107,6 +120,7 @@ export function DateCalendar({ disabled }: IDateCalendarProps) {
             // onChange={setSelectedDate}
             value={selectedDate}
             tileContent={addEventsToCalendarDay}
+            tileClassName={addStyleToCurrEvent}
             prevLabel={prevLabel}
             nextLabel={nextLabel}
             calendarType={'gregory'}

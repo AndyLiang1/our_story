@@ -207,6 +207,10 @@ button {
         @apply flex flex-col items-center justify-start text-center text-[0.5rem];
     }
 
+    .react-calendar .react-calendar__month-view__days__day.curr_event_date {
+        @apply font-bold text-red-400;
+    }
+
     .react-calendar .react-calendar__month-view__days__day abbr[aria-label] {
         @apply flex h-[60%] min-h-[60%] w-full items-center justify-center text-center text-[1rem];
     }

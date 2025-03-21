@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
-import { useLocation, useNavigate } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
@@ -8,6 +7,7 @@ import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../ty
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
+import { useNavigate } from 'react-router-dom';
 
 export interface IFlipbookProps {
     showUploadModalInfo: UploadImageModalInfo;
@@ -59,6 +59,7 @@ export function Flipbook({
     setShowShareDocumentForm
 }: IFlipbookProps) {
     const user = useUserContext();
+    const navigate = useNavigate()
     let collabToken = '';
     let userId = '';
     if (user) {
@@ -428,8 +429,13 @@ export function Flipbook({
                                     <div className="h-[45%] w-full">
                                         {documentsFlipBook && documentsFlipBook.length && (
                                             <DateCalendar
+                                                handleEventClick={goToDocument}
                                                 disabled={
                                                     index !== currentLocationFlipbook.location - 1
+                                                }
+                                                startDate={documentsFlipBook[index - 1].eventDate}
+                                                currEventId={
+                                                    documentsFlipBook[index - 1].documentId
                                                 }
                                             />
                                         )}
@@ -465,6 +471,18 @@ export function Flipbook({
             );
         }
         return renderedPages;
+    };
+
+    const goToDocument = (documentIdToGoTo: string) => {
+        navigate(`/home`, {
+            state: {
+                user,
+                documentToGoToInfo: {
+                    documentId: documentIdToGoTo,
+                    timestampToTriggerUseEffect: Date.now()
+                }
+            }
+        });
     };
 
     return (
