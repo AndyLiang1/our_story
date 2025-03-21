@@ -60,8 +60,9 @@ export function LoginPage(props: ILoginPageProps) {
     });
 
     return (
-        <div className="v-screen h-screen flex-wrap items-center justify-between">
-            <div className="float-right flex h-full w-[45%] items-center justify-center">
+        <div className="v-screen flex h-screen items-center justify-between">
+            <div className="flex h-full w-[55%] scale-100 bg-[url('/login_page.png')] bg-cover"></div>
+            <div className="float-right flex h-full w-[45%] items-center justify-center bg-none">
                 <Formik
                     className="h-full w-full"
                     initialValues={{ email: '', password: '' }}
