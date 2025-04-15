@@ -46,7 +46,7 @@ export class PartnerService {
 
         docIdSetOfUser2.forEach((docId) => {
             if (!docIdSetOfUser1.has(docId)) { 
-                documentOwnershipsToCreate.push({ documentId: docId, userId: partnerUserId });
+                documentOwnershipsToCreate.push({ documentId: docId, userId: userId1 });
             }
         })
 
