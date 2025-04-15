@@ -3,10 +3,10 @@ import { useUserContext } from '../context/userContext';
 
 export interface INavBarProps {
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
-    setShowShareAllDocumentsForm: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowPartnerForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function NavBar({ setShowCreateDocumentForm, setShowShareAllDocumentsForm }: INavBarProps) {
+export function NavBar({ setShowCreateDocumentForm, setShowPartnerForm }: INavBarProps) {
     const navigate = useNavigate();
     const user = useUserContext();
 
@@ -43,7 +43,7 @@ export function NavBar({ setShowCreateDocumentForm, setShowShareAllDocumentsForm
             <div
                 className="flex h-full w-[10%] cursor-pointer items-center justify-center text-center text-[1.2rem] hover:bg-white"
                 onClick={() => {
-                    setShowShareAllDocumentsForm(true);
+                    setShowPartnerForm(true);
                 }}
             >
                 Share All

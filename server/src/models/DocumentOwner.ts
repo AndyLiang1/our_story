@@ -4,9 +4,9 @@ import sequelize from '../db';
 import { Document } from './Document';
 import { User } from './User';
 
-export class DocumentOwners extends Model {}
+export class DocumentOwner extends Model {}
 
-DocumentOwners.init(
+DocumentOwner.init(
     {
         documentId: {
             type: DataTypes.TEXT,
@@ -29,7 +29,7 @@ DocumentOwners.init(
     },
     {
         sequelize,
-        modelName: 'DocumentOwners',
+        modelName: 'DocumentOwner',
         tableName: 'documentOwners',
         schema: config.postgres.dbSchema,
         timestamps: false
@@ -37,10 +37,10 @@ DocumentOwners.init(
 );
 
 Document.belongsToMany(User, {
-    through: DocumentOwners,
+    through: DocumentOwner,
     foreignKey: 'documentId'
 });
 User.belongsToMany(Document, {
-    through: DocumentOwners,
+    through: DocumentOwner,
     foreignKey: 'userId'
 });

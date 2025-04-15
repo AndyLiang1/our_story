@@ -22,7 +22,7 @@ export class UserService {
         return user;
     }
 
-    async getUserByEmail(email: string): Promise<User | null> {
+    async getUserByEmail(email: string) {
         const user = await this.userRepo.getUserByEmail(email);
         return user;
     }

@@ -1,28 +1,26 @@
 import { Field, Form, Formik } from 'formik';
 import { IoIosClose, IoIosWarning } from 'react-icons/io';
 import * as Yup from 'yup';
-import { addDocumentOwnerToAll } from '../../apis/documentApi';
+import { createPartnership } from '../../apis/partnerApi';
 import { useUserContext } from '../../context/userContext';
 import { GenericFormButton } from '../GenericFormButton';
 import { GenericFormInput } from '../GenericFormInput';
 
-export interface IShareAllDocumentsFormProps {
-    setShowShareAllDocumentsForm: React.Dispatch<React.SetStateAction<boolean>>;
+export interface IPartnerFormProps {
+    setShowPartnerForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function ShareAllDocumentsForm({
-    setShowShareAllDocumentsForm
-}: IShareAllDocumentsFormProps) {
+export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
     const user = useUserContext();
     const { collabToken, userId } = user;
     const handleSubmit = async (partnerEmail: string) => {
-        await addDocumentOwnerToAll(collabToken, userId, partnerEmail);
+        await createPartnership(collabToken, userId, partnerEmail);
         closeForm();
     };
     const closeForm = () => {
-        setShowShareAllDocumentsForm(false);
+        setShowPartnerForm(false);
     };
-    const ShareAllDocumentsFormSchema = Yup.object().shape({
+    const PartnerFormSchema = Yup.object().shape({
         partnerEmail: Yup.string()
             .email('Please enter a valid email.')
             .required('Partner email is required.'),
@@ -32,13 +30,13 @@ export function ShareAllDocumentsForm({
         <div className="center-of-page z-10 flex h-[50%] w-[30%] justify-center bg-white">
             <IoIosClose
                 className="absolute top-2 right-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowShareAllDocumentsForm(false)}
+                onClick={() => setShowPartnerForm(false)}
             ></IoIosClose>
             <Formik
                 initialValues={{
                     partnerEmail: ''
                 }}
-                validationSchema={ShareAllDocumentsFormSchema}
+                validationSchema={PartnerFormSchema}
                 onSubmit={(values, actions) => {
                     handleSubmit(values.partnerEmail);
                     setTimeout(() => {
@@ -52,10 +50,12 @@ export function ShareAllDocumentsForm({
                             Share all your documents with a partner
                         </div>
                         <div className="flex h-[10%] w-full items-center justify-center text-center">
-                            <IoIosWarning className="text-[1.5rem] text-orange-400" />
+                            <IoIosWarning className="text-[3rem] text-orange-400" />
 
                             <div className="text-orange-400">
-                                &nbsp;All future documents will be shared automatically too.
+                                &nbsp;If your partner also selects you as their partner, all past,
+                                current, and future documents will be automatically shared between
+                                both of you.
                             </div>
                         </div>
 

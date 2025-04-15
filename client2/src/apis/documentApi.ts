@@ -88,11 +88,12 @@ export const getNeighbouringDocuments = async (
 
 export const createDocument = async (
     collabToken: string,
-    documentData: DocumentCreationAttributes
+    documentData: DocumentCreationAttributes,
+    userId: string
 ) => {
     const { data } = await axios.post(
         `${config.baseUrl}/api/documents`,
-        { ...documentData, eventDate: new Date(documentData.eventDate) },
+        { documentData: {...documentData, eventDate: new Date(documentData.eventDate)}, userId },
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`
@@ -114,37 +115,3 @@ export const editDocumentTitle = async (collabToken: string, title: string, docu
     );
 };
 
-export const addDocumentOwner = async (
-    collabToken: string,
-    userId: string,
-    documentId: string,
-    partnerEmail: string
-) => {
-    const { data } = await axios.put(
-        `${config.baseUrl}/api/documents/${documentId}/owners`,
-        { userId, partnerEmail }, // only allow one partner for now
-        {
-            headers: {
-                Authorization: `Bearer ${collabToken}`
-            }
-        }
-    );
-    return data;
-};
-
-export const addDocumentOwnerToAll = async (
-    collabToken: string,
-    userId: string,
-    partnerEmail: string
-) => {
-    const { data } = await axios.put(
-        `${config.baseUrl}/api/documents/owners`,
-        { userId, partnerEmail },
-        {
-            headers: {
-                Authorization: `Bearer ${collabToken}`
-            }
-        }
-    );
-    return data;
-};

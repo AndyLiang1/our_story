@@ -20,9 +20,8 @@ export class DocumentController {
         this.router.delete('/:documentId', this.deleteDocument.bind(this));
 
         this.router.get('/:documentId/owners', this.getDocumentOwners.bind(this));
-        this.router.put('/:documentId/owners', this.addDocumentOwners.bind(this));
-        this.router.put('/owners', this.addDocumentOwnerToAll.bind(this));
-        this.router.delete('/:documentId/owners/:userId', this.deleteDocumentOwner.bind(this));
+        // this.router.put('/:documentId/owners', this.addDocumentOwners.bind(this));
+        // this.router.delete('/:documentId/owners/:userId', this.deleteDocumentOwner.bind(this));
     }
 
     initRoutes(apiRouter: Router) {
@@ -84,15 +83,15 @@ export class DocumentController {
             type: 'doc',
             content: []
         };
-        const reqBody = req.body;
-        const documentData: DocumentCreationAttributes = {
-            title: reqBody.title,
+        const {documentData, userId} = req.body;
+        const createDocumentData: DocumentCreationAttributes = {
+            title: documentData.title,
             documentContent: defaultDocumentContent,
-            createdByUserId: reqBody.createdByUserId,
-            eventDate: reqBody.eventDate,
+            createdByUserId: documentData.createdByUserId,
+            eventDate: documentData.eventDate,
             images: []
         };
-        const newDocId = await services.documentService.createDocument(documentData);
+        const newDocId = await services.documentService.createDocument(createDocumentData, userId);
         res.status(201).json(newDocId);
     }
 
@@ -144,44 +143,33 @@ export class DocumentController {
         }
     }
 
-    async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
-        const { documentId } = req.params;
-        const { userId, partnerEmail } = req.body;
-        if (documentId) {
-            const docOwners = await services.documentService.addOwners(documentId, userId, partnerEmail);
-            res.status(200).json(docOwners);
-        } else {
-            res.status(400).json({
-                message: 'documentId must be provided.'
-            });
-        }
-    }
-    async addDocumentOwnerToAll(req: Request, res: Response, next: NextFunction) {
-        const { userId, partnerEmail } = req.body;
-        try {
-            const docOwners = await services.documentService.addOwnersToAll(userId, partnerEmail);
-            res.status(200).json(docOwners);
-        } catch (error) {
-            res.status(400).json({
-                message: 'Error with adding owner to all documents'
-            });
-        }
-    }
+    // async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
+    //     const { documentId } = req.params;
+    //     const { userId, partnerEmail } = req.body;
+    //     if (documentId) {
+    //         const docOwners = await services.documentService.addOwners(documentId, userId, partnerEmail);
+    //         res.status(200).json(docOwners);
+    //     } else {
+    //         res.status(400).json({
+    //             message: 'documentId must be provided.'
+    //         });
+    //     }
+    // }
 
-    async deleteDocumentOwner(req: Request, res: Response, next: NextFunction) {
-        const { documentId, userId } = req.params;
-        if (documentId && userId) {
-            await services.documentService.deleteOwner({
-                documentId,
-                userId
-            });
-            res.status(200).json({
-                message: `Owner with userId ${userId} is removed from document successfully.`
-            });
-        } else {
-            res.status(400).json({
-                message: 'Both documentId and userId must be provided.'
-            });
-        }
-    }
+    // async deleteDocumentOwner(req: Request, res: Response, next: NextFunction) {
+    //     const { documentId, userId } = req.params;
+    //     if (documentId && userId) {
+    //         await services.documentService.deleteOwner({
+    //             documentId,
+    //             userId
+    //         });
+    //         res.status(200).json({
+    //             message: `Owner with userId ${userId} is removed from document successfully.`
+    //         });
+    //     } else {
+    //         res.status(400).json({
+    //             message: 'Both documentId and userId must be provided.'
+    //         });
+    //     }
+    // }
 }
