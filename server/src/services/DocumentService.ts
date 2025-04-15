@@ -1,22 +1,16 @@
 import sequelize from '../db';
-import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentRepo } from '../repositories/DocumentRepo';
-import { UserRepo } from '../repositories/UserRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
-import { DocumentCreationAttributes, DocumentData, DocumentOwnerData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
+import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import { services } from './services';
 export class DocumentService {
     documentRepo: DocumentRepo;
-    documentOwnerRepo: DocumentOwnersRepo;
-    userRepo: UserRepo;
 
     constructor() {
         this.documentRepo = new DocumentRepo();
-        this.documentOwnerRepo = new DocumentOwnersRepo();
-        this.userRepo = new UserRepo();
     }
 
-    async getDocuments(userId: string | null = null, queryObject: any) {
+    async getDocuments(userId: string | null = null, queryObject: any = null) {
         let docsInfo: DocumentData[] | DocumentsWithFlags | DocumentsWithCount = [];
 
         if (userId) {
@@ -97,17 +91,16 @@ export class DocumentService {
         return docsFromDBAndFlags;
     }
 
-    async createDocument(documentData: DocumentCreationAttributes) {
+
+    
+
+    async createDocument(documentData: DocumentCreationAttributes, userId: string) {
         return await sequelize.transaction(async (transaction) => {
             const newDocId: string = await this.documentRepo.createDocument({ ...documentData }, transaction);
 
-            await this.documentOwnerRepo.createDocumentOwner(
-                {
-                    documentId: newDocId,
-                    userId: documentData.createdByUserId
-                },
-                transaction
-            );
+            await services.documentOwnerService.createDocumentOwner(newDocId, userId, transaction);
+            const userPartnerId: string = await services.partnerService.getPartnerId(userId);
+            await services.documentOwnerService.createDocumentOwner(newDocId, userPartnerId);
 
             await services.tiptapDocumentService.createDocument(newDocId, documentData);
             return newDocId;
@@ -139,41 +132,22 @@ export class DocumentService {
         return docsThatNeedUpdating.length;
     }
 
-    async addOwners(documentId: string, userIdOfPersonSharing: string, partnerEmail: string) {
-        const partner = await this.userRepo.getUserByEmail(partnerEmail);
-        const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
-        const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
-        const userActuallyOwnsDocument = userDocs.includes(documentId);
-        let data = null;
-        if (userActuallyOwnsDocument && partner) {
-            data = await this.documentOwnerRepo.createDocumentOwner({
-                documentId,
-                userId: partner.getDataValue('userId')
-            });
-        }
+    // async addOwners(documentId: string, userIdOfPersonSharing: string, partnerEmail: string) {
+    //     const partner = await services.userService.getUserByEmail(partnerEmail);
+    //     const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
+    //     const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
+    //     const userActuallyOwnsDocument = userDocs.includes(documentId);
+    //     let data = null;
+    //     if (userActuallyOwnsDocument && partner) {
+    //         data = await services.documentOwnersService.createDocumentOwner(documentId, partner.getDataValue('userId'));
+    //     }
 
-        return data;
-    }
+    //     return data;
+    // }
 
-    async addOwnersToAll(userIdOfPersonSharing: string, partnerEmail: string) {
-        const partner = await this.userRepo.getUserByEmail(partnerEmail);
-        // const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
-        // const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
-        // const userActuallyOwnsDocument = userDocs.includes(documentId);
-        // let data = null;
-        // if (userActuallyOwnsDocument && partner) {
-        //     data = await this.documentOwnerRepo.createDocumentOwner({
-        //         documentId,
-        //         userId: partner.getDataValue('userId')
-        //     });
-        // }
-
-        // return data;
-    }
-
-    async deleteOwner(data: DocumentOwnerData) {
-        await this.documentOwnerRepo.deleteDocumentOwner(data);
-    }
+    // async deleteOwner(data: DocumentOwnerData) {
+    //     await this.documentOwnerRepo.deleteDocumentOwner(data);
+    // }
 
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
         try {

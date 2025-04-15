@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getDocumentsAllStories } from '../apis/documentApi';
 import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
-import { ShareAllDocumentsForm } from '../components/ModalsAndPopupForms/ShareAllDocumentsForm';
+import { PartnerForm } from '../components/ModalsAndPopupForms/PartnerForm';
 import { NavBar } from '../components/Navbar';
 import { UserContext } from '../context/userContext';
 import { DocumentData } from '../types/DocumentTypes';
@@ -21,7 +21,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     // need this state to destroy the trigger div, otherwise, the grid will interpret it as another element
     const [keepTriggerFetchDiv, setKeepTriggerFetchDiv] = useState<boolean>(true);
-    const [showShareAllDocumentsForm, setShowShareAllDocumentsForm] = useState(false);
+    const [showPartnerForm, setShowPartnerForm] = useState(false);
 
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(Number.POSITIVE_INFINITY);
@@ -77,16 +77,12 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                         setTriggerStoriesListRefetch={setTriggerStoriesListRefetch}
                     />
                 )}
-                {showShareAllDocumentsForm && user && (
-                    <ShareAllDocumentsForm
-                        setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
-                    />
-                )}
+                {showPartnerForm && user && <PartnerForm setShowPartnerForm={setShowPartnerForm} />}
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
-                    setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
+                    setShowPartnerForm={setShowPartnerForm}
                 />
-                {(showCreateDocumentForm || showShareAllDocumentsForm) && (
+                {(showCreateDocumentForm || showPartnerForm) && (
                     <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
                 )}
 

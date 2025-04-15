@@ -5,7 +5,9 @@ import { initDb } from './db';
 
 import 'express-async-errors';
 import { DocumentController } from './controllers/DocumentController';
+import { DocumentOwnerController } from './controllers/DocumentOwnerController';
 import { ImageController } from './controllers/ImageController';
+import { PartnerController } from './controllers/PartnerController';
 import { UserController } from './controllers/UserController';
 import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
@@ -31,6 +33,8 @@ const init = async () => {
     new UserController().initRoutes(app);
     new DocumentController().initRoutes(app);
     new ImageController().initRoutes(app);
+    new PartnerController().initRoutes(app);
+    new DocumentOwnerController().initRoutes(app);
     app.use(errorHandler);
 
     syncDocuments();

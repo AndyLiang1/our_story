@@ -4,7 +4,7 @@ import { NavBar } from '../components/Navbar';
 
 import { Flipbook } from '../components/Flipbook';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
-import { ShareAllDocumentsForm } from '../components/ModalsAndPopupForms/ShareAllDocumentsForm';
+import { PartnerForm } from '../components/ModalsAndPopupForms/PartnerForm';
 import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
 import { UploadImageModal } from '../components/ModalsAndPopupForms/UploadImageModal';
 import { UserContext } from '../context/userContext';
@@ -27,7 +27,7 @@ export function HomePage(props: IHomePageProps) {
         documentTitle: '',
         status: false
     });
-    const [showShareAllDocumentsForm, setShowShareAllDocumentsForm] = useState(false);
+    const [showPartnerForm, setShowPartnerForm] = useState(false);
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
 
     useEffect(() => {
@@ -94,21 +94,17 @@ export function HomePage(props: IHomePageProps) {
                         setShowShareDocumentForm={setShowShareDocumentForm}
                     />
                 )}
-                {showShareAllDocumentsForm && user && (
-                    <ShareAllDocumentsForm
-                        setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
-                    />
-                )}
+                {showPartnerForm && user && <PartnerForm setShowPartnerForm={setShowPartnerForm} />}
 
                 {(showCreateDocumentForm ||
                     showUploadModalInfo.status ||
                     showShareDocumentForm.status ||
-                    showShareAllDocumentsForm) && (
+                    showPartnerForm) && (
                     <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
                 )}
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
-                    setShowShareAllDocumentsForm={setShowShareAllDocumentsForm}
+                    setShowPartnerForm={setShowPartnerForm}
                 />
                 <div className="home_page_container bg-pogo flex h-[90%] w-full items-center justify-evenly">
                     <Flipbook

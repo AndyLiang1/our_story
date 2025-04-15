@@ -1,7 +1,7 @@
 import { Field, Form, Formik } from 'formik';
 import { IoIosClose } from 'react-icons/io';
 import * as Yup from 'yup';
-import { addDocumentOwner } from '../../apis/documentApi';
+import { addDocumentOwner } from '../../apis/documentOwnerApi';
 import { useUserContext } from '../../context/userContext';
 import { ShareDocumentFormInfo } from '../../types/DocumentTypes';
 import { GenericFormButton } from '../GenericFormButton';
