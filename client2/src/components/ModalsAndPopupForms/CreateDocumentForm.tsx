@@ -33,14 +33,9 @@ export function CreateDocumentForm({
     });
 
     const handleSubmit = async (formData: CreateDocumentFormData) => {
-        const documentId = await createDocument(
-            user.collabToken,
-            {
-                ...formData,
-                createdByUserId: user.userId
-            },
-            user.userId
-        );
+        const documentId = await createDocument(user.collabToken, {
+            ...formData
+        });
         setShowCreateDocumentForm(false);
         if (setTriggerFlipBookRefetch) setTriggerFlipBookRefetch(documentId);
         if (setTriggerStoriesListRefetch) setTriggerStoriesListRefetch({});

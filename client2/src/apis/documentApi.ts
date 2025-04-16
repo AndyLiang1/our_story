@@ -5,8 +5,8 @@ import {
     DocumentData,
     DocumentsWithFlags
 } from '../types/DocumentTypes';
-export const getDocumentsAllStories = async (userId: string, collabToken: string, page: number) => {
-    let documentUrl = `${config.baseUrl}/api/documents?userId=${userId}&page=${page}`;
+export const getDocumentsAllStories = async (collabToken: string, page: number) => {
+    const documentUrl = `${config.baseUrl}/api/documents?page=${page}`;
     const { data } = await axios.get(documentUrl, {
         headers: {
             Authorization: `Bearer ${collabToken}`
@@ -21,8 +21,8 @@ export const getDocumentsAllStories = async (userId: string, collabToken: string
     return data;
 };
 
-export const getDocument = async (documentId: string, collabToken: string, userId: string) => {
-    const url = `${config.baseUrl}/api/documents/${documentId}?userId=${userId}`;
+export const getDocument = async (documentId: string, collabToken: string) => {
+    const url = `${config.baseUrl}/api/documents/${documentId}`;
     const { data } = await axios.get(url, {
         headers: {
             Authorization: `Bearer ${collabToken}`
@@ -70,7 +70,7 @@ export const getNeighbouringDocuments = async (
     eventDate: Date,
     documentId: string | null
 ) => {
-    let documentUrl = `${config.baseUrl}/api/documents?neighbouringDocs=true&userId=${userId}&eventDate=${eventDate}&documentId=${documentId}`;
+    const documentUrl = `${config.baseUrl}/api/documents?neighbouringDocs=true&userId=${userId}&eventDate=${eventDate}&documentId=${documentId}`;
     const { data } = await axios.get(documentUrl, {
         headers: {
             Authorization: `Bearer ${collabToken}`
@@ -88,12 +88,11 @@ export const getNeighbouringDocuments = async (
 
 export const createDocument = async (
     collabToken: string,
-    documentData: DocumentCreationAttributes,
-    userId: string
+    documentData: DocumentCreationAttributes
 ) => {
     const { data } = await axios.post(
         `${config.baseUrl}/api/documents`,
-        { documentData: {...documentData, eventDate: new Date(documentData.eventDate)}, userId },
+        { documentData: { ...documentData, eventDate: new Date(documentData.eventDate) } },
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`
@@ -114,4 +113,3 @@ export const editDocumentTitle = async (collabToken: string, title: string, docu
         }
     );
 };
-

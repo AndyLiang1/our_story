@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
-import { CustomRequest, JwtVerifier } from '../middleware/JwtVerifier';
+import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
+import { CustomRequest } from '../types/ApiTypes';
 
 export class DocumentOwnerController {
     router: Router;

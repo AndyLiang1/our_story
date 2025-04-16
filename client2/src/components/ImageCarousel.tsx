@@ -60,7 +60,7 @@ export function ImageCarousel({
                 showUploadModalInfo.refetch
             ) {
                 const indexToBe = signedImageUrlsWithGuidNames.length;
-                const doc = await getDocument(document.documentId, collabToken, userId);
+                const doc = await getDocument(document.documentId, collabToken);
                 await getSignedImageUrls(doc.images);
                 resetUploadImageModalStateToInitial();
                 setCurrentIndex(indexToBe);

@@ -6,7 +6,6 @@ export type EventMetaData = {
 
 export interface DocumentCreationAttributes {
     title: string;
-    createdByUserId: string;
     eventDate: Date;
 }
 

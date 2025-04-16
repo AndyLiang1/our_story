@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
-import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
+import { CustomRequest, GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 
 export class DocumentController {
@@ -19,7 +19,7 @@ export class DocumentController {
         this.router.put('/:documentId', this.updateDocument.bind(this));
         this.router.delete('/:documentId', this.deleteDocument.bind(this));
 
-        this.router.get('/:documentId/owners', this.getDocumentOwners.bind(this));
+        // this.router.get('/:documentId/owners', this.getDocumentOwners.bind(this));
         // this.router.put('/:documentId/owners', this.addDocumentOwners.bind(this));
         // this.router.delete('/:documentId/owners/:userId', this.deleteDocumentOwner.bind(this));
     }
@@ -29,7 +29,7 @@ export class DocumentController {
     }
 
     async getDocuments(req: Request, res: Response, next: NextFunction) {
-        const userId = req.query.userId ? (req.query.userId as string) : null;
+        const userId = (req as CustomRequest).userId;
         let queryObject: any = {};
         if (req.query.neighbouringDocs && req.query.eventDate) {
             queryObject = {
@@ -60,7 +60,7 @@ export class DocumentController {
     }
 
     async getDocument(req: Request, res: Response, next: NextFunction) {
-        const userId = req.query.userId ? (req.query.userId as string) : null;
+        const userId = (req as CustomRequest).userId;
         const { documentId } = req.params;
         if (documentId && userId) {
             const doc = await services.documentService.getDocument(userId, documentId);
@@ -83,11 +83,12 @@ export class DocumentController {
             type: 'doc',
             content: []
         };
-        const {documentData, userId} = req.body;
+        const userId = (req as CustomRequest).userId;
+        const { documentData } = req.body;
         const createDocumentData: DocumentCreationAttributes = {
             title: documentData.title,
             documentContent: defaultDocumentContent,
-            createdByUserId: documentData.createdByUserId,
+            createdByUserId: userId,
             eventDate: documentData.eventDate,
             images: []
         };
@@ -131,17 +132,17 @@ export class DocumentController {
         }
     }
 
-    async getDocumentOwners(req: Request, res: Response, next: NextFunction) {
-        const { documentId } = req.params;
-        if (documentId) {
-            const users = await services.userService.getUsersOwningDocument(documentId);
-            res.status(200).json(users);
-        } else {
-            res.status(400).json({
-                message: 'documentId must be provided.'
-            });
-        }
-    }
+    // async getDocumentOwners(req: Request, res: Response, next: NextFunction) {
+    //     const { documentId } = req.params;
+    //     if (documentId) {
+    //         const users = await services.userService.getUsersOwningDocument(documentId);
+    //         res.status(200).json(users);
+    //     } else {
+    //         res.status(400).json({
+    //             message: 'documentId must be provided.'
+    //         });
+    //     }
+    // }
 
     // async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
     //     const { documentId } = req.params;
