@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
-import { JwtVerifier } from '../middleware/JwtVerifier';
+import { CustomRequest, JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
 
 export class DocumentOwnerController {
@@ -16,7 +16,8 @@ export class DocumentOwnerController {
     }
 
     async shareDocument(req: Request, res: Response, next: NextFunction) {
-        const { userId, partnerEmail } = req.body;
+        const userId = (req as CustomRequest).userId;
+        const { partnerEmail } = req.body;
         const { documentId } = req.params;
         try {
             const result = await services.documentOwnerService.shareDocument(documentId, userId, partnerEmail);

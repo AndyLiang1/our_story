@@ -26,6 +26,7 @@ export class PartnerService {
     }
 
     async partnerUserHasYouAsPartner(userId1: string, partnerUserId: string) {
+        if(!partnerUserId) return false
         const userIdOfPartnersPartner = await this.partnerRepo.getPartnerId(partnerUserId);
         return userIdOfPartnersPartner === userId1
     }

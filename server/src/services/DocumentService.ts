@@ -91,16 +91,13 @@ export class DocumentService {
         return docsFromDBAndFlags;
     }
 
-
-    
-
     async createDocument(documentData: DocumentCreationAttributes, userId: string) {
         return await sequelize.transaction(async (transaction) => {
             const newDocId: string = await this.documentRepo.createDocument({ ...documentData }, transaction);
-
             await services.documentOwnerService.createDocumentOwner(newDocId, userId, transaction);
-            const userPartnerId: string = await services.partnerService.getPartnerId(userId);
-            await services.documentOwnerService.createDocumentOwner(newDocId, userPartnerId);
+            const userPartnerId = await services.partnerService.getPartnerId(userId);
+            const partnerHasYouAsPartner = await services.partnerService.partnerUserHasYouAsPartner(userId, userPartnerId);
+            if (partnerHasYouAsPartner) await services.documentOwnerService.createDocumentOwner(newDocId, userPartnerId, transaction);
 
             await services.tiptapDocumentService.createDocument(newDocId, documentData);
             return newDocId;

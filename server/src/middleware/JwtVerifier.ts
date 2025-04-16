@@ -8,7 +8,12 @@ import { DocumentData } from '../types/DocumentTypes';
 
 export interface CustomRequest extends Request {
     collabToken: string | JwtPayload;
+    userId: string;
 }
+
+type DecodedFields = {
+    userId: string;
+};
 
 export class JwtVerifier {
     private static verifier = CognitoJwtVerifier.create({
@@ -69,8 +74,9 @@ export class JwtVerifier {
             if (!token) {
                 throw new Error('No token found.');
             }
-            const decoded = jwt.verify(token, JwtVerifier.tiptapSecret);
+            const decoded = jwt.verify(token, JwtVerifier.tiptapSecret) as DecodedFields;
             (req as CustomRequest).collabToken = decoded;
+            (req as CustomRequest).userId = decoded.userId;
             console.log('Verified.');
         } catch (err) {
             console.error(err);

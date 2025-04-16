@@ -17,9 +17,9 @@ export function ShareDocumentForm({
     setShowShareDocumentForm
 }: IShareDocumentFormProps) {
     const user = useUserContext();
-    const { collabToken, userId } = user;
+    const { collabToken } = user;
     const handleSubmit = async (partnerEmail: string) => {
-        await addDocumentOwner(collabToken, userId, showShareDocumentForm.documentId, partnerEmail);
+        await addDocumentOwner(collabToken, showShareDocumentForm.documentId, partnerEmail);
         closeForm();
     };
     const closeForm = () => {
