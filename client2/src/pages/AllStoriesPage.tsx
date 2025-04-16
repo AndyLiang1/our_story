@@ -47,7 +47,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         }
         if (inView && user.collabToken) {
             const fetchData = async () => {
-                const data = await getDocumentsAllStories(user.userId, user.collabToken, page);
+                const data = await getDocumentsAllStories(user.collabToken, page);
                 setPage(page + 1);
                 setTotal(data.total);
                 setDocuments([...documents, ...data.documents]);

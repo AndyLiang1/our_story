@@ -5,11 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { config } from '../config/config';
 import { services } from '../services/services';
 import { DocumentData } from '../types/DocumentTypes';
-
-export interface CustomRequest extends Request {
-    collabToken: string | JwtPayload;
-    userId: string;
-}
+import { CustomRequest } from '../types/ApiTypes';
 
 type DecodedFields = {
     userId: string;
