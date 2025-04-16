@@ -38,12 +38,11 @@ export const getDocument = async (documentId: string, collabToken: string) => {
 
 export const getDocumentsInMonth = async (
     dateWhoseMonthToSearchFor: Date,
-    userId: string,
     collabToken: string
 ) => {
     const { firstDateOfMonth, lastDateOfMonth } =
         getFirstAndLastDayOfMonth(dateWhoseMonthToSearchFor);
-    const url = `${config.baseUrl}/api/documents?userId=${userId}&startDate=${firstDateOfMonth}&endDate=${lastDateOfMonth}`;
+    const url = `${config.baseUrl}/api/documents?startDate=${firstDateOfMonth}&endDate=${lastDateOfMonth}`;
     const { data } = await axios.get(url, {
         headers: {
             Authorization: `Bearer ${collabToken}`
@@ -65,12 +64,11 @@ const getFirstAndLastDayOfMonth = (currentDate: Date) => {
 };
 
 export const getNeighbouringDocuments = async (
-    userId: string,
     collabToken: string,
     eventDate: Date,
     documentId: string | null
 ) => {
-    const documentUrl = `${config.baseUrl}/api/documents?neighbouringDocs=true&userId=${userId}&eventDate=${eventDate}&documentId=${documentId}`;
+    const documentUrl = `${config.baseUrl}/api/documents?neighbouringDocs=true&eventDate=${eventDate}&documentId=${documentId}`;
     const { data } = await axios.get(documentUrl, {
         headers: {
             Authorization: `Bearer ${collabToken}`

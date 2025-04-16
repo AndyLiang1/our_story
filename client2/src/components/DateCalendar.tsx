@@ -41,7 +41,7 @@ export function DateCalendar({
 }: IDateCalendarProps) {
     const user = useUserContext();
     const navigate = useNavigate();
-    const { collabToken, userId } = user;
+    const { collabToken } = user;
     const [selectedDate, setSelectedDate] = useState<Value>(startDate);
     const [events, setEventsInMonth] = useState<EventMetaData[]>([]);
 
@@ -50,7 +50,6 @@ export function DateCalendar({
             const fetchDocumentsInMonth = async () => {
                 const documents: DocumentData[] = await getDocumentsInMonth(
                     startDate,
-                    userId,
                     collabToken
                 );
                 setEventsInMonth(
@@ -102,7 +101,6 @@ export function DateCalendar({
             const fetchDocumentsInMonth = async () => {
                 const documents: DocumentData[] = await getDocumentsInMonth(
                     activeStartDate,
-                    userId,
                     collabToken
                 );
                 setEventsInMonth(

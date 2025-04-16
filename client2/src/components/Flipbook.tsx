@@ -104,7 +104,6 @@ export function Flipbook({
     const fetchData = async (documentId: string | null) => {
         if (user && user.collabToken) {
             const documentsWindow = await getNeighbouringDocuments(
-                userId,
                 collabToken,
                 new Date(),
                 documentId === 'initial' ? null : documentId
