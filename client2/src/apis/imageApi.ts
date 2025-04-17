@@ -40,14 +40,13 @@ export const getGeneratedDownloadImageSignedUrls = async (
 };
 
 export const addDocumentImages = async (
-    userId: string,
     collabToken: string,
     newImageNamesWithGuid: string[],
     documentId: string
 ) => {
     await axios.post(
         `${config.baseUrl}/api/images/${documentId}`,
-        { userId, newImageNamesWithGuid },
+        { newImageNamesWithGuid },
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`
@@ -57,13 +56,12 @@ export const addDocumentImages = async (
 };
 
 export const deleteDocumentImages = async (
-    userId: string,
     collabToken: string,
     imageNameWithGuidToDelete: string,
     documentId: string
 ) => {
     await axios.delete(
-        `${config.baseUrl}/api/images/${documentId}?userId=${userId}&imageNameWithGuidToDelete=${imageNameWithGuidToDelete}`,
+        `${config.baseUrl}/api/images/${documentId}?imageNameWithGuidToDelete=${imageNameWithGuidToDelete}`,
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`

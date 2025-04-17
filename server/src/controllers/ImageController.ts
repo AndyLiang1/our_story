@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
+import { CustomRequest } from '../types/ApiTypes';
 
 export class ImageController {
     router: Router;
@@ -40,8 +41,9 @@ export class ImageController {
     }
 
     async addImages(req: Request, res: Response, next: NextFunction) {
+        const userId = (req as CustomRequest).userId;
         const { documentId } = req.params;
-        const { userId, newImageNamesWithGuid } = req.body;
+        const { newImageNamesWithGuid } = req.body;
         try {
             const docId = await services.imageService.addImages(userId, documentId, newImageNamesWithGuid);
             res.status(201).json(docId);
@@ -53,7 +55,7 @@ export class ImageController {
 
     async deleteImage(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
-        const userId = req.query.userId ? (req.query.userId as string) : null;
+        const userId = (req as CustomRequest).userId;
         const imageNameWithGuidToDelete = req.query.imageNameWithGuidToDelete ? (req.query.imageNameWithGuidToDelete as string) : null;
         try {
             if (userId && imageNameWithGuidToDelete) {

@@ -18,7 +18,7 @@ export function UploadImageModal({
     setShowUploadModalInfo
 }: IUploadImageModalProps) {
     const user = useUserContext();
-    const { collabToken, userId } = user;
+    const { collabToken } = user;
     const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -43,7 +43,7 @@ export function UploadImageModal({
             const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
             const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
             await uploadImageToAWSUsingSignedUrls(signedUploadUrls);
-            await addDocumentImages(userId, collabToken, [...newImageNamesWithGuid], documentId);
+            await addDocumentImages( collabToken, [...newImageNamesWithGuid], documentId);
             closeModalAndTriggerRefetch();
         } catch (error) {
             console.log('Error during uploading images: ', error);
