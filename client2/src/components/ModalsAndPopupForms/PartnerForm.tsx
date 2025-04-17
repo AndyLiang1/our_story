@@ -12,9 +12,9 @@ export interface IPartnerFormProps {
 
 export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
     const user = useUserContext();
-    const { collabToken, userId } = user;
+    const { collabToken } = user;
     const handleSubmit = async (partnerEmail: string) => {
-        await createPartnership(collabToken, userId, partnerEmail);
+        await createPartnership(collabToken, partnerEmail);
         closeForm();
     };
     const closeForm = () => {
