@@ -5,9 +5,12 @@ module.exports = {
     theme: {
         extend: {
             transform: {
-                'rotate-y-neg-180': 'rotateY(-180deg)',
+                'rotate-y-neg-180': 'rotateY(-180deg)'
             },
-        },
+            fontFamily: {
+                sans: ['Inter', 'sans-serif']
+            }
+        }
     },
     plugins: []
 };
