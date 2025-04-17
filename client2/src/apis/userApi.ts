@@ -27,8 +27,8 @@ export const getUserByEmail = async (email: string) => {
     return res.data;
 };
 
-export const getUserById = async (userId: string) => {
-    const res = await axios.get(`${config.baseUrl}/api/user/${userId}`, {
+export const getUser = async () => {
+    const res = await axios.get(`${config.baseUrl}/api/user`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem(COLLAB_TOKEN_KEY)}`
         }

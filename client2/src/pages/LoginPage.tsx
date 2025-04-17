@@ -3,14 +3,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import { getCollabToken, getUserById } from '../apis/userApi';
+import { getCollabToken, getUser } from '../apis/userApi';
 import { GenericFormButton } from '../components/GenericFormButton';
 import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import { GenericFormInput } from '../components/GenericFormInput';
 import { ACCESS_TOKEN_KEY, COLLAB_TOKEN_KEY, ID_TOKEN_KEY } from '../constant/constant';
 import { login } from '../services/authService';
 import { LoginType } from '../types/UserTypes';
-import { parseJwt } from '../utils/authUtils';
 import { getErrorMessage } from '../utils/errorUtils';
 
 export interface ILoginPageProps {}
@@ -28,8 +27,7 @@ export function LoginPage(props: ILoginPageProps) {
                     const idToken = sessionStorage[ID_TOKEN_KEY].toString();
                     const collabToken = await getCollabToken(idToken);
                     sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken);
-                    const userId = parseJwt(collabToken).userId;
-                    const user = await getUserById(userId);
+                    const user = await getUser();
                     navigate('/home', {
                         state: {
                             user: user

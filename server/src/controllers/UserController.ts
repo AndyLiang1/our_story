@@ -4,6 +4,7 @@ import { config } from '../config/config';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
 import { UserCreationData } from '../types/UserTypes';
+import { CustomRequest } from '../types/ApiTypes';
 
 export class UserController {
     router: Router;
@@ -80,7 +81,7 @@ export class UserController {
     }
 
     async getUserById(req: Request, res: Response, next: NextFunction) {
-        const { userId } = req.params;
+        const userId = (req as CustomRequest).userId;
         const user = await services.userService.getUserById(userId);
         if (user === null) {
             res.status(404).json({
