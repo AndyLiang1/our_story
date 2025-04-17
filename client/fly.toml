@@ -22,4 +22,4 @@ primary_region = 'sea'
   cpus = 1
 
 [env]
-  REACT_APP_NODE_ENV = 'production'
+  VITE_APP_NODE_ENV = 'production'
