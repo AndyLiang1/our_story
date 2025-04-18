@@ -4,11 +4,16 @@ import { NavBar } from '../components/Navbar';
 
 import { Flipbook } from '../components/Flipbook';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
+import { DeleteDocumentConfirmationModal } from '../components/ModalsAndPopupForms/DeleteDocumentConfirmationModal';
 import { PartnerForm } from '../components/ModalsAndPopupForms/PartnerForm';
 import { ShareDocumentForm } from '../components/ModalsAndPopupForms/ShareDocumentForm';
 import { UploadImageModal } from '../components/ModalsAndPopupForms/UploadImageModal';
 import { UserContext } from '../context/userContext';
-import { ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
+import {
+    DeleteDocumentConfirmationModalInfo,
+    ShareDocumentFormInfo,
+    UploadImageModalInfo
+} from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
 
 export interface IHomePageProps {}
@@ -28,6 +33,11 @@ export function HomePage(props: IHomePageProps) {
         status: false
     });
     const [showPartnerForm, setShowPartnerForm] = useState(false);
+    const [showDeleteDocumentConfirmationModal, setShowDeleteDocumentConfirmationModal] =
+        useState<DeleteDocumentConfirmationModalInfo>({
+            documentId: '',
+            status: false
+        });
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');
 
     useEffect(() => {
@@ -95,13 +105,23 @@ export function HomePage(props: IHomePageProps) {
                     />
                 )}
                 {showPartnerForm && user && <PartnerForm setShowPartnerForm={setShowPartnerForm} />}
-
+                {showDeleteDocumentConfirmationModal.status && user && (
+                    <DeleteDocumentConfirmationModal
+                        showDeleteDocumentConfirmationModal={showDeleteDocumentConfirmationModal}
+                        setShowDeleteDocumentConfirmationModal={
+                            setShowDeleteDocumentConfirmationModal
+                        }
+                        setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
+                    />
+                )}
                 {(showCreateDocumentForm ||
                     showUploadModalInfo.status ||
                     showShareDocumentForm.status ||
-                    showPartnerForm) && (
+                    showPartnerForm ||
+                    showDeleteDocumentConfirmationModal.status) && (
                     <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
                 )}
+
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
                     setShowPartnerForm={setShowPartnerForm}
@@ -113,6 +133,9 @@ export function HomePage(props: IHomePageProps) {
                         triggerFlipBookRefetch={triggerFlipBookRefetch}
                         setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
                         setShowShareDocumentForm={setShowShareDocumentForm}
+                        setShowDeleteDocumentConfirmationModal={
+                            setShowDeleteDocumentConfirmationModal
+                        }
                     />
                 </div>
             </UserContext.Provider>
