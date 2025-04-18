@@ -105,7 +105,15 @@ export function HomePage(props: IHomePageProps) {
                     />
                 )}
                 {showPartnerForm && user && <PartnerForm setShowPartnerForm={setShowPartnerForm} />}
-
+                {showDeleteDocumentConfirmationModal.status && user && (
+                    <DeleteDocumentConfirmationModal
+                        showDeleteDocumentConfirmationModal={showDeleteDocumentConfirmationModal}
+                        setShowDeleteDocumentConfirmationModal={
+                            setShowDeleteDocumentConfirmationModal
+                        }
+                        setTriggerFlipBookRefetch={setTriggerFlipBookRefetch}
+                    />
+                )}
                 {(showCreateDocumentForm ||
                     showUploadModalInfo.status ||
                     showShareDocumentForm.status ||
@@ -113,14 +121,7 @@ export function HomePage(props: IHomePageProps) {
                     showDeleteDocumentConfirmationModal.status) && (
                     <div className="fixed inset-0 z-9 h-full w-full bg-black opacity-75" />
                 )}
-                {showDeleteDocumentConfirmationModal && user && (
-                    <DeleteDocumentConfirmationModal
-                        showDeleteDocumentConfirmationModal={showDeleteDocumentConfirmationModal}
-                        setShowDeleteDocumentConfirmationModal={
-                            setShowDeleteDocumentConfirmationModal
-                        }
-                    />
-                )}
+
                 <NavBar
                     setShowCreateDocumentForm={setShowCreateDocumentForm}
                     setShowPartnerForm={setShowPartnerForm}

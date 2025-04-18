@@ -17,7 +17,9 @@ import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../t
 
 export interface IMenuBarProps {
     editor: any;
+    documentIdBefore: string;
     documentId: string;
+    documentIdAfter: string;
     documentTitle: string;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
     setShowDeleteDocumentConfirmationModal: React.Dispatch<
@@ -27,7 +29,9 @@ export interface IMenuBarProps {
 
 export function MenuBar({
     editor,
+    documentIdBefore,
     documentId,
+    documentIdAfter,
     documentTitle,
     setShowShareDocumentForm,
     setShowDeleteDocumentConfirmationModal
@@ -45,7 +49,12 @@ export function MenuBar({
     };
 
     const handleDeleteButtonClicked = () => {
-        setShowDeleteDocumentConfirmationModal(true);
+        setShowDeleteDocumentConfirmationModal({
+            documentIdBefore,
+            documentId,
+            documentIdAfter,
+            status: true
+        });
     };
 
     return (

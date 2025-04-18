@@ -43,6 +43,8 @@ export interface ShareDocumentFormInfo {
     status: boolean;
 }
 export interface DeleteDocumentConfirmationModalInfo {
+    documentIdBefore: string;
     documentId: string;
+    documentIdAfter: string;
     status: boolean;
 }

@@ -462,7 +462,15 @@ export function Flipbook({
                             {index < documentsFlipBook.length && (
                                 <TipTapCollab
                                     key={documentsFlipBook[index].documentId}
+                                    documentIdBefore={
+                                        index === 0 ? '' : documentsFlipBook[index - 1].documentId
+                                    }
                                     documentId={documentsFlipBook[index].documentId}
+                                    documentIdAfter={
+                                        index === documentsFlipBook.length - 1
+                                            ? ''
+                                            : documentsFlipBook[index + 1].documentId
+                                    }
                                     documentTitle={documentsFlipBook[index].title}
                                     collabFlag={index === currentLocationFlipbook.location - 2}
                                     setShowShareDocumentForm={setShowShareDocumentForm}

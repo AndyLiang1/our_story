@@ -177,6 +177,8 @@ export class DocumentRepo {
         let documents: DocumentData[] = [];
         let firstDocumentFlag;
         let lastDocumentFlag;
+        const numDocsToFetchLeftDirection = 7
+        const numDocsToFetchRightDirection = 8
         const queryObject: any = {
             include: [
                 {
@@ -223,7 +225,7 @@ export class DocumentRepo {
                     ['eventDate', 'DESC'],
                     ['createdAt', 'DESC']
                 ],
-                limit: 7
+                limit: numDocsToFetchLeftDirection
             };
 
             const nextAndCurrDocumentsQueryObject = {
@@ -240,15 +242,15 @@ export class DocumentRepo {
                     ['eventDate', 'ASC'],
                     ['createdAt', 'ASC']
                 ],
-                limit: 7 + 1 // will always find one since it includes itself
+                limit: numDocsToFetchRightDirection // will always find one since it includes itself
             };
             const previousDocsInReversedChronologicalOrder = await Document.findAll(previousDocumentsQueryObject);
 
             const previousDocuments = [...previousDocsInReversedChronologicalOrder].reverse();
             const nextAndCurrDocuments = await Document.findAll(nextAndCurrDocumentsQueryObject);
             documents = [...previousDocuments, ...nextAndCurrDocuments] as unknown as DocumentData[];
-            firstDocumentFlag = previousDocuments.length < 7;
-            lastDocumentFlag = nextAndCurrDocuments.length < 8;
+            firstDocumentFlag = previousDocuments.length < numDocsToFetchLeftDirection;
+            lastDocumentFlag = nextAndCurrDocuments.length < numDocsToFetchRightDirection;
         }
 
         return {

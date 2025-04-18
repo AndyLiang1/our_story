@@ -26,7 +26,9 @@ import { MenuBar } from './MenuBar';
 export interface IEditorProps {
     ydoc?: any;
     provider?: any;
+    documentIdBefore: string;
     documentId: string;
+    documentIdAfter: string;
     documentTitle: string;
     collabFlag?: boolean;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
@@ -38,7 +40,9 @@ export interface IEditorProps {
 const Editor = ({
     ydoc,
     provider,
+    documentIdBefore,
     documentId,
+    documentIdAfter,
     documentTitle,
     setShowShareDocumentForm,
     setShowDeleteDocumentConfirmationModal
@@ -170,7 +174,9 @@ const Editor = ({
             {editor && (
                 <MenuBar
                     editor={editor}
+                    documentIdBefore={documentIdBefore}
                     documentId={documentId}
+                    documentIdAfter={documentIdAfter}
                     documentTitle={documentTitle}
                     setShowShareDocumentForm={setShowShareDocumentForm}
                     setShowDeleteDocumentConfirmationModal={setShowDeleteDocumentConfirmationModal}

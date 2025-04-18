@@ -10,16 +10,37 @@ export interface IDeleteDocumentConfirmationModalProps {
     setShowDeleteDocumentConfirmationModal: React.Dispatch<
         React.SetStateAction<DeleteDocumentConfirmationModalInfo>
     >;
+    setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function DeleteDocumentConfirmationModal({
     showDeleteDocumentConfirmationModal,
-    setShowDeleteDocumentConfirmationModal
+    setShowDeleteDocumentConfirmationModal,
+    setTriggerFlipBookRefetch
 }: IDeleteDocumentConfirmationModalProps) {
     const user = useUserContext();
     const { collabToken } = user;
+
+    const closeDeleteDocumentConfirmationModal = () => {
+        setShowDeleteDocumentConfirmationModal({
+            documentIdBefore: '',
+            documentId: '',
+            documentIdAfter: '',
+            status: false
+        });
+    };
     const handleDeleteButtonClicked = async () => {
         await deleteDocument(collabToken, showDeleteDocumentConfirmationModal.documentId);
+        closeDeleteDocumentConfirmationModal();
+        if (showDeleteDocumentConfirmationModal.documentIdBefore) {
+            setTriggerFlipBookRefetch(showDeleteDocumentConfirmationModal.documentIdBefore);
+            return;
+        }
+        if (showDeleteDocumentConfirmationModal.documentIdAfter) {
+            setTriggerFlipBookRefetch(showDeleteDocumentConfirmationModal.documentIdAfter);
+            return;
+        }
+        setTriggerFlipBookRefetch('');
     };
     return (
         <div className="center-of-page z-10 flex h-[30%] w-[30%] justify-center bg-white">
@@ -38,7 +59,7 @@ export function DeleteDocumentConfirmationModal({
                     ></GenericFormButton>
                     <GenericFormButton
                         displayMessage="No"
-                        onClick={() => setShowDeleteDocumentConfirmationModal(false)}
+                        onClick={() => closeDeleteDocumentConfirmationModal()}
                     ></GenericFormButton>
                 </div>
             </div>

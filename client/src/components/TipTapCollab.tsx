@@ -8,7 +8,9 @@ import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../t
 import Editor from './Editor';
 
 export interface ITipTapCollabProps {
+    documentIdBefore: string;
     documentId: string;
+    documentIdAfter: string;
     documentTitle: string;
     collabFlag?: boolean;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
@@ -18,7 +20,9 @@ export interface ITipTapCollabProps {
 }
 
 export function TipTapCollab({
+    documentIdBefore,
     documentId,
+    documentIdAfter,
     documentTitle,
     collabFlag = true,
     setShowShareDocumentForm,
@@ -69,7 +73,9 @@ export function TipTapCollab({
             <Editor
                 provider={providerAndDoc.provider}
                 ydoc={providerAndDoc.doc}
+                documentIdBefore={documentIdBefore}
                 documentId={documentId}
+                documentIdAfter={documentIdAfter}
                 documentTitle={documentTitle}
                 setShowShareDocumentForm={setShowShareDocumentForm}
                 setShowDeleteDocumentConfirmationModal={setShowDeleteDocumentConfirmationModal}
