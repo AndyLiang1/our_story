@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const POSTGRES_URL: string = `postgres://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+const POSTGRES_URL_PROD: string = `postgres://${process.env.DB_USER_PROD}:${process.env.DB_PASS_PROD}@${process.env.DB_HOST_PROD}:${process.env.DB_PORT_PROD}/${process.env.DB_NAME_PROD}`;
+const POSTGRES_URL_DEV: string = `postgres://${process.env.DB_USER_DEV}:${process.env.DB_PASS_DEV}@${process.env.DB_HOST_DEV}:${process.env.DB_PORT_DEV}/${process.env.DB_NAME_DEV}`;
 const SERVER_PORT: number = Number(process.env.PORT) ? Number(process.env.PORT) : 3001;
 const ENV: string = process.env.ENV || 'DEV';
 const JWT_SECRET = process.env.JWT_SECRET || '';
@@ -10,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET || '';
 export const config = {
     postgres: {
         dbSchema: 'our_story',
-        url: POSTGRES_URL
+        url: ENV === 'DEV' ? POSTGRES_URL_DEV : POSTGRES_URL_PROD
     },
     server: {
         port: SERVER_PORT,
