@@ -4,7 +4,7 @@ import * as Y from 'yjs';
 import { useEffect, useState } from 'react';
 import { config } from '../config/config';
 import { useUserContext } from '../context/userContext';
-import { ShareDocumentFormInfo } from '../types/DocumentTypes';
+import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../types/DocumentTypes';
 import Editor from './Editor';
 
 export interface ITipTapCollabProps {
@@ -12,13 +12,17 @@ export interface ITipTapCollabProps {
     documentTitle: string;
     collabFlag?: boolean;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
+    setShowDeleteDocumentConfirmationModal: React.Dispatch<
+        React.SetStateAction<DeleteDocumentConfirmationModalInfo>
+    >;
 }
 
 export function TipTapCollab({
     documentId,
     documentTitle,
     collabFlag = true,
-    setShowShareDocumentForm
+    setShowShareDocumentForm,
+    setShowDeleteDocumentConfirmationModal
 }: ITipTapCollabProps) {
     const user = useUserContext();
     const { collabToken } = user;
@@ -68,6 +72,7 @@ export function TipTapCollab({
                 documentId={documentId}
                 documentTitle={documentTitle}
                 setShowShareDocumentForm={setShowShareDocumentForm}
+                setShowDeleteDocumentConfirmationModal={setShowDeleteDocumentConfirmationModal}
             />
         )
     );

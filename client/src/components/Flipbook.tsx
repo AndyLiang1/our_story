@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
@@ -7,7 +8,6 @@ import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../ty
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
-import { useNavigate } from 'react-router-dom';
 
 export interface IFlipbookProps {
     showUploadModalInfo: UploadImageModalInfo;
@@ -15,6 +15,9 @@ export interface IFlipbookProps {
     triggerFlipBookRefetch: string;
     setTriggerFlipBookRefetch: React.Dispatch<React.SetStateAction<string>>;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
+    setShowDeleteDocumentConfirmationModal: React.Dispatch<
+        React.SetStateAction<DeleteDocumentConfirmationModalInfo>
+    >;
 }
 
 enum PAGE_STYLE_POSSIBLE_STATES {
@@ -56,10 +59,11 @@ export function Flipbook({
     setShowUploadModalInfo,
     triggerFlipBookRefetch,
     setTriggerFlipBookRefetch,
-    setShowShareDocumentForm
+    setShowShareDocumentForm,
+    setShowDeleteDocumentConfirmationModal
 }: IFlipbookProps) {
     const user = useUserContext();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     let collabToken = '';
     let userId = '';
     if (user) {
@@ -462,6 +466,9 @@ export function Flipbook({
                                     documentTitle={documentsFlipBook[index].title}
                                     collabFlag={index === currentLocationFlipbook.location - 2}
                                     setShowShareDocumentForm={setShowShareDocumentForm}
+                                    setShowDeleteDocumentConfirmationModal={
+                                        setShowDeleteDocumentConfirmationModal
+                                    }
                                 />
                             )}
                         </div>

@@ -111,3 +111,13 @@ export const editDocumentTitle = async (collabToken: string, title: string, docu
         }
     );
 };
+export const deleteDocument = async (collabToken: string, documentId: string) => {
+    await axios.delete(
+        `${config.baseUrl}/api/documents/${documentId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${collabToken}`
+            }
+        }
+    );
+};

@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { editDocumentTitle } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
 import { useEditor } from '../hooks/useEditor';
-import { ShareDocumentFormInfo } from '../types/DocumentTypes';
+import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../types/DocumentTypes';
 import { MenuBar } from './MenuBar';
 
 export interface IEditorProps {
@@ -30,6 +30,9 @@ export interface IEditorProps {
     documentTitle: string;
     collabFlag?: boolean;
     setShowShareDocumentForm: React.Dispatch<React.SetStateAction<ShareDocumentFormInfo>>;
+    setShowDeleteDocumentConfirmationModal: React.Dispatch<
+        React.SetStateAction<DeleteDocumentConfirmationModalInfo>
+    >;
 }
 
 const Editor = ({
@@ -37,7 +40,8 @@ const Editor = ({
     provider,
     documentId,
     documentTitle,
-    setShowShareDocumentForm
+    setShowShareDocumentForm,
+    setShowDeleteDocumentConfirmationModal
 }: IEditorProps) => {
     const user = useUserContext();
     const { collabToken } = user;
@@ -169,17 +173,18 @@ const Editor = ({
                     documentId={documentId}
                     documentTitle={documentTitle}
                     setShowShareDocumentForm={setShowShareDocumentForm}
+                    setShowDeleteDocumentConfirmationModal={setShowDeleteDocumentConfirmationModal}
                 />
             )}
             {editor && (
                 <div className="flex h-[95%] w-full flex-col">
                     <input
-                        className="h-[5%] w-full border-none bg-transparent text-center text-[1.3rem] font-['Handlee'] mt-1 focus:outline-none"
+                        className="mt-1 h-[5%] w-full border-none bg-transparent text-center font-['Handlee'] text-[1.3rem] focus:outline-none"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     <EditorContent
-                        className="editor__content h-[95%] w-full px-[1.5rem] box-border overflow-auto"
+                        className="editor__content box-border h-[95%] w-full overflow-auto px-[1.5rem]"
                         editor={editor}
                     />
                 </div>
