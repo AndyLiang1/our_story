@@ -47,7 +47,7 @@ export function TipTapCollab({
                     if (debug) console.log('WebSocket connection opened');
                 },
                 onConnect() {
-                    if (true) console.log('Connected to the server.');
+                    if (debug) console.log('Connected to the server.');
                 },
                 onAuthenticated() {
                     if (debug) console.log('Authenticated');

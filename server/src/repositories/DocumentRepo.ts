@@ -177,8 +177,8 @@ export class DocumentRepo {
         let documents: DocumentData[] = [];
         let firstDocumentFlag;
         let lastDocumentFlag;
-        const numDocsToFetchLeftDirection = 7
-        const numDocsToFetchRightDirection = 8
+        const numDocsToFetchLeftDirection = 3
+        const numDocsToFetchRightDirection = 4 // including current doca
         const queryObject: any = {
             include: [
                 {

@@ -117,6 +117,7 @@ export function Flipbook({
     };
 
     useEffect(() => {
+        if (verboseLogic) console.log('Trigger flipbook refetch: ', triggerFlipBookRefetch);
         if (documentId) fetchData(documentId);
     }, [triggerFlipBookRefetch]);
 
@@ -175,8 +176,8 @@ export function Flipbook({
     let maxLocation = numOfPapers + 1;
 
     useEffect(() => {
-        if (!documentsFlipBook.length) return;
         if (verboseLogic) console.log('GoToPageCalled: ', goToPageCalled);
+        if (!documentsFlipBook.length) return;
         if (typeof goToPageCalled === 'number') {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
@@ -235,9 +236,9 @@ export function Flipbook({
     }, [nextPageTriggered]);
 
     useEffect(() => {
-        if (!documentsFlipBook.length) return;
         if (verboseLogic)
             console.log('Temporary state: ', tempCurrentPageStylesStateForMovingToNextPage);
+        if (!documentsFlipBook.length) return;
         if (nextPageTriggered) {
             const goNextPage = async () => {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
@@ -267,8 +268,8 @@ export function Flipbook({
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
     useEffect(() => {
-        if (!documentsFlipBook.length) return;
         if (verboseLogic) console.log('Page style: ', pageStylesState);
+        if (!documentsFlipBook.length) return;
         if (
             nextPageTriggered &&
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2
