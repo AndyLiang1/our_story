@@ -4,7 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
-import { DocumentData, ShareDocumentFormInfo, UploadImageModalInfo } from '../types/DocumentTypes';
+import {
+    DeleteDocumentConfirmationModalInfo,
+    DocumentData,
+    ShareDocumentFormInfo,
+    UploadImageModalInfo
+} from '../types/DocumentTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
@@ -27,7 +32,8 @@ enum PAGE_STYLE_POSSIBLE_STATES {
     'GO_NEXT_PAGE_1' = 'goToNextPageState1SettingZIndexZero',
     'GO_NEXT_PAGE_2' = 'goToNextPageState2RestoringZIndex',
     'GO_PREV' = 'goPrev',
-    'REFETCH' = 'refetch'
+    'REFETCH' = 'refetch',
+    'DONE' = 'done'
 }
 
 const loadingSpinnerPages = [
@@ -88,7 +94,10 @@ export function Flipbook({
         styles: []
     });
     // given a param n, we will flip the first n papers (not zero indexed?).
-    const [goToPageCalled, setGoToPageCalled] = useState<number | boolean>(false);
+    const [goToPageCalled, setGoToPageCalled] = useState({
+        pageCalled: false,
+        timestamp: Date.now()
+    });
     const [nextPageTriggered, setNextPageTriggered] = useState(false);
     const [
         tempCurrentPageStylesStateForMovingToNextPage,
@@ -117,6 +126,7 @@ export function Flipbook({
     };
 
     useEffect(() => {
+        if (verboseLogic) console.log('Trigger flipbook refetch: ', triggerFlipBookRefetch);
         if (documentId) fetchData(documentId);
     }, [triggerFlipBookRefetch]);
 
@@ -175,9 +185,9 @@ export function Flipbook({
     let maxLocation = numOfPapers + 1;
 
     useEffect(() => {
+        if (verboseLogic) console.log('GoToPageCalled: ', goToPageCalled.pageCalled);
         if (!documentsFlipBook.length) return;
-        if (verboseLogic) console.log('GoToPageCalled: ', goToPageCalled);
-        if (typeof goToPageCalled === 'number') {
+        if (typeof goToPageCalled.pageCalled === 'number') {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
             let styles = [];
@@ -192,7 +202,7 @@ export function Flipbook({
                     });
                     continue;
                 }
-                if (i < goToPageCalled) {
+                if (i < goToPageCalled.pageCalled) {
                     styles.push({
                         ...pageStylesState.styles[i],
                         flipped: true,
@@ -204,7 +214,8 @@ export function Flipbook({
                 } else {
                     styles.push({
                         ...pageStylesState.styles[i],
-                        regularZIndex: pageStylesState.styles[i]?.regularZIndex + goToPageCalled - 1
+                        regularZIndex:
+                            pageStylesState.styles[i]?.regularZIndex + goToPageCalled.pageCalled - 1
                     });
                 }
             }
@@ -220,7 +231,7 @@ export function Flipbook({
                     styles.push({ ...pageStylesState.styles[i], goToPageTriggered: false });
                 }
                 setPageStylesState({
-                    state: PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED_2,
+                    state: PAGE_STYLE_POSSIBLE_STATES.DONE,
                     styles
                 });
             }
@@ -230,14 +241,22 @@ export function Flipbook({
     /* Next page useEffectchains */
 
     useEffect(() => {
+        if (verboseLogic) console.log('Next page triggered: ', nextPageTriggered);
         if (!documentsFlipBook.length) return;
-        if (nextPageTriggered) setTempCurrentPageStylesStateForMovingToNextPage(pageStylesState);
+        if (nextPageTriggered) {
+            setTempCurrentPageStylesStateForMovingToNextPage(pageStylesState);
+        } else {
+            setGoToPageCalled({
+                pageCalled: false,
+                timestamp: Date.now()
+            });
+        }
     }, [nextPageTriggered]);
 
     useEffect(() => {
-        if (!documentsFlipBook.length) return;
         if (verboseLogic)
             console.log('Temporary state: ', tempCurrentPageStylesStateForMovingToNextPage);
+        if (!documentsFlipBook.length) return;
         if (nextPageTriggered) {
             const goNextPage = async () => {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
@@ -267,8 +286,8 @@ export function Flipbook({
     }, [tempCurrentPageStylesStateForMovingToNextPage]);
 
     useEffect(() => {
-        if (!documentsFlipBook.length) return;
         if (verboseLogic) console.log('Page style: ', pageStylesState);
+        if (!documentsFlipBook.length) return;
         if (
             nextPageTriggered &&
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_2
@@ -280,12 +299,18 @@ export function Flipbook({
             return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL) {
-            setGoToPageCalled(documentsFlipBook.length);
+            setGoToPageCalled({
+                pageCalled: documentsFlipBook.length,
+                timestamp: Date.now()
+            });
             return;
         }
         if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH) {
             const index = documentsFlipBook.findIndex((doc) => doc.documentId === documentId);
-            setGoToPageCalled(index + 1);
+            setGoToPageCalled({
+                pageCalled: index + 1,
+                timestamp: Date.now()
+            });
             return;
         }
         if (
@@ -293,7 +318,14 @@ export function Flipbook({
             pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_TO_PAGE_CALLED
         ) {
             setCurrentLocationFlipbook({
-                location: (goToPageCalled as number) + 1,
+                location: (goToPageCalled.pageCalled as number) + 1,
+                timestamp: Date.now()
+            });
+            return;
+        }
+        if (pageStylesState && pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_PREV) {
+            setCurrentLocationFlipbook({
+                location: currentLocationFlipbook.location - 1,
                 timestamp: Date.now()
             });
             return;
@@ -303,9 +335,9 @@ export function Flipbook({
     useEffect(() => {
         if (verboseLogic) console.log('Current location: ', currentLocationFlipbook);
         if (!documentsFlipBook.length) return;
-        if (nextPageTriggered) {
-            setNextPageTriggered(false);
-        }
+        // if (nextPageTriggered) {
+        //     setNextPageTriggered(false);
+        // }
         if (documentsWindow) {
             if (
                 currentLocationFlipbook.location === maxLocation - 1 &&
@@ -320,7 +352,14 @@ export function Flipbook({
                 setTriggerFlipBookRefetch(documentsFlipBook[0].documentId);
                 return;
             }
-            setGoToPageCalled(false);
+            if (nextPageTriggered) {
+                setNextPageTriggered(false);
+                return;
+            }
+            setGoToPageCalled({
+                pageCalled: false,
+                timestamp: Date.now()
+            });
         }
     }, [currentLocationFlipbook]);
 
@@ -342,10 +381,6 @@ export function Flipbook({
             setPageStylesState({
                 state: PAGE_STYLE_POSSIBLE_STATES.GO_PREV,
                 styles
-            });
-            setCurrentLocationFlipbook({
-                location: currentLocationFlipbook.location - 1,
-                timestamp: Date.now()
             });
             // reset the refetch, incase say, we click some date on calendar,
             // then flip back, then click the first date again,
@@ -509,6 +544,8 @@ export function Flipbook({
                     }
                     onClick={async () => {
                         if (arrowClickPause) return;
+                        // flipping left has a faster animation than flipping right
+                        // so we need this to ensure the speeds are roughly the same
                         setArrowClickPause(true);
                         goPrevPage();
                         setTimeout(() => {
@@ -516,9 +553,8 @@ export function Flipbook({
                         }, 1500);
                     }}
                     disabled={
-                        arrowClickPause ||
-                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL ||
-                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH
+                        // prevent user from spam clicking
+                        arrowClickPause || pageStylesState.state !== PAGE_STYLE_POSSIBLE_STATES.DONE
                     }
                 >
                     <FaChevronLeft />
@@ -528,6 +564,8 @@ export function Flipbook({
                 <button
                     onClick={async () => {
                         if (arrowClickPause) return;
+                        // flipping left has a faster animation than flipping right
+                        // so we need this to ensure the speeds are roughly the same
                         setArrowClickPause(true);
                         setNextPageTriggered(true);
                         setTimeout(() => {
@@ -539,9 +577,8 @@ export function Flipbook({
                         (arrowClickPause ? 'text-gray-300' : 'text-white')
                     }
                     disabled={
-                        arrowClickPause ||
-                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.INITIAL ||
-                        pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.REFETCH
+                        // prevent user from spam clicking
+                        arrowClickPause || pageStylesState.state !== PAGE_STYLE_POSSIBLE_STATES.DONE
                     }
                 >
                     <FaChevronRight />
