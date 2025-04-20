@@ -8,26 +8,16 @@ export const addUser = async (
     givenName: string,
     familyName: string
 ) => {
-    const user = await axios.post(`${config.baseUrl}/api/user`, {
+    await axios.post(`${config.baseUrl}/api/user`, {
         cognitoId,
         email,
         givenName,
         familyName
     });
-    console.log(`Added user successfully. ${JSON.stringify(user)}`);
-    return user;
+    console.log(`Added user successfully.`);
 };
 
-export const getUserByEmail = async (email: string) => {
-    const res = await axios.get(`${config.baseUrl}/api/user/email/${encodeURIComponent(email)}`, {
-        headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(COLLAB_TOKEN_KEY)}`
-        }
-    });
-    return res.data;
-};
-
-export const getUser = async () => {
+export const getUserByCollabToken = async () => {
     const res = await axios.get(`${config.baseUrl}/api/user`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem(COLLAB_TOKEN_KEY)}`

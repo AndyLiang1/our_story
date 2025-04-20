@@ -1,4 +1,3 @@
-import { User } from '../models/User';
 import { UserRepo } from '../repositories/UserRepo';
 import { UserCreationData } from '../types/UserTypes';
 export class UserService {
@@ -10,11 +9,6 @@ export class UserService {
     async createUser(userData: UserCreationData) {
         const user = await this.userRepo.addUser(userData);
         return user;
-    }
-
-    async getAllUsers() {
-        const users = await this.userRepo.getAllUsers();
-        return users;
     }
 
     async getUserById(userId: string) {

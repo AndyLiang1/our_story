@@ -122,23 +122,6 @@ export class DocumentService {
         return docsThatNeedUpdating.length;
     }
 
-    // async addOwners(documentId: string, userIdOfPersonSharing: string, partnerEmail: string) {
-    //     const partner = await services.userService.getUserByEmail(partnerEmail);
-    //     const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
-    //     const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
-    //     const userActuallyOwnsDocument = userDocs.includes(documentId);
-    //     let data = null;
-    //     if (userActuallyOwnsDocument && partner) {
-    //         data = await services.documentOwnersService.createDocumentOwner(documentId, partner.getDataValue('userId'));
-    //     }
-
-    //     return data;
-    // }
-
-    // async deleteOwner(data: DocumentOwnerData) {
-    //     await this.documentOwnerRepo.deleteDocumentOwner(data);
-    // }
-
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
         try {
             const docInfo: DocumentData | null = await this.getDocument(userId, documentId);

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import { getCollabToken, getUser } from '../apis/userApi';
+import { getCollabToken, getUserByCollabToken } from '../apis/userApi';
 import { GenericFormButton } from '../components/GenericFormButton';
 import { GenericFormErrorMessage } from '../components/GenericFormErrorMessage';
 import { GenericFormInput } from '../components/GenericFormInput';
@@ -27,7 +27,7 @@ export function LoginPage(props: ILoginPageProps) {
                     const idToken = sessionStorage[ID_TOKEN_KEY].toString();
                     const collabToken = await getCollabToken(idToken);
                     sessionStorage.setItem(COLLAB_TOKEN_KEY, collabToken);
-                    const user = await getUser();
+                    const user = await getUserByCollabToken();
                     navigate('/home', {
                         state: {
                             user: user
