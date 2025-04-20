@@ -12,7 +12,6 @@ import { UserController } from './controllers/UserController';
 import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
 import { syncDocuments } from './scheduled-jobs/syncDocuments';
-import { pingTipTap } from './scheduled-jobs/tiptapPinger';
 
 const app: Express = express();
 app.use(cors());
@@ -38,7 +37,6 @@ const init = async () => {
     app.use(errorHandler);
 
     syncDocuments();
-    pingTipTap();
 };
 
 init();

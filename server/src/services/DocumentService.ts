@@ -52,14 +52,9 @@ export class DocumentService {
         }
         const firstImagesSigned = await services.imageService.generateDownloadURLs(firstImages);
         for (const [index, doc] of docs.entries()) {
-            doc.setDataValue('firstImageWSignedUrl', firstImagesSigned.signedDownloadUrls[index]);
+            doc.firstImageWSignedUrl = firstImagesSigned.signedDownloadUrls[index];
         }
         return docs;
-    }
-
-    async getLatestDocument() {
-        const doc = await this.documentRepo.getLatestDocument();
-        return doc;
     }
 
     async getDocument(userId: string, documentId: string) {
@@ -74,10 +69,8 @@ export class DocumentService {
                 title: docFromDB.title,
                 documentContent: docFromTipTap,
                 createdAt: docFromDB.createdAt,
-                updatedAt: docFromDB.updatedAt,
                 eventDate: new Date(docFromDB.eventDate),
-                images: docFromDB.images,
-                createdByUserId: docFromDB.createdByUserId
+                images: docFromDB.images
             };
         }
         return data as DocumentData;

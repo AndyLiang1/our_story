@@ -7,40 +7,11 @@ import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttribut
 export class DocumentRepo {
     constructor() {}
 
-    // async getDocuments(userId: string | null, startDate: Date | null, endDate: Date | null, hasUpdated: boolean | null) {
-    //     let whereObjectForDocuments: any = {};
-    //     let whereObjectForUsers: any = {};
-    //     if (startDate != null && endDate != null) {
-    //         whereObjectForDocuments.eventDate = {
-    //             [Op.gte]: new Date(startDate),
-    //             [Op.lte]: new Date(endDate)
-    //         };
-    //     }
-    //     if (userId != null) whereObjectForUsers.userId = userId;
-    //     if (hasUpdated != null) whereObjectForDocuments.hasUpdated = hasUpdated;
-    //     const docs = await Document.findAll({
-    //         include: [
-    //             {
-    //                 model: User,
-    //                 required: true,
-    //                 where: whereObjectForUsers,
-    //                 through: {
-    //                     attributes: []
-    //                 },
-    //                 attributes: []
-    //             }
-    //         ],
-    //         where: whereObjectForDocuments,
-    //         order: [['createdAt', 'DESC']]
-    //     });
-    //     return docs as unknown as DocumentData[];
-    // }
-
     async getAllStoriesPaginated(userId: string, page: number) {
         const limit = 20;
         const offset = (page - 1) * limit;
 
-        const docs = await Document.findAndCountAll({
+        const docsInfo = await Document.findAndCountAll({
             include: [
                 {
                     model: User,
@@ -59,17 +30,18 @@ export class DocumentRepo {
             limit,
             offset
         });
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(docsInfo.rows);
 
         return {
-            documents: docs.rows as unknown as DocumentData[],
-            total: docs.count,
+            documents,
+            total: docsInfo.count,
             page,
-            totalPages: Math.ceil(docs.count / limit)
+            totalPages: Math.ceil(docsInfo.count / limit)
         };
     }
 
     async getDocumentsToSync() {
-        const docs = await Document.findAll({
+        const documentsRaw: Document[] = await Document.findAll({
             include: [
                 {
                     model: User,
@@ -86,7 +58,8 @@ export class DocumentRepo {
                 ['createdAt', 'DESC']
             ]
         });
-        return docs as unknown as DocumentData[];
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw);
+        return documents;
     }
 
     async getDocumentsBetweenDates(userId: string, startDate: Date, endDate: Date) {
@@ -96,7 +69,7 @@ export class DocumentRepo {
                 [Op.lte]: new Date(endDate)
             }
         };
-        const docs = await Document.findAll({
+        const documentsRaw: Document[] = await Document.findAll({
             include: [
                 {
                     model: User,
@@ -114,25 +87,12 @@ export class DocumentRepo {
                 ['createdAt', 'DESC']
             ]
         });
-        return docs as unknown as DocumentData[];
-    }
-
-    async getLatestDocument() {
-        const doc = await Document.findAll({
-            order: [
-                ['eventDate', 'DESC'],
-                ['createdAt', 'DESC']
-            ],
-            limit: 1
-        });
-        if (doc.length == 0) {
-            return null;
-        }
-        return doc[0];
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw);
+        return documents;
     }
 
     async getDocuments(userId: string) {
-        const docs = await Document.findAll({
+        const documentsRaw: Document[] = await Document.findAll({
             include: [
                 {
                     model: User,
@@ -149,11 +109,12 @@ export class DocumentRepo {
                 ['createdAt', 'DESC']
             ]
         });
-        return docs as unknown as DocumentData[];
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw);
+        return documents;
     }
 
     async getDocument(userId: string, documentId: string) {
-        const doc = await Document.findOne({
+        const documentRaw: Document | null = await Document.findOne({
             where: {
                 documentId
             },
@@ -169,16 +130,20 @@ export class DocumentRepo {
                 }
             ]
         });
-        return doc as unknown as DocumentData | null;
+        if (documentRaw) {
+            const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);
+            return documents[0];
+        }
+        return null;
     }
 
     async getNeighbouringDocuments(userId: string | null, eventDate: Date, createdAt: Date | null) {
         const isInitialLoad = createdAt === null;
-        let documents: DocumentData[] = [];
+        let documentsRaw: Document[] = [];
         let firstDocumentFlag;
         let lastDocumentFlag;
-        const numDocsToFetchLeftDirection = 3
-        const numDocsToFetchRightDirection = 4 // including current doca
+        const numDocsToFetchLeftDirection = 3;
+        const numDocsToFetchRightDirection = 4; // including current doca
         const queryObject: any = {
             include: [
                 {
@@ -188,10 +153,9 @@ export class DocumentRepo {
                     through: {
                         attributes: []
                     },
-                    attributes: ['userId']
+                    attributes: []
                 }
             ]
-            // attributes: this.getDocumentDataKeys(),
         };
         if (isInitialLoad) {
             const mostRecentQueryObject = {
@@ -207,7 +171,7 @@ export class DocumentRepo {
             };
             const mostRecentDocsInReversedChronologicalOrder = await Document.findAll(mostRecentQueryObject);
             const mostRecentDocuments = [...mostRecentDocsInReversedChronologicalOrder].reverse();
-            documents = [...mostRecentDocuments] as unknown as DocumentData[];
+            documentsRaw = [...mostRecentDocuments];
             firstDocumentFlag = mostRecentDocuments.length < 4;
             lastDocumentFlag = true;
         } else {
@@ -248,10 +212,11 @@ export class DocumentRepo {
 
             const previousDocuments = [...previousDocsInReversedChronologicalOrder].reverse();
             const nextAndCurrDocuments = await Document.findAll(nextAndCurrDocumentsQueryObject);
-            documents = [...previousDocuments, ...nextAndCurrDocuments] as unknown as DocumentData[];
+            documentsRaw = [...previousDocuments, ...nextAndCurrDocuments];
             firstDocumentFlag = previousDocuments.length < numDocsToFetchLeftDirection;
             lastDocumentFlag = nextAndCurrDocuments.length < numDocsToFetchRightDirection;
         }
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw);
 
         return {
             documents,
@@ -266,14 +231,15 @@ export class DocumentRepo {
     }
 
     async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
-        const doc = await Document.findByPk(documentId);
-        if (doc === null) {
+        const documentRaw = await Document.findByPk(documentId);
+        if (documentRaw === null) {
             throw Error(`Document with ID ${documentId} does not exist.`);
         }
-        await doc.update({ ...documentData });
-        await doc.save();
-        await doc.reload();
-        return doc;
+        await documentRaw.update({ ...documentData });
+        await documentRaw.save();
+        await documentRaw.reload();
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);
+        return documents[0];
     }
 
     async deleteDocument(documentId: string, transaction?: Transaction) {
@@ -285,21 +251,19 @@ export class DocumentRepo {
         });
     }
 
-    getDocumentDataKeys() {
-        const documentDataOb: DocumentData = {
-            documentId: '',
-            users: [],
-            title: '',
-            documentContent: {
-                type: '',
-                content: undefined
-            },
-            eventDate: new Date(),
-            images: [],
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            createdByUserId: ''
-        };
-        return Object.keys(documentDataOb);
-    }
+    convertRawDocumentModelsToDocumentDataArray = (rawDocuments: Document[]) => {
+        const documents: DocumentData[] = [];
+        for (const rawDocument of rawDocuments) {
+            const document: DocumentData = {
+                documentId: rawDocument.getDataValue('documentId'),
+                title: rawDocument.getDataValue('title'),
+                documentContent: rawDocument.getDataValue('documentContent'),
+                eventDate: rawDocument.getDataValue('eventDate'),
+                createdAt: rawDocument.getDataValue('createdAt'),
+                images: rawDocument.getDataValue('images')
+            };
+            documents.push(document);
+        }
+        return documents;
+    };
 }
