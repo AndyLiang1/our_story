@@ -52,14 +52,9 @@ export class DocumentService {
         }
         const firstImagesSigned = await services.imageService.generateDownloadURLs(firstImages);
         for (const [index, doc] of docs.entries()) {
-            doc.setDataValue('firstImageWSignedUrl', firstImagesSigned.signedDownloadUrls[index]);
+            doc.firstImageWSignedUrl = firstImagesSigned.signedDownloadUrls[index];
         }
         return docs;
-    }
-
-    async getLatestDocument() {
-        const doc = await this.documentRepo.getLatestDocument();
-        return doc;
     }
 
     async getDocument(userId: string, documentId: string) {
@@ -74,10 +69,8 @@ export class DocumentService {
                 title: docFromDB.title,
                 documentContent: docFromTipTap,
                 createdAt: docFromDB.createdAt,
-                updatedAt: docFromDB.updatedAt,
                 eventDate: new Date(docFromDB.eventDate),
-                images: docFromDB.images,
-                createdByUserId: docFromDB.createdByUserId
+                images: docFromDB.images
             };
         }
         return data as DocumentData;
@@ -128,23 +121,6 @@ export class DocumentService {
 
         return docsThatNeedUpdating.length;
     }
-
-    // async addOwners(documentId: string, userIdOfPersonSharing: string, partnerEmail: string) {
-    //     const partner = await services.userService.getUserByEmail(partnerEmail);
-    //     const userDocsModel = await this.documentOwnerRepo.getDocumentsByUserId(userIdOfPersonSharing);
-    //     const userDocs = userDocsModel.map((userDocModel) => userDocModel.getDataValue('documentId'));
-    //     const userActuallyOwnsDocument = userDocs.includes(documentId);
-    //     let data = null;
-    //     if (userActuallyOwnsDocument && partner) {
-    //         data = await services.documentOwnersService.createDocumentOwner(documentId, partner.getDataValue('userId'));
-    //     }
-
-    //     return data;
-    // }
-
-    // async deleteOwner(data: DocumentOwnerData) {
-    //     await this.documentOwnerRepo.deleteDocumentOwner(data);
-    // }
 
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
         try {

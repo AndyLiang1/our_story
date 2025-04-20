@@ -1,11 +1,11 @@
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import { NextFunction, Request, Response } from 'express';
-import { default as jsonwebtoken, default as jwt, JwtPayload } from 'jsonwebtoken';
+import { default as jsonwebtoken, default as jwt } from 'jsonwebtoken';
 import { jwtDecode } from 'jwt-decode';
 import { config } from '../config/config';
 import { services } from '../services/services';
-import { DocumentData } from '../types/DocumentTypes';
 import { CustomRequest } from '../types/ApiTypes';
+import { DocumentData } from '../types/DocumentTypes';
 
 type DecodedFields = {
     userId: string;
@@ -44,7 +44,8 @@ export class JwtVerifier {
             }
             var data: any = jwtDecode(token);
             const user = await services.userService.getUserByEmail(data.email);
-            const userId = user?.getDataValue('userId');
+            if (!user) throw Error('No user found');
+            const userId = user.userId;
             const docs = (await services.documentService.getDocuments(userId, null)) as DocumentData[];
             const allowDocumentNames = docs.map((doc) => doc.documentId);
             data = {

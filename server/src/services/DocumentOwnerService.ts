@@ -14,7 +14,7 @@ export class DocumentOwnerService {
             const docsOfUser = (await services.documentService.getDocuments(userId)) as DocumentData[];
             const docToBeSharedIsADocOfUser = docsOfUser.map((doc) => doc.documentId).includes(documentId);
             if (partnerUser && docToBeSharedIsADocOfUser) {
-                const partnerUserId: string = partnerUser.getDataValue('userId');
+                const partnerUserId: string = partnerUser.userId;
                 await this.createDocumentOwner(documentId, partnerUserId);
             } else {
                 throw Error('Partner not found');

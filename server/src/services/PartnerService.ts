@@ -12,9 +12,8 @@ export class PartnerService {
         const partnerUser = await services.userService.getUserByEmail(partnerEmail);
 
         if (partnerUser) {
-            if (partnerUser.getDataValue('email') !== partnerEmail) throw Error('You can only have one partner');
-
-            const partnerUserId = partnerUser.getDataValue('userId');
+            if (partnerUser.email !== partnerEmail) throw Error('You can only have one partner');
+            const partnerUserId = partnerUser.userId;
             const partnerUserAlsoHasYouAsParnter = await this.partnerUserHasYouAsPartner(userId1, partnerUserId);
             if (partnerUserAlsoHasYouAsParnter) {
                 await this.shareAllPreviousDocument(userId1, partnerUserId);
@@ -50,20 +49,10 @@ export class PartnerService {
                 documentOwnershipsToCreate.push({ documentId: docId, userId: userId1 });
             }
         });
-
         await services.documentOwnerService.bulkCreateDocumentOwner(documentOwnershipsToCreate);
     }
 
     async getPartnerId(userIdWhosePartnersWeWant: string) {
         return await this.partnerRepo.getPartnerId(userIdWhosePartnersWeWant);
     }
-
-    // async deletePartners(userId1: string, partnerEmail: string) {
-    //     const partnerUserId = await services.userService.getUserByEmail(partnerEmail);
-    //     if (partnerUserId) {
-    //         await this.partnerRepo.deletePartner(userId1, partnerUserId.getDataValue('userId'));
-    //     } else {
-    //         throw Error('No user exists with that email');
-    //     }
-    // }
 }

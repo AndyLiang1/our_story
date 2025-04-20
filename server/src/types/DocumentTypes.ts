@@ -1,19 +1,20 @@
-import { UserCreationData } from '../types/UserTypes';
-
-export interface DocumentData extends DocumentCreationAttributes {
+export interface DocumentData {
     documentId: string;
-    createdAt: Date;
-    updatedAt: Date;
-    users: UserCreationData[];
-    firstImageWSignedUrl?: string | null;
+    title: string;
+    documentContent: DocumentContent;
+    eventDate: Date; // YYYY-MM-DD
+    images: string[];
+    createdAt: Date; // needed in get neighbouring docs
+    // updatedAt: Date;
+    firstImageWSignedUrl?: string | null; // only needed by all story page, and is set in the service layer as it requires the image service as well
 }
 
 export type DocumentDataKeys = keyof DocumentData;
 
 export interface DocumentCreationAttributes {
     title: string;
-    documentContent: DocumentContent;
     createdByUserId: string;
+    documentContent: DocumentContent;
     eventDate: Date; // YYYY-MM-DD
     images: string[];
 }

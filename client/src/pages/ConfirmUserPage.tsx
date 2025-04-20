@@ -23,7 +23,7 @@ export function ConfirmUserPage(props: IConfirmUserPageProps) {
     const handleSubmit = async (formData: ConfirmUserType) => {
         try {
             await confirmSignUp(formData);
-            const user = await addUser(
+            await addUser(
                 location.state?.email,
                 location.state?.cognitoId,
                 location.state?.givenName,

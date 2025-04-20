@@ -6,14 +6,13 @@ export class DocumentOwnersRepo {
     constructor() {}
 
     async createDocumentOwner(data: DocumentOwnerData, transaction?: Transaction) {
-        const docOwner = await DocumentOwner.create(
+        await DocumentOwner.create(
             {
                 documentId: data.documentId,
                 userId: data.userId
             },
             { transaction }
         );
-        return docOwner;
     }
 
     async bulkCreateDocumentOwner(documentOwnerDatas: DocumentOwnerData[]) {
@@ -29,16 +28,6 @@ export class DocumentOwnersRepo {
         });
         return docIds;
     }
-
-    // async getOwnersByDocumentId(documentId: string) {
-    //     const owners = await DocumentOwners.findAll({
-    //         where: {
-    //             documentId
-    //         },
-    //         attributes: ['userId']
-    //     });
-    //     return owners;
-    // }
 
     async deleteDocumentOwner(data: DocumentOwnerData) {
         await DocumentOwner.destroy({

@@ -35,7 +35,9 @@ export function HomePage(props: IHomePageProps) {
     const [showPartnerForm, setShowPartnerForm] = useState(false);
     const [showDeleteDocumentConfirmationModal, setShowDeleteDocumentConfirmationModal] =
         useState<DeleteDocumentConfirmationModalInfo>({
+            documentIdBefore: '',
             documentId: '',
+            documentIdAfter: '',
             status: false
         });
     const [triggerFlipBookRefetch, setTriggerFlipBookRefetch] = useState<string>('');

@@ -71,10 +71,8 @@ export function Flipbook({
     const user = useUserContext();
     const navigate = useNavigate();
     let collabToken = '';
-    let userId = '';
     if (user) {
         collabToken = user.collabToken;
-        userId = user.userId;
     }
     let verboseLogic = false;
     let verboseInit = false;

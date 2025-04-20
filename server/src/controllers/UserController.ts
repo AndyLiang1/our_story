@@ -3,8 +3,8 @@ import express, { NextFunction, Request, Response, Router } from 'express';
 import { config } from '../config/config';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
-import { UserCreationData } from '../types/UserTypes';
 import { CustomRequest } from '../types/ApiTypes';
+import { UserCreationData } from '../types/UserTypes';
 
 export class UserController {
     router: Router;
@@ -18,13 +18,25 @@ export class UserController {
         // to call the login function
         // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
         this.router.post('/', this.createUser.bind(this));
-        this.router.get('/', JwtVerifier.verifyCollabToken, this.getAllUsers.bind(this));
-        this.router.get('/email/:email', JwtVerifier.verifyCollabToken, this.getUserByEmail.bind(this));
-        this.router.get('/:userId', JwtVerifier.verifyCollabToken, this.getUserById.bind(this));
+        this.router.get('/', JwtVerifier.verifyCollabToken, this.getUserByCollabToken.bind(this));
+        // this.router.get('/email/:email', JwtVerifier.verifyCollabToken, this.getUserByEmail.bind(this));
+        // this.router.get('/:userId', JwtVerifier.verifyCollabToken, this.getUserById.bind(this));
     }
 
     initRoutes(apiRouter: Router) {
         apiRouter.use('/api/user', this.router);
+    }
+
+    async getUserByCollabToken(req: Request, res: Response, next: NextFunction) {
+        const userId = (req as CustomRequest).userId;
+        const user = await services.userService.getUserById(userId);
+        if (user === null) {
+            res.status(404).json({
+                message: `User with ID ${userId} not found.`
+            });
+        } else {
+            res.status(200).json(user);
+        }
     }
 
     private async userSignedUp(email: string): Promise<boolean> {
@@ -58,37 +70,6 @@ export class UserController {
             res.status(403).json({
                 message: 'User has not signed up. Forbidden.'
             });
-        }
-    }
-
-    async getAllUsers(req: Request, res: Response, next: NextFunction) {
-        const users = await services.userService.getAllUsers();
-        res.status(200).json(users);
-    }
-
-    async getUserByEmail(req: Request, res: Response, next: NextFunction) {
-        const { email } = req.params;
-        const user = await services.userService.getUserByEmail(email);
-        console.log(`user with email ${email}: ${JSON.stringify(user)}`);
-
-        if (user === null) {
-            res.status(404).json({
-                message: `User with email ${email} not found.`
-            });
-        } else {
-            res.status(200).json(user);
-        }
-    }
-
-    async getUserById(req: Request, res: Response, next: NextFunction) {
-        const userId = (req as CustomRequest).userId;
-        const user = await services.userService.getUserById(userId);
-        if (user === null) {
-            res.status(404).json({
-                message: `User with ID ${userId} not found.`
-            });
-        } else {
-            res.status(200).json(user);
         }
     }
 }

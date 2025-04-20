@@ -24,7 +24,6 @@ export type LoginBEType = {
 };
 
 export type User = {
-    userId: string;
     cognitoId: string;
     email: string;
     firstName: string;

@@ -23,7 +23,7 @@ export function ImageCarousel({
     setShowUploadModalInfo
 }: IImageCarouselProps) {
     const user = useUserContext();
-    const { collabToken, userId } = user;
+    const { collabToken } = user;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [signedImageUrlsWithGuidNames, setSignedImageUrlsWithGuidNames] = useState<
         { signedImageUrl: string; imageNameWithGuid: string }[]
@@ -90,12 +90,7 @@ export function ImageCarousel({
         );
         setSignedImageUrlsWithGuidNames(updatedSignedImageUrlsWithGuidNames);
         setCurrentIndex(currentIndex > 0 ? currentIndex - 1 : 0);
-        await deleteDocumentImages(
-            userId,
-            collabToken,
-            imageNameWithGuidToDelete,
-            document.documentId
-        );
+        await deleteDocumentImages(collabToken, imageNameWithGuidToDelete, document.documentId);
     };
 
     return (
