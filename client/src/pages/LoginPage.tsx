@@ -101,7 +101,18 @@ export function LoginPage(props: ILoginPageProps) {
                             <GenericFormButton
                                 displayMessage="Need an account? Sign Up"
                                 disabled={false}
-                                onClick={() => navigate('/signup')}
+                                onClick={
+                                    // () => navigate('/signup')
+
+                                    () => {
+                                        Swal.fire({
+                                            title: 'Apologies!',
+                                            text: "Sorry! For the time being, due to our text editor being on TipTap's free plan, only select users are allowed to sign up (unless you want to donate $100 per month :3). To see a video demo of this app, please go to: https://github.com/AndyLiang1/our_story",
+                                            icon: 'error',
+                                            confirmButtonText: 'Have a nice day!'
+                                        });
+                                    }
+                                }
                                 styles="h-12 w-[30%]"
                             ></GenericFormButton>
                         </Form>
