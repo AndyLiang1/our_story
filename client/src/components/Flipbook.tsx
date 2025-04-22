@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { getNeighbouringDocuments } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
+import { DocumentData } from '../types/DocumentTypes';
 import {
     DeleteDocumentConfirmationModalInfo,
-    DocumentData,
     ShareDocumentFormInfo,
     UploadImageModalInfo
-} from '../types/DocumentTypes';
+} from '../types/ModalInfoTypes';
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
@@ -92,7 +92,10 @@ export function Flipbook({
         styles: []
     });
     // given a param n, we will flip the first n papers (not zero indexed?).
-    const [goToPageCalled, setGoToPageCalled] = useState({
+    const [goToPageCalled, setGoToPageCalled] = useState<{
+        pageCalled: boolean | number;
+        timestamp: number;
+    }>({
         pageCalled: false,
         timestamp: Date.now()
     });
@@ -157,7 +160,7 @@ export function Flipbook({
     useEffect(() => {
         if (verboseInit) console.log('Documents flipbook: ', documentsFlipBook);
         if (documentsFlipBook.length) {
-            let styles = [];
+            const styles = [];
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 styles.push({
                     flipped: i !== 0 ? false : true,
@@ -179,8 +182,8 @@ export function Flipbook({
         }
     }, [documentsFlipBook]);
 
-    let numOfPapers = documentsFlipBook.length + 1;
-    let maxLocation = numOfPapers + 1;
+    const numOfPapers = documentsFlipBook.length + 1;
+    const maxLocation = numOfPapers + 1;
 
     useEffect(() => {
         if (verboseLogic) console.log('GoToPageCalled: ', goToPageCalled.pageCalled);
@@ -188,7 +191,7 @@ export function Flipbook({
         if (typeof goToPageCalled.pageCalled === 'number') {
             // going to page called, should effectively mimic turning a page manually
             // so all the flipped and regular z-indices should be the same as if we flipped here manually
-            let styles = [];
+            const styles = [];
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 if (i === 0) {
                     styles.push({
@@ -224,7 +227,7 @@ export function Flipbook({
         } else {
             if (verboseLogic) console.log('In else block, pageStyle: ', pageStylesState);
             if (pageStylesState) {
-                let styles = [];
+                const styles = [];
                 for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                     styles.push({ ...pageStylesState.styles[i], goToPageTriggered: false });
                 }
@@ -259,7 +262,7 @@ export function Flipbook({
             const goNextPage = async () => {
                 // temporarily set all Z-indices after this page to be LESS or equal to this page,
                 // just set em all to negative values.
-                let styles = [];
+                const styles = [];
                 for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                     if (i === currentLocationFlipbook.location - 1)
                         styles.push({ ...pageStylesState.styles[i], flipped: true });
@@ -428,7 +431,7 @@ export function Flipbook({
                                 pageStylesState.state === PAGE_STYLE_POSSIBLE_STATES.GO_NEXT_PAGE_1
                             ) {
                                 const restoreZIndices = () => {
-                                    let styles = [];
+                                    const styles = [];
                                     for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                                         if (i > currentLocationFlipbook.location - 1)
                                             styles.push({
@@ -505,6 +508,9 @@ export function Flipbook({
                                             : documentsFlipBook[index + 1].documentId
                                     }
                                     documentTitle={documentsFlipBook[index].title}
+                                    documentHasUpdatedInTipTap={
+                                        documentsFlipBook[index].hasUpdatedInTipTap
+                                    }
                                     collabFlag={index === currentLocationFlipbook.location - 2}
                                     setShowShareDocumentForm={setShowShareDocumentForm}
                                     setShowDeleteDocumentConfirmationModal={

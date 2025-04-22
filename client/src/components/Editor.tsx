@@ -17,10 +17,13 @@ import Text from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
-import { editDocumentTitle } from '../apis/documentApi';
+import { editDocumentHasUpdatedInTipTapFlag, editDocumentTitle } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
 import { useEditor } from '../hooks/useEditor';
-import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../types/DocumentTypes';
+import {
+    DeleteDocumentConfirmationModalInfo,
+    ShareDocumentFormInfo
+} from '../types/ModalInfoTypes';
 import { MenuBar } from './MenuBar';
 
 export interface IEditorProps {
@@ -35,6 +38,7 @@ export interface IEditorProps {
     setShowDeleteDocumentConfirmationModal: React.Dispatch<
         React.SetStateAction<DeleteDocumentConfirmationModalInfo>
     >;
+    documentHasUpdatedInTipTap: boolean;
 }
 
 const Editor = ({
@@ -45,14 +49,14 @@ const Editor = ({
     documentIdAfter,
     documentTitle,
     setShowShareDocumentForm,
-    setShowDeleteDocumentConfirmationModal
+    setShowDeleteDocumentConfirmationModal,
+    documentHasUpdatedInTipTap
 }: IEditorProps) => {
     const user = useUserContext();
     const { collabToken } = user;
-    const [status, setStatus] = useState('connecting');
     const [title, setTitle] = useState(documentTitle);
     const [debouncedValue, setDebouncedValue] = useState('');
-    let updatedHasChangedFlag = false;
+    const [stopFlaggingDocumentHasUpdated, setStopFlaggingDocumentHasUpdated] = useState(false);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -62,6 +66,17 @@ const Editor = ({
             clearTimeout(handler);
         };
     }, [title]);
+
+    useEffect(() => {
+        const updateDocumentHasUpdatedFlag = async () => {
+            await editDocumentHasUpdatedInTipTapFlag(collabToken, documentId);
+        };
+        // state is true if the document has connected to tiptap and has content
+        // even if there are no updates, it seems like just connecting will trigger the
+        // update event for our editor
+        if (stopFlaggingDocumentHasUpdated && !documentHasUpdatedInTipTap)
+            updateDocumentHasUpdatedFlag();
+    }, [stopFlaggingDocumentHasUpdated]);
 
     useEffect(() => {
         const updateDocumentTitle = async () => {
@@ -74,18 +89,6 @@ const Editor = ({
 
     const editor = useEditor(
         {
-            // onCreate: ({ editor: currentEditor }) => {
-            //     provider.on('synced', () => {
-            //         if (currentEditor.isEmpty) {
-            //             currentEditor.commands.setContent('Hwllo');
-            //         }
-            //     });
-            // },
-            // onUpdate: () => {
-            //     if (!updatedHasChangedFlag) {
-            //         updatedHasChangedFlag = true;
-            //     }
-            // },
             extensions:
                 ydoc && provider
                     ? [
@@ -149,19 +152,11 @@ const Editor = ({
         },
         [ydoc, provider]
     );
-
-    useEffect(() => {
-        // Update status changes
-        const statusHandler = (event: any) => {
-            setStatus(event.status);
-        };
-
-        if (provider) provider.on('status', statusHandler);
-
-        return () => {
-            if (provider) provider.off('status', statusHandler);
-        };
-    }, [provider]);
+    if (editor) {
+        editor.on('update', ({ editor }) => {
+            setStopFlaggingDocumentHasUpdated(true);
+        });
+    }
 
     useEffect(() => {
         if (editor && !editor.isActive('highlight')) {

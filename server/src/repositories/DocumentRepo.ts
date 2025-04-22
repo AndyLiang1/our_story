@@ -260,7 +260,8 @@ export class DocumentRepo {
                 documentContent: rawDocument.getDataValue('documentContent'),
                 eventDate: rawDocument.getDataValue('eventDate'),
                 createdAt: rawDocument.getDataValue('createdAt'),
-                images: rawDocument.getDataValue('images')
+                images: rawDocument.getDataValue('images'),
+                hasUpdatedInTipTap: rawDocument.getDataValue('hasUpdatedInTipTap')
             };
             documents.push(document);
         }

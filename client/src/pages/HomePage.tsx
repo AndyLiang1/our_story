@@ -13,7 +13,7 @@ import {
     DeleteDocumentConfirmationModalInfo,
     ShareDocumentFormInfo,
     UploadImageModalInfo
-} from '../types/DocumentTypes';
+} from '../types/ModalInfoTypes';
 import { User } from '../types/UserTypes';
 
 export interface IHomePageProps {}

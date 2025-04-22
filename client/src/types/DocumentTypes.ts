@@ -9,15 +9,16 @@ export interface DocumentCreationAttributes {
     eventDate: Date;
 }
 
-export interface DocumentData extends DocumentCreationAttributes {
+export interface DocumentData {
+    hasUpdatedInTipTap: boolean;
     documentId: string;
     title: string;
     documentContent: DocumentContent;
     images: string[];
     createdAt: string;
-    updatedAt: string;
     eventDate: Date;
     firstImageWSignedUrl?: string;
+    documentHasUpdatedInTipTap: boolean;
 }
 
 type DocumentContent = {
@@ -30,21 +31,3 @@ export type DocumentsWithFlags = {
     firstDocumentFlag: boolean;
     lastDocumentFlag: boolean;
 };
-
-export interface UploadImageModalInfo {
-    documentId: string;
-    status: boolean;
-    refetch: boolean;
-}
-
-export interface ShareDocumentFormInfo {
-    documentId: string;
-    documentTitle: string;
-    status: boolean;
-}
-export interface DeleteDocumentConfirmationModalInfo {
-    documentIdBefore: string;
-    documentId: string;
-    documentIdAfter: string;
-    status: boolean;
-}

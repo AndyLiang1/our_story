@@ -36,10 +36,7 @@ export const getDocument = async (documentId: string, collabToken: string) => {
     return document;
 };
 
-export const getDocumentsInMonth = async (
-    dateWhoseMonthToSearchFor: Date,
-    collabToken: string
-) => {
+export const getDocumentsInMonth = async (dateWhoseMonthToSearchFor: Date, collabToken: string) => {
     const { firstDateOfMonth, lastDateOfMonth } =
         getFirstAndLastDayOfMonth(dateWhoseMonthToSearchFor);
     const url = `${config.baseUrl}/api/documents?startDate=${firstDateOfMonth}&endDate=${lastDateOfMonth}`;
@@ -111,13 +108,25 @@ export const editDocumentTitle = async (collabToken: string, title: string, docu
         }
     );
 };
-export const deleteDocument = async (collabToken: string, documentId: string) => {
-    await axios.delete(
+
+export const editDocumentHasUpdatedInTipTapFlag = async (
+    collabToken: string,
+    documentId: string
+) => {
+    await axios.put(
         `${config.baseUrl}/api/documents/${documentId}`,
+        { hasUpdatedInTipTap: true },
         {
             headers: {
                 Authorization: `Bearer ${collabToken}`
             }
         }
     );
+};
+export const deleteDocument = async (collabToken: string, documentId: string) => {
+    await axios.delete(`${config.baseUrl}/api/documents/${documentId}`, {
+        headers: {
+            Authorization: `Bearer ${collabToken}`
+        }
+    });
 };

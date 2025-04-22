@@ -13,7 +13,7 @@ import {
     FaTrashAlt
 } from 'react-icons/fa';
 import { LuHeading1, LuHeading2, LuHeading3 } from 'react-icons/lu';
-import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../types/DocumentTypes';
+import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../types/ModalInfoTypes';
 
 export interface IMenuBarProps {
     editor: any;
