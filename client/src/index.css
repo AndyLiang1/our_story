@@ -88,10 +88,6 @@ button {
         @apply font-['Handlee'];
     }
 
-    .editor__content mark {
-        background-color: rgba(224, 246, 255, 0.7);
-    }
-
     .editor__content .collaboration-cursor__caret {
         border-left: 1px solid #0d0d0d;
         border-right: 1px solid #0d0d0d;

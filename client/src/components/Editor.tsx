@@ -159,10 +159,16 @@ const Editor = ({
     }
 
     useEffect(() => {
-        if (editor && !editor.isActive('highlight')) {
-            editor.chain().focus().toggleHighlight().run();
-        }
-    }, [editor?.isActive('highlight')]);
+        if(editor) editor.chain().focus().toggleHighlight({ color: 'rgba(224, 246, 255, 0.7)' }).run();
+    }, [editor]);
+
+    // useEffect(() => {
+    //     if (editor) console.log(documentId, 'triggered', editor.isActive('highlight'));
+    //     if (editor && !editor.isActive('highlight')) {
+    //         console.log('Triggered2');
+    //         editor.chain().focus().toggleHighlight({ color: 'rgba(224, 246, 255, 0.7)' }).run();
+    //     }
+    // }, [editor?.isActive('highlight')]);
 
     return (
         <div className="h-full w-full">

@@ -8,12 +8,14 @@ import {
     FaItalic,
     FaListOl,
     FaListUl,
-    FaParagraph,
     FaShareSquare,
     FaTrashAlt
 } from 'react-icons/fa';
 import { LuHeading1, LuHeading2, LuHeading3 } from 'react-icons/lu';
-import { DeleteDocumentConfirmationModalInfo, ShareDocumentFormInfo } from '../types/ModalInfoTypes';
+import {
+    DeleteDocumentConfirmationModalInfo,
+    ShareDocumentFormInfo
+} from '../types/ModalInfoTypes';
 
 export interface IMenuBarProps {
     editor: any;
@@ -122,14 +124,14 @@ export function MenuBar({
                 clear marks
             </button> */}
                 {/* <button onClick={() => editor.chain().focus().clearNodes().run()}>clear nodes</button> */}
-                <button
+                {/* <button
                     className={
                         'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
                     }
                     onClick={() => editor.chain().focus().setParagraph().run()}
                 >
                     <FaParagraph className="text-[1rem]" />
-                </button>
+                </button> */}
                 <button
                     className={
                         'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
@@ -205,7 +207,13 @@ export function MenuBar({
                     className={
                         'flex aspect-square h-full items-center justify-center text-center transition duration-200 hover:bg-gray-200'
                     }
-                    onClick={() => editor.chain().focus().toggleHighlight().run()} // Highlight styling set by index.css
+                    onClick={() =>
+                        editor
+                            .chain()
+                            .focus()
+                            .toggleHighlight({ color: 'rgba(224, 246, 255, 0.7)' })
+                            .run()
+                    }
                 >
                     <FaHighlighter className="text-[1rem]" />
                 </button>
