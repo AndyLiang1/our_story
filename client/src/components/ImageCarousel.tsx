@@ -4,7 +4,7 @@ import { IoMdCloudUpload } from 'react-icons/io';
 import { getDocument } from '../apis/documentApi';
 import { deleteDocumentImages, getGeneratedDownloadImageSignedUrls } from '../apis/imageApi';
 import { useUserContext } from '../context/userContext';
-import { DocumentData, UploadImageModalInfo } from '../types/DocumentTypes';
+import { DocumentData, UploadImageModalInfo } from '../types/ModalInfoTypes';
 
 export interface IImageCarouselProps {
     document: DocumentData;

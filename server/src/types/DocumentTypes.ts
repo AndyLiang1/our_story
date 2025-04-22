@@ -5,6 +5,7 @@ export interface DocumentData {
     eventDate: Date; // YYYY-MM-DD
     images: string[];
     createdAt: Date; // needed in get neighbouring docs
+    hasUpdatedInTipTap: boolean;
     // updatedAt: Date;
     firstImageWSignedUrl?: string | null; // only needed by all story page, and is set in the service layer as it requires the image service as well
 }

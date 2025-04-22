@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { deleteDocument } from '../../apis/documentApi';
 import { useUserContext } from '../../context/userContext';
-import { DeleteDocumentConfirmationModalInfo } from '../../types/DocumentTypes';
+import { DeleteDocumentConfirmationModalInfo } from '../../types/ModalInfoTypes';
 import { GenericFormButton } from '../GenericFormButton';
 
 export interface IDeleteDocumentConfirmationModalProps {

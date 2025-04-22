@@ -103,7 +103,6 @@ export function LoginPage(props: ILoginPageProps) {
                                 disabled={false}
                                 onClick={
                                     // () => navigate('/signup')
-
                                     () => {
                                         Swal.fire({
                                             title: 'Apologies!',

@@ -5,7 +5,7 @@ import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
 import { addDocumentImages, getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
 import { useUserContext } from '../../context/userContext';
-import { UploadImageModalInfo } from '../../types/DocumentTypes';
+import { UploadImageModalInfo } from '../../types/ModalInfoTypes';
 import { GenericFormButton } from '../GenericFormButton';
 
 export interface IUploadImageModalProps {

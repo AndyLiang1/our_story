@@ -3,7 +3,7 @@ import { IoIosClose } from 'react-icons/io';
 import * as Yup from 'yup';
 import { addDocumentOwner } from '../../apis/documentOwnerApi';
 import { useUserContext } from '../../context/userContext';
-import { ShareDocumentFormInfo } from '../../types/DocumentTypes';
+import { ShareDocumentFormInfo } from '../../types/ModalInfoTypes';
 import { GenericFormButton } from '../GenericFormButton';
 import { GenericFormInput } from '../GenericFormInput';
 
