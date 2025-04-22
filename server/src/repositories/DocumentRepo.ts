@@ -52,7 +52,7 @@ export class DocumentRepo {
                     attributes: []
                 }
             ],
-            where: { hasUpdated: true },
+            where: { hasUpdatedInTipTap: true },
             order: [
                 ['eventDate', 'DESC'],
                 ['createdAt', 'DESC']
