@@ -97,6 +97,7 @@ export class DocumentController {
     }
 
     async updateDocument(req: Request, res: Response, next: NextFunction) {
+        const userId = (req as CustomRequest).userId;
         const { documentId } = req.params;
         const reqBody = req.body;
         const documentData: PartialDocumentUpdateAttributes = {
@@ -107,7 +108,7 @@ export class DocumentController {
         };
 
         if (documentId) {
-            const doc = await services.documentService.updateDocument(documentId, documentData);
+            const doc = await services.documentService.updateDocument(userId, documentId, documentData);
             res.status(200).json(doc);
         } else {
             res.status(400).json({
@@ -116,11 +117,11 @@ export class DocumentController {
         }
     }
 
-    // TODO MAKE SURE USERID IS USED TOO
     async deleteDocument(req: Request, res: Response, next: NextFunction) {
+        const userId = (req as CustomRequest).userId;
         const { documentId } = req.params;
         if (documentId) {
-            await services.documentService.deleteDocument(documentId);
+            await services.documentService.deleteDocument(userId, documentId);
             res.status(200).json({
                 message: `Document with ID ${documentId} is deleted successfully.`
             });
@@ -131,45 +132,4 @@ export class DocumentController {
         }
     }
 
-    // async getDocumentOwners(req: Request, res: Response, next: NextFunction) {
-    //     const { documentId } = req.params;
-    //     if (documentId) {
-    //         const users = await services.userService.getUsersOwningDocument(documentId);
-    //         res.status(200).json(users);
-    //     } else {
-    //         res.status(400).json({
-    //             message: 'documentId must be provided.'
-    //         });
-    //     }
-    // }
-
-    // async addDocumentOwners(req: Request, res: Response, next: NextFunction) {
-    //     const { documentId } = req.params;
-    //     const { userId, partnerEmail } = req.body;
-    //     if (documentId) {
-    //         const docOwners = await services.documentService.addOwners(documentId, userId, partnerEmail);
-    //         res.status(200).json(docOwners);
-    //     } else {
-    //         res.status(400).json({
-    //             message: 'documentId must be provided.'
-    //         });
-    //     }
-    // }
-
-    // async deleteDocumentOwner(req: Request, res: Response, next: NextFunction) {
-    //     const { documentId, userId } = req.params;
-    //     if (documentId && userId) {
-    //         await services.documentService.deleteOwner({
-    //             documentId,
-    //             userId
-    //         });
-    //         res.status(200).json({
-    //             message: `Owner with userId ${userId} is removed from document successfully.`
-    //         });
-    //     } else {
-    //         res.status(400).json({
-    //             message: 'Both documentId and userId must be provided.'
-    //         });
-    //     }
-    // }
 }
