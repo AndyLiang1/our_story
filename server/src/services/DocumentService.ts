@@ -1,4 +1,5 @@
 import sequelize from '../db';
+import { documentNotFound } from '../helpers/errorMessage';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -59,12 +60,11 @@ export class DocumentService {
 
     async getDocument(userId: string, documentId: string) {
         if (!documentId) return null;
-        let data = null;
+        let documentData = null;
         const docFromDB: DocumentData | null = await this.documentRepo.getDocument(userId, documentId);
         if (docFromDB) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
-
-            data = {
+            documentData = {
                 documentId: docFromDB.documentId,
                 title: docFromDB.title,
                 documentContent: docFromTipTap,
@@ -73,7 +73,7 @@ export class DocumentService {
                 images: docFromDB.images
             };
         }
-        return data as DocumentData;
+        return documentData as DocumentData;
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
@@ -96,13 +96,15 @@ export class DocumentService {
         });
     }
 
-    async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
-        const data = await this.documentRepo.updateDocument(documentId, documentData);
+    async updateDocument(userId: string, documentId: string, documentData: PartialDocumentUpdateAttributes) {
+        const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
         return data;
     }
 
-    async deleteDocument(documentId: string) {
+    async deleteDocument(userId: string, documentId: string) {
         await sequelize.transaction(async (t) => {
+            const document = await this.getDocument(userId, documentId);
+            if (!document) throw Error(documentNotFound(documentId));
             await this.documentRepo.deleteDocument(documentId, t);
             await services.tiptapDocumentService.deleteDocument(documentId);
         });
@@ -110,62 +112,45 @@ export class DocumentService {
 
     async syncDocuments() {
         const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSync();
-
         for (const docThatNeedsUpdated of docsThatNeedUpdating) {
             const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId);
-            this.updateDocument(docThatNeedsUpdated.documentId, {
+            this.documentRepo.syncDocument(docThatNeedsUpdated.documentId, {
                 documentContent: docFromTipTap.content
             });
         }
-
         return docsThatNeedUpdating.length;
     }
 
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
-        try {
-            const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
-            if (docInfo) {
-                const documentData: PartialDocumentUpdateAttributes = {
-                    title: docInfo.title,
-                    documentContent: docInfo.documentContent,
-                    // hasUpdatedInTipTap: docInfo?.hasUpdatedInTipTap,
-                    images: [...docInfo.images, ...newImageNamesWithGuid]
-                };
-                const data = await this.documentRepo.updateDocument(documentId, documentData);
-                return data;
-            } else {
-                return null;
-            }
-        } catch (e: unknown) {
-            if (e instanceof Error) {
-                console.error('Error updating document:', e.message);
-            } else {
-                console.error('Unknown error occurred:', e);
-            }
+        const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
+        if (docInfo) {
+            const documentData: PartialDocumentUpdateAttributes = {
+                title: docInfo.title,
+                documentContent: docInfo.documentContent,
+                hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
+                images: [...docInfo.images, ...newImageNamesWithGuid]
+            };
+            const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
+            return data;
+        } else {
+            return null;
         }
     }
+
     async deleteImage(userId: string, documentId: string, imageNameWithGuidToDelete: string) {
-        try {
-            const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
-            if (docInfo) {
-                const filteredImages = docInfo.images.filter((imageNameWithGuid) => imageNameWithGuid !== imageNameWithGuidToDelete);
-                const documentData: PartialDocumentUpdateAttributes = {
-                    title: docInfo.title,
-                    documentContent: docInfo.documentContent,
-                    // hasUpdatedInTipTap: docInfo?.hasUpdatedInTipTap,
-                    images: filteredImages
-                };
-                const data = await this.documentRepo.updateDocument(documentId, documentData);
-                return data;
-            } else {
-                return null;
-            }
-        } catch (e: unknown) {
-            if (e instanceof Error) {
-                console.error('Error updating document:', e.message);
-            } else {
-                console.error('Unknown error occurred:', e);
-            }
+        const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
+        if (docInfo) {
+            const filteredImages = docInfo.images.filter((imageNameWithGuid) => imageNameWithGuid !== imageNameWithGuidToDelete);
+            const documentData: PartialDocumentUpdateAttributes = {
+                title: docInfo.title,
+                documentContent: docInfo.documentContent,
+                hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
+                images: filteredImages
+            };
+            const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
+            return data;
+        } else {
+            return null;
         }
     }
 }

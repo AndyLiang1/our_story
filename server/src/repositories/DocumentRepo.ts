@@ -1,5 +1,6 @@
 import { Op } from '@sequelize/core';
 import { Transaction } from 'sequelize';
+import { documentNotFound } from '../helpers/errorMessage';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
 import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -230,10 +231,39 @@ export class DocumentRepo {
         return doc.getDataValue('documentId');
     }
 
-    async updateDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
+    // similar to updateDocument, but no userId check
+    async syncDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
         const documentRaw = await Document.findByPk(documentId);
+
         if (documentRaw === null) {
-            throw Error(`Document with ID ${documentId} does not exist.`);
+            throw Error(documentNotFound(documentId));
+        }
+        await documentRaw.update({ ...documentData });
+        await documentRaw.save();
+        await documentRaw.reload();
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);
+        return documents[0];
+    }
+
+    async updateDocument(userId: string, documentId: string, documentData: PartialDocumentUpdateAttributes) {
+        const documentRaw: Document | null = await Document.findOne({
+            where: {
+                documentId
+            },
+            include: [
+                {
+                    model: User,
+                    required: true,
+                    where: { userId: userId },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: []
+                }
+            ]
+        });
+        if (documentRaw === null) {
+            throw Error(documentNotFound(documentId));
         }
         await documentRaw.update({ ...documentData });
         await documentRaw.save();
