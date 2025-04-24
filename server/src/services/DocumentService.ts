@@ -112,10 +112,13 @@ export class DocumentService {
 
     async syncDocuments() {
         const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSync();
-        for (const docThatNeedsUpdated of docsThatNeedUpdating) {
-            const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdated.documentId);
-            this.documentRepo.syncDocument(docThatNeedsUpdated.documentId, {
-                documentContent: docFromTipTap.content
+        for (const docThatNeedsUpdating of docsThatNeedUpdating) {
+            const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdating.documentId);
+            this.documentRepo.syncDocument(docThatNeedsUpdating.documentId, {
+                title: docThatNeedsUpdating.title,
+                documentContent: docFromTipTap.content,
+                hasUpdatedInTipTap: false,
+                images: docThatNeedsUpdating.images
             });
         }
         return docsThatNeedUpdating.length;

@@ -18,10 +18,6 @@ export class DocumentController {
         this.router.post('/', this.createDocument.bind(this));
         this.router.put('/:documentId', this.updateDocument.bind(this));
         this.router.delete('/:documentId', this.deleteDocument.bind(this));
-
-        // this.router.get('/:documentId/owners', this.getDocumentOwners.bind(this));
-        // this.router.put('/:documentId/owners', this.addDocumentOwners.bind(this));
-        // this.router.delete('/:documentId/owners/:userId', this.deleteDocumentOwner.bind(this));
     }
 
     initRoutes(apiRouter: Router) {
