@@ -9,6 +9,7 @@ import { NavBar } from '../components/Navbar';
 import { UserContext } from '../context/userContext';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
+import { promptLoginSwal } from '../components/Alerts/PromptLogin';
 
 export interface IAllStoriesPageProps {}
 
@@ -48,6 +49,9 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         if (inView && user.collabToken) {
             const fetchData = async () => {
                 const data = await getDocumentsAllStories(user.collabToken, page);
+                if(data.response?.status === 403) {
+                    await promptLoginSwal()
+                }
                 setPage(page + 1);
                 setTotal(data.total);
                 setDocuments([...documents, ...data.documents]);

@@ -7,18 +7,25 @@ import {
 } from '../types/DocumentTypes';
 export const getDocumentsAllStories = async (collabToken: string, page: number) => {
     const documentUrl = `${config.baseUrl}/api/documents?page=${page}`;
-    const { data } = await axios.get(documentUrl, {
-        headers: {
-            Authorization: `Bearer ${collabToken}`
+    try {
+        const { data } = await axios.get(documentUrl, {
+            headers: {
+                Authorization: `Bearer ${collabToken}`
+            }
+        });
+        data.documents = data.documents.map((document: DocumentData) => {
+            return {
+                ...document,
+                eventDate: new Date(document.eventDate)
+            };
+        });
+        return data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const status = error.response?.status;
+            if (status === 403) return error;
         }
-    });
-    data.documents = data.documents.map((document: DocumentData) => {
-        return {
-            ...document,
-            eventDate: new Date(document.eventDate)
-        };
-    });
-    return data;
+    }
 };
 
 export const getDocument = async (documentId: string, collabToken: string) => {
@@ -66,19 +73,26 @@ export const getNeighbouringDocuments = async (
     documentId: string | null
 ) => {
     const documentUrl = `${config.baseUrl}/api/documents?neighbouringDocs=true&eventDate=${eventDate}&documentId=${documentId}`;
-    const { data } = await axios.get(documentUrl, {
-        headers: {
-            Authorization: `Bearer ${collabToken}`
+    try {
+        const { data } = await axios.get(documentUrl, {
+            headers: {
+                Authorization: `Bearer ${collabToken}`
+            }
+        });
+        const responseDataWithDate: DocumentsWithFlags = {
+            ...data,
+            documents: data.documents.map((doc: DocumentData) => ({
+                ...doc,
+                eventDate: new Date(doc.eventDate)
+            }))
+        };
+        return responseDataWithDate;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const status = error.response?.status;
+            if (status === 403) return error;
         }
-    });
-    const responseDataWithDate: DocumentsWithFlags = {
-        ...data,
-        documents: data.documents.map((doc: DocumentData) => ({
-            ...doc,
-            eventDate: new Date(doc.eventDate)
-        }))
-    };
-    return responseDataWithDate;
+    }
 };
 
 export const createDocument = async (
