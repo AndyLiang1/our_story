@@ -91,7 +91,6 @@ export class DocumentService {
             const userPartnerId = await services.partnerService.getPartnerId(userId);
             const partnerHasYouAsPartner = await services.partnerService.partnerUserHasYouAsPartner(userId, userPartnerId);
             if (partnerHasYouAsPartner) await services.documentOwnerService.createDocumentOwner(newDocId, userPartnerId, transaction);
-
             await services.tiptapDocumentService.createDocument(newDocId, documentData);
             return newDocId;
         });

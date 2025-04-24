@@ -78,7 +78,7 @@ export class JwtVerifier {
         } catch (err) {
             console.error(err);
             return res.status(403).json({
-                message: 'Not authorized.'
+                message: 'Not authorized. Please sign in again.'
             });
         }
         next();

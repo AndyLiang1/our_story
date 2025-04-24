@@ -96,7 +96,6 @@ export class DocumentController {
         res.status(201).json(newDocId);
     }
 
-    // TODO MAKE SURE USERID IS USED TOO
     async updateDocument(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
         const reqBody = req.body;
