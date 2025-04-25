@@ -35,13 +35,16 @@ export function TipTapCollab({
 }: ITipTapCollabProps) {
     const user = useUserContext();
     const { collabToken } = user;
-    const [providerAndDoc, setProviderAndDoc] = useState<any>(null);
+    const [providerAndDoc, setProviderAndDoc] = useState<{
+        doc: Y.Doc | null
+        provider: TiptapCollabProvider | null
+    } | null>(null);
 
     useEffect(() => {
         const debug = false;
-        const doc: any = collabFlag ? new Y.Doc() : null;
-        let provider: any = null;
-        if (collabFlag) {
+        const doc = collabFlag ? new Y.Doc() : null;
+        let provider: TiptapCollabProvider | null = null;
+        if (collabFlag && doc) {
             provider = new TiptapCollabProvider({
                 name: documentId,
                 appId: `${config.tiptapProvider.appId}`,
