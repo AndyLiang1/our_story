@@ -9,6 +9,7 @@ Partner.init(
     {
         userId1: {
             type: DataTypes.TEXT,
+            primaryKey: true,
             allowNull: false,
             references: {
                 model: User,
@@ -17,6 +18,7 @@ Partner.init(
         },
         userId2: {
             type: DataTypes.TEXT,
+            primaryKey: true,
             allowNull: false,
             references: {
                 model: User,
