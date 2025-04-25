@@ -23,8 +23,12 @@ export class DocumentOwnerController {
         try {
             const result = await services.documentOwnerService.shareDocument(documentId, userId, partnerEmail);
             res.status(201).json(result);
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                res.status(409).json({
+                    message: 'You have already shared this document with this user.'
+                });
+            }
             next(error);
         }
     }

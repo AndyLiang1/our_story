@@ -13,7 +13,6 @@ import {
 import { DateCalendar } from './DateCalendar';
 import { ImageCarousel } from './ImageCarousel';
 import { TipTapCollab } from './TipTapCollab';
-import { promptLoginSwal } from './Alerts/PromptLogin';
 
 export interface IFlipbookProps {
     showUploadModalInfo: UploadImageModalInfo;
@@ -123,10 +122,7 @@ export function Flipbook({
                 new Date(),
                 documentId === 'initial' ? null : documentId
             );
-            if(documentsWindow.response?.status === 403) {
-                                await promptLoginSwal()
-                            }
-            setDocumentsWindow(documentsWindow);
+            if (documentsWindow) setDocumentsWindow(documentsWindow);
         }
     };
 
@@ -372,7 +368,7 @@ export function Flipbook({
 
     const goPrevPage = () => {
         if (currentLocationFlipbook.location > 2) {
-            let styles = [];
+            const styles = [];
             for (let i = 0; i < documentsFlipBook.length + 1; i++) {
                 if (i === currentLocationFlipbook.location - 2)
                     styles.push({ ...pageStylesState.styles[i], flipped: false });

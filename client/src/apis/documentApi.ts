@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { promptLoginSwal } from '../components/Alerts/PromptLogin';
 import { config } from '../config/config';
 import {
     DocumentCreationAttributes,
@@ -23,7 +24,7 @@ export const getDocumentsAllStories = async (collabToken: string, page: number) 
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const status = error.response?.status;
-            if (status === 403) return error;
+            if (status === 403) await promptLoginSwal();
         }
     }
 };
@@ -90,7 +91,7 @@ export const getNeighbouringDocuments = async (
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const status = error.response?.status;
-            if (status === 403) return error;
+            if (status === 403) await promptLoginSwal();
         }
     }
 };
