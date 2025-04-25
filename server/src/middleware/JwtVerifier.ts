@@ -42,7 +42,7 @@ export class JwtVerifier {
             if (!token) {
                 throw new Error('No token found.');
             }
-            var data: any = jwtDecode(token);
+            let data: any = jwtDecode(token);
             const user = await services.userService.getUserByEmail(data.email);
             if (!user) throw Error('No user found');
             const userId = user.userId;

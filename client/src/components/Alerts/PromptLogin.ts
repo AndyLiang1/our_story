@@ -1,4 +1,4 @@
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 
 export const promptLoginSwal = async () => {
     const result = await Swal.fire({
@@ -9,7 +9,6 @@ export const promptLoginSwal = async () => {
     });
 
     if (result.isConfirmed) {
-       console.log('helloooo')
-       window.location.href = '/'
+        window.location.href = '/';
     }
 };
