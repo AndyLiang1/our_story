@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getDocumentsAllStories } from '../apis/documentApi';
+import { promptLoginSwal } from '../components/Alerts/PromptLogin';
 import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
 import { PartnerForm } from '../components/ModalsAndPopupForms/PartnerForm';
@@ -9,14 +10,15 @@ import { NavBar } from '../components/Navbar';
 import { UserContext } from '../context/userContext';
 import { DocumentData } from '../types/DocumentTypes';
 import { User } from '../types/UserTypes';
-import { promptLoginSwal } from '../components/Alerts/PromptLogin';
 
 export interface IAllStoriesPageProps {}
 
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const LIMIT = 20;
     const navigate = useNavigate();
-    const [user, setUser] = useState<User>(useLocation().state.user);
+    const location = useLocation();
+    if (!location.state) promptLoginSwal();
+    const [user, setUser] = useState<User>(location.state.user);
     const [documents, setDocuments] = useState<DocumentData[]>([]);
     const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
@@ -49,8 +51,8 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         if (inView && user.collabToken) {
             const fetchData = async () => {
                 const data = await getDocumentsAllStories(user.collabToken, page);
-                if(data.response?.status === 403) {
-                    await promptLoginSwal()
+                if (data.response?.status === 403) {
+                    await promptLoginSwal();
                 }
                 setPage(page + 1);
                 setTotal(data.total);

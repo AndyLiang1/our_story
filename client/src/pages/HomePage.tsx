@@ -15,11 +15,13 @@ import {
     UploadImageModalInfo
 } from '../types/ModalInfoTypes';
 import { User } from '../types/UserTypes';
+import { promptLoginSwal } from '../components/Alerts/PromptLogin';
 
 export interface IHomePageProps {}
 
 export function HomePage(props: IHomePageProps) {
     const location = useLocation();
+    if(!location.state) promptLoginSwal()
     const [user, setUser] = useState<User>(location.state.user);
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     const [showUploadModalInfo, setShowUploadModalInfo] = useState<UploadImageModalInfo>({
