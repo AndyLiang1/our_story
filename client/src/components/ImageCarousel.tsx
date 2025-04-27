@@ -32,13 +32,14 @@ export function ImageCarousel({
     const DEFAULT_IMG_URL = '/autumn-landscape-building-city-blue-600nw-2174533935.png';
 
     useEffect(() => {
-        getSignedImageUrls();
+        getSignedImageUrls(null, document.documentId);
     }, []);
 
-    const getSignedImageUrls = async (imagesNameWGuid?: string[]) => {
+    const getSignedImageUrls = async (imagesNameWGuid: string[] | null, documentId: string) => {
         const listOfImageNamesWithGuid = imagesNameWGuid ? imagesNameWGuid : document.images;
         const { signedDownloadUrls } = await getGeneratedDownloadImageSignedUrls(
             collabToken,
+            documentId,
             listOfImageNamesWithGuid
         );
 
@@ -62,7 +63,7 @@ export function ImageCarousel({
             ) {
                 const indexToBe = signedImageUrlsWithGuidNames.length;
                 const doc = await getDocument(document.documentId, collabToken);
-                await getSignedImageUrls(doc.images);
+                await getSignedImageUrls(doc.images, document.documentId);
                 resetUploadImageModalStateToInitial();
                 setCurrentIndex(indexToBe);
             }

@@ -22,11 +22,13 @@ export const getGeneratedUploadImageSignedUrls = async (
 
 export const getGeneratedDownloadImageSignedUrls = async (
     collabToken: string,
+    documentId: string,
     imageNamesWithGuid: string[]
 ) => {
     const { data } = await axios.post(
         `${config.baseUrl}/api/images/downloadUrls`,
         {
+            documentId,
             imageNamesWithGuid: imageNamesWithGuid
         },
         {
