@@ -37,14 +37,14 @@ export class ImageService {
         }
     }
 
-    async generateDownloadURLs(imageNames: (string | null)[]) {
+    async generateDownloadURLs(imageNamesWithGuid: (string | null)[]) {
         try {
             const signedUrls = await Promise.all(
-                imageNames.map(async (imageName) => {
-                    if (!imageName) return null;
+                imageNamesWithGuid.map(async (imageNameWithGuid) => {
+                    if (!imageNameWithGuid) return null;
                     const params = {
                         Bucket: config.awsUser.s3BucketName,
-                        Key: imageName
+                        Key: imageNameWithGuid
                     };
 
                     const command = new GetObjectCommand(params);
@@ -52,7 +52,7 @@ export class ImageService {
                 })
             );
             return {
-                uniqueImageNames: imageNames,
+                uniqueImageNames: imageNamesWithGuid,
                 signedDownloadUrls: signedUrls
             };
         } catch (error) {

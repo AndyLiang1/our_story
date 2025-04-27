@@ -12,6 +12,7 @@ import {
     FaTrashAlt
 } from 'react-icons/fa';
 import { LuHeading1, LuHeading2, LuHeading3 } from 'react-icons/lu';
+import { useUserContext } from '../context/userContext';
 import {
     DeleteDocumentConfirmationModalInfo,
     ShareDocumentFormInfo
@@ -38,6 +39,7 @@ export function MenuBar({
     setShowShareDocumentForm,
     setShowDeleteDocumentConfirmationModal
 }: IMenuBarProps) {
+    const user = useUserContext();
     if (!editor) {
         return null;
     }
@@ -211,7 +213,7 @@ export function MenuBar({
                         editor
                             .chain()
                             .focus()
-                            .toggleHighlight({ color: 'rgba(224, 246, 255, 0.7)' })
+                            .toggleHighlight({ color: user.textColor ? user.textColor : null })
                             .run()
                     }
                 >

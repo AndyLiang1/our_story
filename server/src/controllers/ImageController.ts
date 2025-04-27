@@ -30,9 +30,9 @@ export class ImageController {
     }
 
     async generateDownloadURLs(req: Request, res: Response, next: NextFunction) {
-        const { imageNames } = req.body as { imageNames: string[] };
+        const { imageNamesWithGuid } = req.body as { imageNamesWithGuid: string[] };
         try {
-            const result = await services.imageService.generateDownloadURLs(imageNames);
+            const result = await services.imageService.generateDownloadURLs(imageNamesWithGuid);
             res.status(200).json(result);
         } catch (error) {
             console.error(error);

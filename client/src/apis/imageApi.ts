@@ -27,7 +27,7 @@ export const getGeneratedDownloadImageSignedUrls = async (
     const { data } = await axios.post(
         `${config.baseUrl}/api/images/downloadUrls`,
         {
-            imageNames: imageNamesWithGuid
+            imageNamesWithGuid: imageNamesWithGuid
         },
         {
             headers: {

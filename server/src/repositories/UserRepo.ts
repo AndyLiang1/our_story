@@ -73,7 +73,8 @@ export class UserRepo {
             const user: UserReturnTypeData = {
                 email: userRaw.getDataValue('email'),
                 firstName: userRaw.getDataValue('firstName'),
-                lastName: userRaw.getDataValue('lastName')
+                lastName: userRaw.getDataValue('lastName'),
+                textColor: userRaw.getDataValue('colour')
             };
             users.push(user);
         }

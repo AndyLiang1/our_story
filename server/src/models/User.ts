@@ -40,7 +40,7 @@ User.init(
                 throw new Error('Do not try to set the `fullName` value!');
             }
         },
-        textColor: {
+        colour: {
             type: DataTypes.TEXT
         }
     },
