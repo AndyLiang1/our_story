@@ -17,7 +17,7 @@ export class UserController {
         // when I hit /api/users in a get request, I am going
         // to call the login function
         // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
-        this.router.post('/', this.createUser.bind(this));
+        // this.router.post('/', this.createUser.bind(this));
         this.router.get('/', JwtVerifier.verifyCollabToken, this.getUserByCollabToken.bind(this));
         // this.router.get('/email/:email', JwtVerifier.verifyCollabToken, this.getUserByEmail.bind(this));
         // this.router.get('/:userId', JwtVerifier.verifyCollabToken, this.getUserById.bind(this));
@@ -39,6 +39,7 @@ export class UserController {
         }
     }
 
+    // unused atm
     private async userSignedUp(email: string): Promise<boolean> {
         try {
             const input: AdminGetUserCommandInput = {
@@ -54,6 +55,7 @@ export class UserController {
         }
     }
 
+    // unused atm
     async createUser(req: Request, res: Response, next: NextFunction) {
         const requestBody = req.body;
         const userData: UserCreationData = {

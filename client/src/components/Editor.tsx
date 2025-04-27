@@ -159,7 +159,12 @@ const Editor = ({
     }
 
     useEffect(() => {
-        if(editor) editor.chain().focus().toggleHighlight({ color: 'rgba(224, 246, 255, 0.7)' }).run();
+        if (editor)
+            editor
+                .chain()
+                .focus()
+                .toggleHighlight({ color: user.textColor ? user.textColor : '' })
+                .run();
     }, [editor]);
 
     // useEffect(() => {
