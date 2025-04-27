@@ -8,8 +8,8 @@ export class ImageController {
     constructor() {
         this.router = express.Router();
         this.router.use(JwtVerifier.verifyCollabToken);
-        this.router.post('/uploadUrls', this.generateUploadURLs.bind(this));
-        this.router.post('/downloadUrls', this.generateDownloadURLs.bind(this));
+        this.router.post('/uploadUrls', this.getUploadURLS.bind(this));
+        this.router.post('/downloadUrls', this.getDownloadURLs.bind(this));
         this.router.post('/:documentId', this.addImages.bind(this));
         this.router.delete('/:documentId', this.deleteImage.bind(this));
     }
@@ -18,10 +18,10 @@ export class ImageController {
         apiRouter.use('/api/images', this.router);
     }
 
-    async generateUploadURLs(req: Request, res: Response, next: NextFunction) {
+    async getUploadURLS(req: Request, res: Response, next: NextFunction) {
         const { imageNames } = req.body as { imageNames: string[] };
         try {
-            const result = await services.imageService.generateUploadURLs(imageNames);
+            const result = await services.imageService.getUploadURLS(imageNames);
             res.status(200).json(result);
         } catch (error) {
             console.error(error);
@@ -29,10 +29,11 @@ export class ImageController {
         }
     }
 
-    async generateDownloadURLs(req: Request, res: Response, next: NextFunction) {
-        const { imageNamesWithGuid } = req.body as { imageNamesWithGuid: string[] };
+    async getDownloadURLs(req: Request, res: Response, next: NextFunction) {
+        const userId = (req as CustomRequest).userId;
+        const { imageNamesWithGuid, documentId } = req.body as { imageNamesWithGuid: string[], documentId: string };
         try {
-            const result = await services.imageService.generateDownloadURLs(imageNamesWithGuid);
+            const result = await services.imageService.getDownloadURLs(userId, imageNamesWithGuid, documentId);
             res.status(200).json(result);
         } catch (error) {
             console.error(error);

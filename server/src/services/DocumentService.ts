@@ -32,7 +32,7 @@ export class DocumentService {
                         for (const doc of docsInfo.documents) {
                             images.push(doc.images.length ? doc.images[0] : null);
                         }
-                        const documentsWithFirstImage = await this.setFirstImagesOfImages(docsInfo.documents);
+                        const documentsWithFirstImage = await this.setFirstImagesOfImages(userId, docsInfo.documents);
                         docsInfo.documents = documentsWithFirstImage;
                         break;
                     default:
@@ -46,7 +46,7 @@ export class DocumentService {
         return docsInfo;
     }
 
-    async setFirstImagesOfImages(docs: any[]) {
+    async setFirstImagesOfImages(userId: string, docs: any[]) {
         const firstImages = [];
         for (const doc of docs) {
             firstImages.push(doc.images.length ? doc.images[0] : null);

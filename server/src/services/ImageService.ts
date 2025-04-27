@@ -3,12 +3,13 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../config/config';
 import { s3Client } from '../s3';
+import { DocumentData } from '../types/DocumentTypes';
 import { services } from './services';
 
 export class ImageService {
     constructor() {}
 
-    async generateUploadURLs(imageNames: string[]) {
+    async getUploadURLS(imageNames: string[]) {
         const uniqueImageNames: string[] = [];
         try {
             const signedUrls = await Promise.all(
@@ -37,6 +38,20 @@ export class ImageService {
         }
     }
 
+    checkDownloadURLsToBeGeneratedAreFromYourDocument(document: DocumentData, imageNamesWithGuid: (string | null)[]) {
+        for (let imageNameWithGuid of imageNamesWithGuid) {
+            if (!imageNameWithGuid) continue;
+            if (!document.images.includes(imageNameWithGuid)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Assumes that we have already checked and confirmed that we have the proper permissions to generate
+     * download urls.
+     * @param imageNamesWithGuid
+     * @returns
+     */
     async generateDownloadURLs(imageNamesWithGuid: (string | null)[]) {
         try {
             const signedUrls = await Promise.all(
@@ -55,6 +70,19 @@ export class ImageService {
                 uniqueImageNames: imageNamesWithGuid,
                 signedDownloadUrls: signedUrls
             };
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+    async getDownloadURLs(userId: string, imageNamesWithGuid: (string | null)[], documentId: string) {
+        try {
+            const document = await services.documentService.getDocument(userId, documentId);
+            if (document && this.checkDownloadURLsToBeGeneratedAreFromYourDocument(document, imageNamesWithGuid)) {
+                return await this.generateDownloadURLs(imageNamesWithGuid);
+            } else {
+                throw Error('Unauthorized');
+            }
         } catch (error) {
             console.error(error);
             throw error;
