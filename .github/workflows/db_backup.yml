@@ -61,4 +61,4 @@ jobs:
           year="$(date -u +'%Y')"
           month="$(date -u +'%m')"
           day="$(date -u +'%d')"
-          aws s3 cp ${filename}.gz s3://${S3_BUCKET}/year=${year}/month=${month}/day=${day}/${filename}.gz
+          aws s3 cp ${filename}.gz s3://${S3_BUCKET}/year=${year}/month=${month}/day=${day}/${filename}.gz --storage-class GLACIER
