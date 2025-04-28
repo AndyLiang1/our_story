@@ -56,7 +56,7 @@ jobs:
           echo Dumping ...
           filename="$(date -u +'%H%M%S').sql"
           PGPASSWORD=${PGPASSWORD} pg_dump -h $PGHOST -p $PGPORT -x -U $PGUSER -F c -b -v  -Z0 -f ${filename} ${PGDATABASE}
-          gzip ${{ env.filename }}
+          gzip ${filename}
           ls
           year="$(date -u +'%Y')"
           month="$(date -u +'%m')"
