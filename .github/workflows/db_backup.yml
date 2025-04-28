@@ -1,0 +1,58 @@
+name: Back up database
+run-name: Backing up our-story-db
+
+# every sunday at 12AM PST (7AM UTC)
+on:
+  schedule:
+    - cron: "0 7 * * 0"
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_PRODUCTION_DB_TOKEN }}
+      FLY_DB_APP: ${{ secrets.FLY_DB_APP_NAME }}
+      PGUSER: postgres
+      PGPASSWORD: ${{ secrets.FLY_DB_PASSWORD }}
+      PGDATABASE: our_story_db
+      PGHOST: localhost
+      PGPORT: 5432
+      S3_BUCKET: our-story-db-backups
+
+    steps:
+      - name: Install AWS CLI
+        run: sudo apt-get update && sudo apt-get install -y awscli
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install pg_dump version 16.3
+        run: |
+          # Add PostgreSQL APT repo
+          sudo install -d /etc/apt/keyrings
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/keyrings/pgdg.asc > /dev/null
+          echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+
+          # Update and install PostgreSQL client
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client-16
+
+          # Confirm version
+          psql --version
+      - name: Dump database, gzip, and upload to S3
+        run: |
+          flyctl proxy $PGPORT:5432 -a $FLY_DB_APP &
+          sleep 3
+          echo Dumping ...
+          filename="$(date -u +'%H%M%S').sql"
+          PGPASSWORD=${PGPASSWORD} pg_dump -h $PGHOST -p $PGPORT -x -U $PGUSER -F c -b -v  -Z0 -f ${filename} ${PGDATABASE}
+          gzip ${{ env.filename }}
+          ls
+          year="$(date -u +'%Y')"
+          month="$(date -u +'%m')"
+          day="$(date -u +'%d')"
+          aws s3 cp ${filename}.gz s3://${S3_BUCKET}/year=${year}/month=${month}/day={day}/${filename}.gz
