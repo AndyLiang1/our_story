@@ -36,7 +36,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Install pg_dump version 16.3
+      - name: Install pg_dump version 16
         run: |
           # Add PostgreSQL APT repo
           sudo install -d /etc/apt/keyrings
