@@ -26,6 +26,7 @@ export class DocumentOwnerController {
         } catch (error: any) {
             if (error.name === 'SequelizeUniqueConstraintError') {
                 res.status(409).json({
+                    name: 'SequelizeUniqueConstraintError',
                     message: 'You have already shared this document with this user.'
                 });
             }
