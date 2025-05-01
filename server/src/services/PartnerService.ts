@@ -1,3 +1,4 @@
+import { BadRequestError, NotFoundError } from '../helpers/ErrorHelpers';
 import { PartnerRepo } from '../repositories/PartnerRepo';
 import { DocumentData, DocumentOwnerData } from '../types/DocumentTypes';
 import { services } from './services';
@@ -8,11 +9,18 @@ export class PartnerService {
         this.partnerRepo = new PartnerRepo();
     }
 
+    // 4 cases,
+    // Never shared with anyone, no one shared with you
+    // Never shared with anyone, someone shared with you
+    // Have shared with someone, no one shared with you
+    // Have shared with someone, someone shared with you
     async createPartner(userId1: string, partnerEmail: string) {
-        const partnerUser = await services.userService.getUserByEmail(partnerEmail);
+        const hasSharedWithSomeone = await this.partnerRepo.checkHasSharedWithSomeone(userId1);
+        if (hasSharedWithSomeone) throw new BadRequestError('You can only have one partner');
 
+        const partnerUser = await services.userService.getUserByEmail(partnerEmail);
         if (partnerUser) {
-            if (partnerUser.email !== partnerEmail) throw Error('You can only have one partner');
+            if (partnerUser.userId === userId1) throw new BadRequestError('You cannot share document with yourself');
             const partnerUserId = partnerUser.userId;
             const partnerUserAlsoHasYouAsParnter = await this.partnerUserHasYouAsPartner(userId1, partnerUserId);
             if (partnerUserAlsoHasYouAsParnter) {
@@ -20,7 +28,7 @@ export class PartnerService {
             }
             await this.partnerRepo.createPartner(userId1, partnerUserId);
         } else {
-            throw Error('No user exists with that email');
+            throw new NotFoundError('No user with that email');
         }
     }
 

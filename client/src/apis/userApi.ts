@@ -27,7 +27,7 @@ export const getUserByCollabToken = async () => {
 };
 
 export const getCollabToken = async (idToken: string) => {
-    const res = await axios.get(`${config.baseUrl}/api/auth/getCollabToken`, {
+    const res = await axios.get(`${config.baseUrl}/api/auth/collabTokens`, {
         headers: {
             Authorization: `Bearer ${idToken}`
         }
