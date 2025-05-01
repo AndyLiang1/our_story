@@ -24,13 +24,6 @@ export class PartnerController {
             const result = await services.partnerService.createPartner(userId, partnerEmail);
             res.status(201).json(result);
         } catch (error: any) {
-            // from DB
-            if (error.name === 'SequelizeUniqueConstraintError') {
-                res.status(409).json({
-                    name: 'SequelizeUniqueConstraintError',
-                    message: 'You have already tried or are partners with this user.'
-                });
-            }
             if (error instanceof BadRequestError) {
                 res.status(400).json({
                     name: error.name,

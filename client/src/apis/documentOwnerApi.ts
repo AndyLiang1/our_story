@@ -21,7 +21,6 @@ export const addDocumentOwner = async (
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const status = error.response?.status;
-            console.log(error.response?.status);
             await Swal.fire({
                 title: 'Error',
                 text:
@@ -29,7 +28,7 @@ export const addDocumentOwner = async (
                         ? 'You have already shared this document with this user'
                         : 'Something went wrong',
                 icon: 'error',
-                confirmButtonText: 'Login'
+                confirmButtonText: 'Ok'
             });
         }
     }
