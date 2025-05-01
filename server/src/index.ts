@@ -28,7 +28,7 @@ const init = async () => {
         console.log(`Server is running at http://localhost:${port}`);
     });
 
-    app.get('/api/auth/getCollabToken', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
+    app.get('/api/auth/collabTokens', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
     new UserController().initRoutes(app);
     new DocumentController().initRoutes(app);
     new ImageController().initRoutes(app);

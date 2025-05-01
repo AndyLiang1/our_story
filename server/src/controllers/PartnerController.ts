@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
+import { BadRequestError, NotFoundError } from '../helpers/ErrorHelpers';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
 import { CustomRequest } from '../types/ApiTypes';
@@ -22,8 +23,26 @@ export class PartnerController {
         try {
             const result = await services.partnerService.createPartner(userId, partnerEmail);
             res.status(201).json(result);
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            // from DB
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                res.status(409).json({
+                    name: 'SequelizeUniqueConstraintError',
+                    message: 'You have already tried or are partners with this user.'
+                });
+            }
+            if (error instanceof BadRequestError) {
+                res.status(400).json({
+                    name: error.name,
+                    message: error.message
+                });
+            }
+            if (error instanceof NotFoundError) {
+                res.status(404).json({
+                    name: error.name,
+                    message: error.message
+                });
+            }
             next(error);
         }
     }

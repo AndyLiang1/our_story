@@ -1,9 +1,12 @@
 import { Field, Form, Formik } from 'formik';
+import { useState } from 'react';
 import { IoIosClose, IoIosWarning } from 'react-icons/io';
 import * as Yup from 'yup';
 import { createPartnership } from '../../apis/partnerApi';
 import { useUserContext } from '../../context/userContext';
+import { errorType, genericErrorMessage } from '../../types/ApiTypes';
 import { GenericFormButton } from '../GenericFormButton';
+import { GenericFormErrorMessage } from '../GenericFormErrorMessage';
 import { GenericFormInput } from '../GenericFormInput';
 
 export interface IPartnerFormProps {
@@ -12,10 +15,23 @@ export interface IPartnerFormProps {
 
 export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
     const user = useUserContext();
+    const [formErrorMessage, setFormErrorMessage] = useState('');
     const { collabToken } = user;
     const handleSubmit = async (partnerEmail: string) => {
-        await createPartnership(collabToken, partnerEmail);
-        closeForm();
+        try {
+            await createPartnership(collabToken, partnerEmail);
+            closeForm();
+        } catch (error: any) {
+            if (error.response.data) {
+                const errorData = error.response.data;
+                console.log(errorData);
+                if ([errorType.BAD_REQUEST, errorType.NOT_FOUND].includes(errorData.name)) {
+                    setFormErrorMessage(errorData.message);
+                } else {
+                    setFormErrorMessage(genericErrorMessage);
+                }
+            }
+        }
     };
     const closeForm = () => {
         setShowPartnerForm(false);
@@ -72,9 +88,9 @@ export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
                             component={GenericFormInput}
                         />
 
-                        {/* {formErrorMessagae && (
+                        {formErrorMessage && (
                             <GenericFormErrorMessage errorMessage={formErrorMessage} />
-                        )}  */}
+                        )}
 
                         <GenericFormButton
                             displayMessage="Share"

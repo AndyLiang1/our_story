@@ -1,5 +1,5 @@
 import sequelize from '../db';
-import { documentNotFound } from '../helpers/errorMessage';
+import { documentNotFound } from '../helpers/ErrorHelpers';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';

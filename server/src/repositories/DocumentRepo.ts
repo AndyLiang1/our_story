@@ -1,6 +1,6 @@
 import { Op } from '@sequelize/core';
 import { Transaction } from 'sequelize';
-import { documentNotFound } from '../helpers/errorMessage';
+import { documentNotFound } from '../helpers/ErrorHelpers';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
 import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
