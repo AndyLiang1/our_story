@@ -40,13 +40,13 @@ export function DeleteDocumentConfirmationModal({
             setTriggerFlipBookRefetch(showDeleteDocumentConfirmationModal.documentIdAfter);
             return;
         }
-        setTriggerFlipBookRefetch('');
+        setTriggerFlipBookRefetch('initial');
     };
     return (
         <div className="center-of-page z-10 flex h-[30%] w-[30%] justify-center bg-white">
             <IoIosClose
                 className="absolute top-2 right-2 cursor-pointer text-[2rem]"
-                onClick={() => setShowDeleteDocumentConfirmationModal(false)}
+                onClick={() => closeDeleteDocumentConfirmationModal()}
             ></IoIosClose>
             <div className="flex h-full w-[90%] flex-col items-center justify-center text-center">
                 <div className="text-[1.5rem] font-bold">
