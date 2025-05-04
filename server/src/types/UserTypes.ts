@@ -17,5 +17,5 @@ export type UserReturnTypeData = {
     email: string;
     firstName: string;
     lastName: string;
-    textColor: string
+    textColor: string | null
 };

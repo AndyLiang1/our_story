@@ -390,6 +390,16 @@ export function Flipbook({
         }
     };
 
+    const createDocumentPrompt = () => {
+        return (
+            <div className="h-[80%] w-full translate-x-[-50%]">
+                <div className="box-border flex h-full w-full items-center justify-center rounded-[4rem] border-none bg-white px-[3.5rem] text-center text-[2.5rem] shadow-2xl">
+                    Create your first document by clicking create in the nav bar above!
+                </div>
+            </div>
+        );
+    };
+
     const renderedPapers = () => {
         const renderedPages = [];
         const unfinishedStates = [PAGE_STYLE_POSSIBLE_STATES.REFETCH];
@@ -564,7 +574,8 @@ export function Flipbook({
                     <FaChevronLeft />
                 </button>
             )}
-            {!(lastDocumentFlag && currentLocationFlipbook.location === maxLocation - 1) && (
+            {(!(lastDocumentFlag && currentLocationFlipbook.location === maxLocation - 1) &&
+                documentsFlipBook.length) && (
                 <button
                     onClick={async () => {
                         if (arrowClickPause) return;
@@ -589,8 +600,10 @@ export function Flipbook({
                 </button>
             )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
-                <div className={`book h-[85%] w-[35%] translate-x-[50%]`}>
-                    {pageStylesState && pageStylesState.styles.length > 0 && renderedPapers()}
+                <div className={`book flex h-[85%] w-[35%] translate-x-[50%] items-center`}>
+                    {pageStylesState && pageStylesState.styles.length > 0
+                        ? renderedPapers()
+                        : createDocumentPrompt()}
                 </div>
             </div>
         </div>

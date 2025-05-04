@@ -71,6 +71,16 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         });
     };
 
+    const createDocumentPrompt = () => {
+        return (
+            <div className="h-[65%] w-[31.5%]">
+                <div className="box-border flex h-full w-full items-center justify-center rounded-[4rem] border-none bg-white px-[3.5rem] text-center text-[2.5rem] shadow-2xl">
+                    Create your first document by clicking create in the nav bar above!
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="v-screen relative h-screen flex-wrap items-center">
             <UserContext.Provider value={user}>
@@ -90,9 +100,9 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                 )}
 
                 <div className="bg-pogo absolute h-[90%] w-full">
-                    <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
-                        {documents.length > 0 &&
-                            documents.map((doc: DocumentData) => {
+                    {documents.length > 0 ? (
+                        <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
+                            {documents.map((doc: DocumentData) => {
                                 return (
                                     <GenericCard
                                         title={doc.title}
@@ -103,8 +113,13 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                                     />
                                 );
                             })}
-                        {keepTriggerFetchDiv && <div ref={ref}></div>}
-                    </div>
+                            {keepTriggerFetchDiv && <div ref={ref}></div>}
+                        </div>
+                    ) : (
+                        <div className="flex h-full w-full items-center justify-center text-center">
+                            {createDocumentPrompt()}
+                        </div>
+                    )}
                 </div>
             </UserContext.Provider>
         </div>
