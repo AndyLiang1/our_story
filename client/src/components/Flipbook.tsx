@@ -179,6 +179,11 @@ export function Flipbook({
                         : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
                 styles
             });
+        } else {
+            setPageStylesState({
+                state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
+                styles: []
+            });
         }
     }, [documentsFlipBook]);
 
@@ -574,31 +579,32 @@ export function Flipbook({
                     <FaChevronLeft />
                 </button>
             )}
-            {(!(lastDocumentFlag && currentLocationFlipbook.location === maxLocation - 1) &&
-                documentsFlipBook.length) && (
-                <button
-                    onClick={async () => {
-                        if (arrowClickPause) return;
-                        // flipping left has a faster animation than flipping right
-                        // so we need this to ensure the speeds are roughly the same
-                        setArrowClickPause(true);
-                        setNextPageTriggered(true);
-                        setTimeout(() => {
-                            setArrowClickPause(false);
-                        }, 1500);
-                    }}
-                    className={
-                        'absolute top-[50%] right-[5rem] z-[3] flex translate-x-0 translate-y-[-50%] transform items-center text-[8rem] ' +
-                        (arrowClickPause ? 'text-gray-300' : 'text-white')
-                    }
-                    disabled={
-                        // prevent user from spam clicking
-                        arrowClickPause || pageStylesState.state !== PAGE_STYLE_POSSIBLE_STATES.DONE
-                    }
-                >
-                    <FaChevronRight />
-                </button>
-            )}
+            {!(lastDocumentFlag && currentLocationFlipbook.location === maxLocation - 1) &&
+                documentsFlipBook.length > 0 && (
+                    <button
+                        onClick={async () => {
+                            if (arrowClickPause) return;
+                            // flipping left has a faster animation than flipping right
+                            // so we need this to ensure the speeds are roughly the same
+                            setArrowClickPause(true);
+                            setNextPageTriggered(true);
+                            setTimeout(() => {
+                                setArrowClickPause(false);
+                            }, 1500);
+                        }}
+                        className={
+                            'absolute top-[50%] right-[5rem] z-[3] flex translate-x-0 translate-y-[-50%] transform items-center text-[8rem] ' +
+                            (arrowClickPause ? 'text-gray-300' : 'text-white')
+                        }
+                        disabled={
+                            // prevent user from spam clicking
+                            arrowClickPause ||
+                            pageStylesState.state !== PAGE_STYLE_POSSIBLE_STATES.DONE
+                        }
+                    >
+                        <FaChevronRight />
+                    </button>
+                )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book flex h-[85%] w-[35%] translate-x-[50%] items-center`}>
                     {pageStylesState && pageStylesState.styles.length > 0

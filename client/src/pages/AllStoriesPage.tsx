@@ -113,13 +113,13 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                                     />
                                 );
                             })}
-                            {keepTriggerFetchDiv && <div ref={ref}></div>}
                         </div>
                     ) : (
                         <div className="flex h-full w-full items-center justify-center text-center">
                             {createDocumentPrompt()}
                         </div>
                     )}
+                    {keepTriggerFetchDiv && <div ref={ref}></div>}
                 </div>
             </UserContext.Provider>
         </div>
