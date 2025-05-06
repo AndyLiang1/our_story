@@ -123,7 +123,9 @@ export function Flipbook({
                 new Date(),
                 documentId === 'initial' ? null : documentId
             );
-            // setDisplayCreateDocPrompt(documentId === 'initial' && !documentsWindow?.documents.length);
+            setDisplayCreateDocPrompt(
+                documentId === 'initial' && !documentsWindow?.documents.length
+            );
             if (documentsWindow) setDocumentsWindow(documentsWindow);
         }
     };
@@ -181,12 +183,7 @@ export function Flipbook({
                         : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
                 styles
             });
-        } else {
-            setPageStylesState({
-                state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
-                styles: []
-            });
-        }
+        } 
     }, [documentsFlipBook]);
 
     const numOfPapers = documentsFlipBook.length + 1;
@@ -411,7 +408,9 @@ export function Flipbook({
         if (unfinishedStates.includes(pageStylesState.state)) {
             return loadingSpinnerPages;
         }
-        if (documentsFlipBook.length + 1 !== pageStylesState.styles.length) {
+        if (
+            documentsFlipBook.length + 1 !== pageStylesState.styles.length
+        ) {
             return loadingSpinnerPages;
         }
 
@@ -607,7 +606,7 @@ export function Flipbook({
                 )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book flex h-[85%] w-[35%] translate-x-[50%] items-center`}>
-                    {pageStylesState && pageStylesState.styles.length > 0 && renderedPapers()}
+                    {pageStylesState && pageStylesState.styles.length > 0 && !displayCreateDocPrompt && renderedPapers()}
                     {displayCreateDocPrompt && createDocumentPrompt}
                 </div>
             </div>
