@@ -114,6 +114,7 @@ export function Flipbook({
     const firstDocumentFlag = documentsWindow ? documentsWindow.firstDocumentFlag : true;
     const lastDocumentFlag = documentsWindow ? documentsWindow.lastDocumentFlag : true;
     const [arrowClickPause, setArrowClickPause] = useState(false);
+    const [displayCreateDocPrompt, setDisplayCreateDocPrompt] = useState(false);
 
     const fetchData = async (documentId: string | null) => {
         if (user && user.collabToken) {
@@ -121,6 +122,9 @@ export function Flipbook({
                 collabToken,
                 new Date(),
                 documentId === 'initial' ? null : documentId
+            );
+            setDisplayCreateDocPrompt(
+                documentId === 'initial' && !documentsWindow?.documents.length
             );
             if (documentsWindow) setDocumentsWindow(documentsWindow);
         }
@@ -179,12 +183,7 @@ export function Flipbook({
                         : PAGE_STYLE_POSSIBLE_STATES.INITIAL,
                 styles
             });
-        } else {
-            setPageStylesState({
-                state: PAGE_STYLE_POSSIBLE_STATES.INITIAL,
-                styles: []
-            });
-        }
+        } 
     }, [documentsFlipBook]);
 
     const numOfPapers = documentsFlipBook.length + 1;
@@ -395,15 +394,13 @@ export function Flipbook({
         }
     };
 
-    const createDocumentPrompt = () => {
-        return (
-            <div className="h-[80%] w-full translate-x-[-50%]">
-                <div className="box-border flex h-full w-full items-center justify-center rounded-[4rem] border-none bg-white px-[3.5rem] text-center text-[2.5rem] shadow-2xl">
-                    Create your first document by clicking create in the nav bar above!
-                </div>
+    const createDocumentPrompt = (
+        <div className="h-[80%] w-full translate-x-[-50%]">
+            <div className="box-border flex h-full w-full items-center justify-center rounded-[4rem] border-none bg-white px-[3.5rem] text-center text-[2.5rem] shadow-2xl">
+                Create your first document by clicking create in the nav bar above!
             </div>
-        );
-    };
+        </div>
+    );
 
     const renderedPapers = () => {
         const renderedPages = [];
@@ -411,7 +408,9 @@ export function Flipbook({
         if (unfinishedStates.includes(pageStylesState.state)) {
             return loadingSpinnerPages;
         }
-        if (documentsFlipBook.length + 1 !== pageStylesState.styles.length) {
+        if (
+            documentsFlipBook.length + 1 !== pageStylesState.styles.length
+        ) {
             return loadingSpinnerPages;
         }
 
@@ -607,9 +606,8 @@ export function Flipbook({
                 )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
                 <div className={`book flex h-[85%] w-[35%] translate-x-[50%] items-center`}>
-                    {pageStylesState && pageStylesState.styles.length > 0
-                        ? renderedPapers()
-                        : createDocumentPrompt()}
+                    {pageStylesState && pageStylesState.styles.length > 0 && !displayCreateDocPrompt && renderedPapers()}
+                    {displayCreateDocPrompt && createDocumentPrompt}
                 </div>
             </div>
         </div>

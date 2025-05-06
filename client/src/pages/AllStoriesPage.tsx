@@ -13,13 +13,23 @@ import { User } from '../types/UserTypes';
 
 export interface IAllStoriesPageProps {}
 
+enum DOCUMENT_STATE {
+    'INIT' = 'initial',
+    'DONE' = 'done'
+}
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const LIMIT = 20;
     const navigate = useNavigate();
     const location = useLocation();
     if (!location.state) promptLoginSwal();
     const [user, setUser] = useState<User>(location.state.user);
-    const [documents, setDocuments] = useState<DocumentData[]>([]);
+    const [documentData, setDocumentData] = useState<{
+        state: DOCUMENT_STATE;
+        documents: DocumentData[];
+    }>({
+        state: DOCUMENT_STATE.INIT,
+        documents: []
+    });
     const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     // need this state to destroy the trigger div, otherwise, the grid will interpret it as another element
@@ -53,7 +63,10 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                 const data = await getDocumentsAllStories(user.collabToken, page);
                 setPage(page + 1);
                 setTotal(data.total);
-                setDocuments([...documents, ...data.documents]);
+                setDocumentData({
+                    state: DOCUMENT_STATE.DONE,
+                    documents: [...documentData.documents, ...data.documents]
+                });
             };
             fetchData();
         }
@@ -100,25 +113,26 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                 )}
 
                 <div className="bg-pogo absolute h-[90%] w-full">
-                    {documents.length > 0 ? (
-                        <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
-                            {documents.map((doc: DocumentData) => {
-                                return (
-                                    <GenericCard
-                                        title={doc.title}
-                                        date={doc.eventDate}
-                                        image={doc.firstImageWSignedUrl}
-                                        defaultImage={DEFAULT_IMG_URL}
-                                        handleClick={() => goToDocument(doc.documentId)}
-                                    />
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div className="flex h-full w-full items-center justify-center text-center">
-                            {createDocumentPrompt()}
-                        </div>
-                    )}
+                    {documentData.state === DOCUMENT_STATE.DONE &&
+                        (documentData.documents.length > 0 ? (
+                            <div className="box-border grid h-full w-full grid-cols-[repeat(auto-fit,12rem)] justify-center gap-[10rem] overflow-auto pt-[1.5rem] pb-[1.5rem]">
+                                {documentData.documents.map((doc: DocumentData) => {
+                                    return (
+                                        <GenericCard
+                                            title={doc.title}
+                                            date={doc.eventDate}
+                                            image={doc.firstImageWSignedUrl}
+                                            defaultImage={DEFAULT_IMG_URL}
+                                            handleClick={() => goToDocument(doc.documentId)}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="flex h-full w-full items-center justify-center text-center">
+                                {createDocumentPrompt()}
+                            </div>
+                        ))}
                     {keepTriggerFetchDiv && <div ref={ref}></div>}
                 </div>
             </UserContext.Provider>
