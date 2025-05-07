@@ -11,7 +11,7 @@ import { GenericFormInput } from '../GenericFormInput';
 export interface ICreateDocumentFormProps {
     setShowCreateDocumentForm: React.Dispatch<React.SetStateAction<boolean>>;
     setTriggerFlipBookRefetch?: React.Dispatch<React.SetStateAction<string>>;
-    setTriggerStoriesListRefetch?: React.Dispatch<React.SetStateAction<object>>;
+    setDocumentIdToAddToAllStoriesPage?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type CreateDocumentFormData = {
@@ -22,7 +22,7 @@ type CreateDocumentFormData = {
 export function CreateDocumentForm({
     setShowCreateDocumentForm,
     setTriggerFlipBookRefetch,
-    setTriggerStoriesListRefetch
+    setDocumentIdToAddToAllStoriesPage
 }: ICreateDocumentFormProps) {
     const user = useUserContext();
     const [formErrorMessage, setFormErrorMessage] = useState('');
@@ -38,7 +38,7 @@ export function CreateDocumentForm({
         });
         setShowCreateDocumentForm(false);
         if (setTriggerFlipBookRefetch) setTriggerFlipBookRefetch(documentId);
-        if (setTriggerStoriesListRefetch) setTriggerStoriesListRefetch({});
+        if (setDocumentIdToAddToAllStoriesPage) setDocumentIdToAddToAllStoriesPage(documentId);
     };
     return (
         <div className="center-of-page z-10 flex h-[50%] w-[30%] justify-center bg-white">
