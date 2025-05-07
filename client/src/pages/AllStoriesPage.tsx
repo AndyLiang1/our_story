@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getDocumentsAllStories } from '../apis/documentApi';
+import { getDocument, getDocumentsAllStories } from '../apis/documentApi';
 import { promptLoginSwal } from '../components/Alerts/PromptLogin';
 import { GenericCard } from '../components/GenericCard';
 import { CreateDocumentForm } from '../components/ModalsAndPopupForms/CreateDocumentForm';
@@ -17,6 +17,7 @@ enum DOCUMENT_STATE {
     'INIT' = 'initial',
     'DONE' = 'done'
 }
+
 export function AllStoriesPage(props: IAllStoriesPageProps) {
     const LIMIT = 20;
     const navigate = useNavigate();
@@ -30,14 +31,14 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         state: DOCUMENT_STATE.INIT,
         documents: []
     });
-    const [triggerStoriesListRefetch, setTriggerStoriesListRefetch] = useState<object>({});
+    const [documentIdToAddToAllStoriesPage, setDocumentIdToAddToAllStoriesPage] =
+        useState<string>('');
     const [showCreateDocumentForm, setShowCreateDocumentForm] = useState<boolean>(false);
     // need this state to destroy the trigger div, otherwise, the grid will interpret it as another element
     const [keepTriggerFetchDiv, setKeepTriggerFetchDiv] = useState<boolean>(true);
     const [showPartnerForm, setShowPartnerForm] = useState(false);
 
     const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(Number.POSITIVE_INFINITY);
     const DEFAULT_IMG_URL = '/autumn-landscape-building-city-blue-600nw-2174533935.png';
 
     useEffect(() => {
@@ -51,23 +52,42 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
         }
     }, []);
 
+    useEffect(() => {
+        if (user.collabToken) {
+            fetchData();
+        }
+    }, [user]);
+
+    const fetchData = async () => {
+        const data = await getDocumentsAllStories(user.collabToken, page);
+        setPage(Math.floor((data.documents.length + documentData.documents.length) / LIMIT) + 1);
+        if (data.documents.length < LIMIT) setKeepTriggerFetchDiv(false);
+        setDocumentData({
+            state: DOCUMENT_STATE.DONE,
+            documents: [...documentData.documents, ...data.documents]
+        });
+    };
+
+    useEffect(() => {
+        if (user && documentIdToAddToAllStoriesPage) {
+            const getDocumentAndUpdateDocumentList = async () => {
+                const newlyCreatedDocument = await getDocument(
+                    documentIdToAddToAllStoriesPage,
+                    user.collabToken
+                );
+                setDocumentData({
+                    state: DOCUMENT_STATE.DONE,
+                    documents: [newlyCreatedDocument, ...documentData.documents]
+                });
+            };
+            getDocumentAndUpdateDocumentList();
+        }
+    }, [documentIdToAddToAllStoriesPage]);
+
     const { ref, inView } = useInView({});
 
     useEffect(() => {
-        if (page * LIMIT >= total) {
-            setKeepTriggerFetchDiv(false);
-            return;
-        }
         if (inView && user.collabToken) {
-            const fetchData = async () => {
-                const data = await getDocumentsAllStories(user.collabToken, page);
-                setPage(page + 1);
-                setTotal(data.total);
-                setDocumentData({
-                    state: DOCUMENT_STATE.DONE,
-                    documents: [...documentData.documents, ...data.documents]
-                });
-            };
             fetchData();
         }
     }, [inView, user]);
@@ -100,7 +120,7 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                 {showCreateDocumentForm && user && (
                     <CreateDocumentForm
                         setShowCreateDocumentForm={setShowCreateDocumentForm}
-                        setTriggerStoriesListRefetch={setTriggerStoriesListRefetch}
+                        setDocumentIdToAddToAllStoriesPage={setDocumentIdToAddToAllStoriesPage}
                     />
                 )}
                 {showPartnerForm && user && <PartnerForm setShowPartnerForm={setShowPartnerForm} />}
@@ -127,13 +147,13 @@ export function AllStoriesPage(props: IAllStoriesPageProps) {
                                         />
                                     );
                                 })}
+                                {keepTriggerFetchDiv && <div ref={ref}></div>}
                             </div>
                         ) : (
                             <div className="flex h-full w-full items-center justify-center text-center">
                                 {createDocumentPrompt()}
                             </div>
                         ))}
-                    {keepTriggerFetchDiv && <div ref={ref}></div>}
                 </div>
             </UserContext.Provider>
         </div>
