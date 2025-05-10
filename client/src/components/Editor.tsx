@@ -120,8 +120,8 @@ const Editor = ({
                           CollaborationCursor.configure({
                               provider: provider,
                               user: {
-                                  name: 'Andy Arya',
-                                  color: '#e0f6ff'
+                                  name: user.firstName,
+                                  color: user.textColor
                               }
                           })
                       ]
