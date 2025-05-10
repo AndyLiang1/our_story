@@ -143,8 +143,8 @@ export class DocumentRepo {
         let documentsRaw: Document[] = [];
         let firstDocumentFlag;
         let lastDocumentFlag;
-        const numDocsToFetchLeftDirection = 3;
-        const numDocsToFetchRightDirection = 4; // including current doca
+        const numDocsToFetchLeftDirection = 7;
+        const numDocsToFetchRightDirection = 8; // including current doca
         const queryObject: any = {
             include: [
                 {
