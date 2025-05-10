@@ -3,7 +3,7 @@ export interface IGenericCardProps {
     date: Date;
     image: string | undefined;
     defaultImage: string;
-    handleClick?: () => void
+    handleClick?: () => void;
 }
 
 export function GenericCard({ title, date, image, defaultImage, handleClick }: IGenericCardProps) {
@@ -22,20 +22,17 @@ export function GenericCard({ title, date, image, defaultImage, handleClick }: I
         </div>
     );
     return (
-        <div className="mr-2 h-[13rem] w-[12rem] cursor-pointer rounded-[1rem] bg-white transition duration-200 hover:scale-105" onClick = {handleClick}>
+        <div
+            className="mr-2 h-[13rem] w-[12rem] cursor-pointer rounded-[1rem] bg-white transition duration-200 hover:scale-105"
+            onClick={handleClick}
+        >
             {imageComponent}
             <div className="h-[30%] w-full">
                 <div className="flex h-[50%] w-full items-center justify-center text-center">
                     {title}
                 </div>
                 <div className="box-border flex h-[50%] w-full items-center justify-center pb-2 text-center">
-                    {date
-                        .toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: '2-digit',
-                            year: 'numeric'
-                        })
-                        .replace(',', '')}
+                    {date.toISOString().split('T')[0]}
                 </div>
             </div>
         </div>
