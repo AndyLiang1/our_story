@@ -2,7 +2,7 @@ name: Auto deploy to Fly
 on:
   push:
     branches:
-      - Fix_super_fly_command_typo
+      - auto_deploy_github_action
   workflow_dispatch:
 jobs:
   deploy:
