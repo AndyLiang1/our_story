@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - Fix_super_fly_command_typo
   workflow_dispatch:
 jobs:
   deploy:
