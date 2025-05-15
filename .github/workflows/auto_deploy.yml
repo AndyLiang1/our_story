@@ -2,7 +2,8 @@ name: Auto deploy to Fly
 on:
   push:
     branches:
-      - master
+      - Fix_super_fly_command_typo
+  workflow_dispatch:
 jobs:
   deploy:
     name: Deploy app
@@ -10,7 +11,7 @@ jobs:
     concurrency: deploy-group    
     steps:
       - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@maste
+      - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Change directory 
         run: cd client
       - name: Deploy client to fly
