@@ -2,7 +2,7 @@ name: Auto deploy to Fly
 on:
   push:
     branches:
-      - auto_deploy_github_action
+      - master
   workflow_dispatch:
 jobs:
   deploy:
@@ -12,9 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Change directory 
-        run: cd client
-      - name: Deploy client to fly
-        run: flyctl deploy --remote-only
+      - name: Deploy client
+        run: |
+          cd client
+          flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_DEPLOY_TOKEN_OURSTORY_FRONTEND }}
+      - name : Deploy server
+        run: | 
+          cd server
+          flyctl deploy --remote-only 
+        env: 
+          FLY_API_TOKEN: ${{ secrets.FLY_DEPLOY_TOKEN_OURSTORY_API }}
+
+
