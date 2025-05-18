@@ -24,7 +24,6 @@ export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
         } catch (error: any) {
             if (error.response.data) {
                 const errorData = error.response.data;
-                console.log(errorData);
                 if ([errorType.BAD_REQUEST, errorType.NOT_FOUND].includes(errorData.name)) {
                     setFormErrorMessage(errorData.message);
                 } else {
@@ -43,7 +42,7 @@ export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
         confirm: Yup.string().oneOf(['Confirm'], 'You must type "Confirm".')
     });
     return (
-        <div className="center-of-page z-10 flex h-[50%] w-[30%] justify-center bg-white">
+        <div className="center-of-page z-10 flex h-[50%] w-[40%] justify-center items-center text-center bg-white">
             <IoIosClose
                 className="absolute top-2 right-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowPartnerForm(false)}
