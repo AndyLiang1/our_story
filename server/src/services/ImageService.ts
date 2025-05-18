@@ -91,8 +91,10 @@ export class ImageService {
 
     async deleteImage(userId: string, documentId: string, imageNameWithGuidToDelete: string) {
         try {
-            await this.deleteImageFromAWS(imageNameWithGuidToDelete);
-            await services.documentService.deleteImage(userId, documentId, imageNameWithGuidToDelete);
+            const doc = await services.documentService.deleteImage(userId, documentId, imageNameWithGuidToDelete);
+            if (doc) {
+                await this.deleteImageFromAWS(imageNameWithGuidToDelete);
+            }
         } catch (error) {
             console.error(error);
             throw error;
