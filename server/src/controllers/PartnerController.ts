@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
-import { BadRequestError, NotFoundError } from '../helpers/ErrorHelpers';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
 import { CustomRequest } from '../types/ApiTypes';
@@ -20,24 +19,8 @@ export class PartnerController {
     async createPartners(req: Request, res: Response, next: NextFunction) {
         const userId = (req as CustomRequest).userId;
         const { partnerEmail } = req.body;
-        try {
-            const result = await services.partnerService.createPartner(userId, partnerEmail);
-            res.status(201).json(result);
-        } catch (error: any) {
-            if (error instanceof BadRequestError) {
-                res.status(400).json({
-                    name: error.name,
-                    message: error.message
-                });
-            }
-            if (error instanceof NotFoundError) {
-                res.status(404).json({
-                    name: error.name,
-                    message: error.message
-                });
-            }
-            next(error);
-        }
+        const result = await services.partnerService.createPartner(userId, partnerEmail);
+        res.status(201).json(result);
     }
 
     // async deletePartner(req: Request, res: Response, next: NextFunction) {

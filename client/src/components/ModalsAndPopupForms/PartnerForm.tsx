@@ -25,7 +25,9 @@ export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
             if (error.response.data) {
                 const errorData = error.response.data;
                 if ([errorType.BAD_REQUEST, errorType.NOT_FOUND].includes(errorData.name)) {
-                    setFormErrorMessage(errorData.message);
+                    setFormErrorMessage(
+                        'Error. You may have already initiated partnership with someone, or that person does not exist.'
+                    );
                 } else {
                     setFormErrorMessage(genericErrorMessage);
                 }
@@ -42,7 +44,7 @@ export function PartnerForm({ setShowPartnerForm }: IPartnerFormProps) {
         confirm: Yup.string().oneOf(['Confirm'], 'You must type "Confirm".')
     });
     return (
-        <div className="center-of-page z-10 flex h-[50%] w-[40%] justify-center items-center text-center bg-white">
+        <div className="center-of-page z-10 flex h-[50%] w-[40%] items-center justify-center bg-white text-center">
             <IoIosClose
                 className="absolute top-2 right-2 cursor-pointer text-[2rem]"
                 onClick={() => setShowPartnerForm(false)}
