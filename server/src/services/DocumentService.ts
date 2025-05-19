@@ -73,7 +73,10 @@ export class DocumentService {
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
-        const currDocument: DocumentData = await this.getDocument(userId, documentId as string);
+        let currDocument = null
+        if(documentId) {
+            currDocument = await this.getDocument(userId, documentId as string);
+        }
         const eventDate = currDocument ? currDocument.eventDate : new Date();
         const createdAt = currDocument ? currDocument.createdAt : null;
         const docsFromDBAndFlags: DocumentsWithFlags = await this.documentRepo.getNeighbouringDocuments(userId, eventDate, createdAt);
