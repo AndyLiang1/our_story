@@ -1,9 +1,9 @@
 import { Transaction } from 'sequelize';
+import { UnauthorizedError } from '../helpers/ErrorHelpers';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentData, DocumentOwnerData } from '../types/DocumentTypes';
 import { UserData } from '../types/UserTypes';
 import { services } from './services';
-import { UnauthorizedError } from '../helpers/ErrorHelpers';
 export class DocumentOwnerService {
     documentOwnersRepo: DocumentOwnersRepo;
     constructor() {
@@ -19,7 +19,7 @@ export class DocumentOwnerService {
                 const partnerUserId: string = partnerUser.userId;
                 await this.createDocumentOwner(documentId, partnerUserId);
             } else {
-                throw new UnauthorizedError()
+                throw new UnauthorizedError();
             }
         }
     }

@@ -1,5 +1,4 @@
 import sequelize from '../db';
-import { documentNotFoundMessage } from '../helpers/ErrorHelpers';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -60,7 +59,7 @@ export class DocumentService {
 
     async getDocument(userId: string, documentId: string) {
         let documentData = null;
-        const docFromDB: DocumentData = await this.documentRepo.getDocument(userId, documentId) as DocumentData;
+        const docFromDB: DocumentData = (await this.documentRepo.getDocument(userId, documentId)) as DocumentData;
         const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
         documentData = {
             documentId: docFromDB.documentId,
