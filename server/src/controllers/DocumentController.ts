@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
+import { BadRequestError } from '../helpers/ErrorHelpers';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
 import { CustomRequest, GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
@@ -49,9 +50,7 @@ export class DocumentController {
             const docsInfo = await services.documentService.getDocuments(userId, queryObject);
             res.status(200).json(docsInfo);
         } else {
-            res.status(400).json({
-                message: 'userId must be provided.'
-            });
+            throw new BadRequestError();
         }
     }
 
@@ -68,9 +67,7 @@ export class DocumentController {
                 res.status(200).json(doc);
             }
         } else {
-            res.status(400).json({
-                message: 'documentId and userId must be provided.'
-            });
+            throw new BadRequestError();
         }
     }
 
@@ -107,9 +104,7 @@ export class DocumentController {
             const doc = await services.documentService.updateDocument(userId, documentId, documentData);
             res.status(200).json(doc);
         } else {
-            res.status(400).json({
-                message: 'documentId must be provided.'
-            });
+            throw new BadRequestError();
         }
     }
 
@@ -122,10 +117,7 @@ export class DocumentController {
                 message: `Document with ID ${documentId} is deleted successfully.`
             });
         } else {
-            res.status(400).json({
-                message: 'documentId must be provided.'
-            });
+            throw new BadRequestError();
         }
     }
-
 }

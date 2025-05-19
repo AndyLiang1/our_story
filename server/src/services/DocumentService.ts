@@ -1,5 +1,4 @@
 import sequelize from '../db';
-import { documentNotFound } from '../helpers/ErrorHelpers';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -53,31 +52,28 @@ export class DocumentService {
         }
         const firstImagesSigned = await services.imageService.generateDownloadURLs(firstImages);
         for (const [index, doc] of docs.entries()) {
-            doc.firstImageWSignedUrl = firstImagesSigned.signedDownloadUrls[index];
+            doc.firstImageWSignedUrl = firstImagesSigned!.signedDownloadUrls[index];
         }
         return docs;
     }
 
     async getDocument(userId: string, documentId: string) {
-        if (!documentId) return null;
         let documentData = null;
-        const docFromDB: DocumentData | null = await this.documentRepo.getDocument(userId, documentId);
-        if (docFromDB) {
-            const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
-            documentData = {
-                documentId: docFromDB.documentId,
-                title: docFromDB.title,
-                documentContent: docFromTipTap,
-                createdAt: docFromDB.createdAt,
-                eventDate: new Date(docFromDB.eventDate),
-                images: docFromDB.images
-            };
-        }
+        const docFromDB: DocumentData = (await this.documentRepo.getDocument(userId, documentId)) as DocumentData;
+        const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
+        documentData = {
+            documentId: docFromDB.documentId,
+            title: docFromDB.title,
+            documentContent: docFromTipTap,
+            createdAt: docFromDB.createdAt,
+            eventDate: new Date(docFromDB.eventDate),
+            images: docFromDB.images
+        };
         return documentData as DocumentData;
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
-        const currDocument: DocumentData | null = (await this.getDocument(userId, documentId as string)) as unknown as DocumentData | null;
+        const currDocument: DocumentData = await this.getDocument(userId, documentId as string);
         const eventDate = currDocument ? currDocument.eventDate : new Date();
         const createdAt = currDocument ? currDocument.createdAt : null;
         const docsFromDBAndFlags: DocumentsWithFlags = await this.documentRepo.getNeighbouringDocuments(userId, eventDate, createdAt);
@@ -103,8 +99,7 @@ export class DocumentService {
 
     async deleteDocument(userId: string, documentId: string) {
         await sequelize.transaction(async (t) => {
-            const document = await this.getDocument(userId, documentId);
-            if (!document) throw Error(documentNotFound(documentId));
+            const document: DocumentData = await this.getDocument(userId, documentId);
             await this.documentRepo.deleteDocument(documentId, t);
             await services.tiptapDocumentService.deleteDocument(documentId);
         });
@@ -125,35 +120,27 @@ export class DocumentService {
     }
 
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
-        const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
-        if (docInfo) {
-            const documentData: PartialDocumentUpdateAttributes = {
-                title: docInfo.title,
-                documentContent: docInfo.documentContent,
-                hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
-                images: [...docInfo.images, ...newImageNamesWithGuid]
-            };
-            const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
-            return data;
-        } else {
-            return null;
-        }
+        const docInfo: DocumentData = await this.getDocument(userId, documentId);
+        const documentData: PartialDocumentUpdateAttributes = {
+            title: docInfo.title,
+            documentContent: docInfo.documentContent,
+            hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
+            images: [...docInfo.images, ...newImageNamesWithGuid]
+        };
+        const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
+        return data;
     }
 
     async deleteImage(userId: string, documentId: string, imageNameWithGuidToDelete: string) {
-        const docInfo: DocumentData | null = await this.getDocument(userId, documentId);
-        if (docInfo) {
-            const filteredImages = docInfo.images.filter((imageNameWithGuid) => imageNameWithGuid !== imageNameWithGuidToDelete);
-            const documentData: PartialDocumentUpdateAttributes = {
-                title: docInfo.title,
-                documentContent: docInfo.documentContent,
-                hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
-                images: filteredImages
-            };
-            const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
-            return data;
-        } else {
-            return null;
-        }
+        const docInfo: DocumentData = await this.getDocument(userId, documentId);
+        const filteredImages = docInfo.images.filter((imageNameWithGuid) => imageNameWithGuid !== imageNameWithGuidToDelete);
+        const documentData: PartialDocumentUpdateAttributes = {
+            title: docInfo.title,
+            documentContent: docInfo.documentContent,
+            hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
+            images: filteredImages
+        };
+        const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
+        return data;
     }
 }
