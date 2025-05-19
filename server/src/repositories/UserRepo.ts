@@ -1,3 +1,4 @@
+import { NotFoundError, userNotFoundMessage } from '../helpers/ErrorHelpers';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
 import { UserCreationData, UserData, UserReturnTypeData } from '../types/UserTypes';
@@ -13,7 +14,7 @@ export class UserRepo {
     async getUserById(userId: string) {
         const userRaw = await User.findByPk(userId);
         if (userRaw) {
-            const user = this.convertRawUsersToUseReturnrType([userRaw])[0];
+            const user: UserReturnTypeData = this.convertRawUsersToUseReturnType([userRaw])[0];
             return user;
         }
         return null;
@@ -26,10 +27,11 @@ export class UserRepo {
             }
         });
         if (userRaw) {
-            const user = this.convertRawUsersToUserType([userRaw])[0];
+            const user: UserData = this.convertRawUsersToUserType([userRaw])[0];
             return user;
+        } else {
+            throw new NotFoundError(userNotFoundMessage(email));
         }
-        return null;
     }
 
     async getUsersOwningDocument(documentId: string) {
@@ -48,7 +50,7 @@ export class UserRepo {
                 }
             ]
         });
-        const users = this.convertRawUsersToUserType(usersRaw);
+        const users: UserData[] = this.convertRawUsersToUserType(usersRaw);
         return users;
     }
 
@@ -67,7 +69,7 @@ export class UserRepo {
         return users;
     };
 
-    convertRawUsersToUseReturnrType = (usersRaw: User[]) => {
+    convertRawUsersToUseReturnType = (usersRaw: User[]) => {
         const users: UserReturnTypeData[] = [];
         for (const userRaw of usersRaw) {
             const user: UserReturnTypeData = {

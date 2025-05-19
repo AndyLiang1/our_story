@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
+import { BadRequestError } from '../helpers/ErrorHelpers';
 import { JwtVerifier } from '../middleware/JwtVerifier';
 import { services } from '../services/services';
 import { CustomRequest } from '../types/ApiTypes';
@@ -20,52 +21,34 @@ export class ImageController {
 
     async getUploadURLS(req: Request, res: Response, next: NextFunction) {
         const { imageNames } = req.body as { imageNames: string[] };
-        try {
-            const result = await services.imageService.getUploadURLS(imageNames);
-            res.status(200).json(result);
-        } catch (error) {
-            console.error(error);
-            next(error);
-        }
+        const result = await services.imageService.getUploadURLS(imageNames);
+        res.status(200).json(result);
     }
 
     async getDownloadURLs(req: Request, res: Response, next: NextFunction) {
         const userId = (req as CustomRequest).userId;
-        const { imageNamesWithGuid, documentId } = req.body as { imageNamesWithGuid: string[], documentId: string };
-        try {
-            const result = await services.imageService.getDownloadURLs(userId, imageNamesWithGuid, documentId);
-            res.status(200).json(result);
-        } catch (error) {
-            console.error(error);
-            next(error);
-        }
+        const { imageNamesWithGuid, documentId } = req.body as { imageNamesWithGuid: string[]; documentId: string };
+        const result = await services.imageService.getDownloadURLs(userId, imageNamesWithGuid, documentId);
+        res.status(200).json(result);
     }
 
     async addImages(req: Request, res: Response, next: NextFunction) {
         const userId = (req as CustomRequest).userId;
         const { documentId } = req.params;
         const { newImageNamesWithGuid } = req.body;
-        try {
-            const docId = await services.imageService.addImages(userId, documentId, newImageNamesWithGuid);
-            res.status(201).json(docId);
-        } catch (error) {
-            console.error(error);
-            next(error);
-        }
+        const docId = await services.imageService.addImages(userId, documentId, newImageNamesWithGuid);
+        res.status(201).json(docId);
     }
 
     async deleteImage(req: Request, res: Response, next: NextFunction) {
         const { documentId } = req.params;
         const userId = (req as CustomRequest).userId;
         const imageNameWithGuidToDelete = req.query.imageNameWithGuidToDelete ? (req.query.imageNameWithGuidToDelete as string) : null;
-        try {
-            if (userId && imageNameWithGuidToDelete) {
-                await services.imageService.deleteImage(userId, documentId, imageNameWithGuidToDelete);
-                res.status(201).json(documentId);
-            }
-        } catch (error) {
-            console.error(error);
-            next(error);
+        if (userId && imageNameWithGuidToDelete) {
+            await services.imageService.deleteImage(userId, documentId, imageNameWithGuidToDelete);
+            res.status(201).json(documentId);
+        } else {
+            throw new BadRequestError();
         }
     }
 }

@@ -1,6 +1,6 @@
 import { Op } from '@sequelize/core';
 import { Transaction } from 'sequelize';
-import { documentNotFound } from '../helpers/ErrorHelpers';
+import { documentNotFoundMessage, NotFoundError } from '../helpers/ErrorHelpers';
 import { Document } from '../models/Document';
 import { User } from '../models/User';
 import { DocumentCreationAttributes, DocumentData, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -135,7 +135,7 @@ export class DocumentRepo {
             const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);
             return documents[0];
         }
-        return null;
+        throw new NotFoundError(documentNotFoundMessage(documentId));
     }
 
     async getNeighbouringDocuments(userId: string | null, eventDate: Date, createdAt: Date | null) {
@@ -236,7 +236,7 @@ export class DocumentRepo {
         const documentRaw = await Document.findByPk(documentId);
 
         if (documentRaw === null) {
-            throw Error(documentNotFound(documentId));
+            throw new NotFoundError(documentNotFoundMessage(documentId));
         }
         await documentRaw.update({ ...documentData });
         await documentRaw.save();
@@ -263,7 +263,7 @@ export class DocumentRepo {
             ]
         });
         if (documentRaw === null) {
-            throw Error(documentNotFound(documentId));
+            throw new NotFoundError(documentNotFoundMessage(documentId));
         }
         await documentRaw.update({ ...documentData });
         await documentRaw.save();

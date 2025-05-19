@@ -1,7 +1,9 @@
 import { Transaction } from 'sequelize';
 import { DocumentOwnersRepo } from '../repositories/DocumentOwnersRepo';
 import { DocumentData, DocumentOwnerData } from '../types/DocumentTypes';
+import { UserData } from '../types/UserTypes';
 import { services } from './services';
+import { UnauthorizedError } from '../helpers/ErrorHelpers';
 export class DocumentOwnerService {
     documentOwnersRepo: DocumentOwnersRepo;
     constructor() {
@@ -10,14 +12,14 @@ export class DocumentOwnerService {
 
     async shareDocument(documentId: string, userId: string, partnerEmail: string | null) {
         if (partnerEmail) {
-            const partnerUser = await services.userService.getUserByEmail(partnerEmail);
+            const partnerUser = (await services.userService.getUserByEmail(partnerEmail)) as UserData;
             const docsOfUser = (await services.documentService.getDocuments(userId)) as DocumentData[];
             const docToBeSharedIsADocOfUser = docsOfUser.map((doc) => doc.documentId).includes(documentId);
-            if (partnerUser && docToBeSharedIsADocOfUser) {
+            if (docToBeSharedIsADocOfUser) {
                 const partnerUserId: string = partnerUser.userId;
                 await this.createDocumentOwner(documentId, partnerUserId);
             } else {
-                throw Error('Partner not found');
+                throw new UnauthorizedError()
             }
         }
     }

@@ -2,6 +2,7 @@ import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, PutObjectComma
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../config/config';
+import { BadRequestError, UnauthorizedError } from '../helpers/ErrorHelpers';
 import { s3Client } from '../s3';
 import { DocumentData } from '../types/DocumentTypes';
 import { services } from './services';
@@ -32,9 +33,8 @@ export class ImageService {
                 uniqueImageNames,
                 signedUploadUrls: signedUrls
             };
-        } catch (error) {
-            console.error(error);
-            throw error;
+        } catch (error: any) {
+            throw new BadRequestError(error.message);
         }
     }
 
@@ -70,33 +70,22 @@ export class ImageService {
                 uniqueImageNames: imageNamesWithGuid,
                 signedDownloadUrls: signedUrls
             };
-        } catch (error) {
-            console.error(error);
-            throw error;
+        } catch (error: any) {
+            throw new BadRequestError(error.message);
         }
     }
     async getDownloadURLs(userId: string, imageNamesWithGuid: (string | null)[], documentId: string) {
-        try {
-            const document = await services.documentService.getDocument(userId, documentId);
-            if (document && this.checkDownloadURLsToBeGeneratedAreFromYourDocument(document, imageNamesWithGuid)) {
-                return await this.generateDownloadURLs(imageNamesWithGuid);
-            } else {
-                throw Error('Unauthorized');
-            }
-        } catch (error) {
-            console.error(error);
-            throw error;
+        const document = await services.documentService.getDocument(userId, documentId);
+        if (document && this.checkDownloadURLsToBeGeneratedAreFromYourDocument(document, imageNamesWithGuid)) {
+            return await this.generateDownloadURLs(imageNamesWithGuid);
+        } else {
+            throw new UnauthorizedError();
         }
     }
 
     async deleteImage(userId: string, documentId: string, imageNameWithGuidToDelete: string) {
-        try {
-            await this.deleteImageFromAWS(imageNameWithGuidToDelete);
-            await services.documentService.deleteImage(userId, documentId, imageNameWithGuidToDelete);
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        await services.documentService.deleteImage(userId, documentId, imageNameWithGuidToDelete);
+        await this.deleteImageFromAWS(imageNameWithGuidToDelete);
     }
 
     async deleteImageFromAWS(imageNameWithGuid: string) {
@@ -120,12 +109,7 @@ export class ImageService {
     }
 
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
-        try {
-            await services.documentService.addImages(userId, documentId, newImageNamesWithGuid);
-            return documentId;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+        await services.documentService.addImages(userId, documentId, newImageNamesWithGuid);
+        return documentId;
     }
 }
