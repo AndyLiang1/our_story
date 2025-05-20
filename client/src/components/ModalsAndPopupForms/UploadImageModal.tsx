@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import { AiTwotoneCloseCircle } from 'react-icons/ai';
 import { IoIosClose } from 'react-icons/io';
+import BeatLoader from 'react-spinners/BeatLoader';
 import { addDocumentImages, getGeneratedUploadImageSignedUrls } from '../../apis/imageApi';
 import { useUserContext } from '../../context/userContext';
 import { UploadImageModalInfo } from '../../types/ModalInfoTypes';
@@ -23,12 +24,14 @@ export function UploadImageModal({
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { documentId } = showUploadModalInfo;
+    const [isLoading, setIsLoading] = useState(false);
 
     const selectFiles = () => {
         if (fileInputRef.current) fileInputRef.current.click();
     };
 
     const closeModalAndTriggerRefetch = () => {
+        setIsLoading(false);
         setShowUploadModalInfo({ documentId, status: false, refetch: true });
     };
 
@@ -42,8 +45,9 @@ export function UploadImageModal({
             );
             const newImageNamesWithGuid = signedUrlsAndImageNamesWithGuid.uniqueImageNames;
             const { signedUploadUrls } = signedUrlsAndImageNamesWithGuid;
+            setIsLoading(true);
             await uploadImageToAWSUsingSignedUrls(signedUploadUrls);
-            await addDocumentImages( collabToken, [...newImageNamesWithGuid], documentId);
+            await addDocumentImages(collabToken, [...newImageNamesWithGuid], documentId);
             closeModalAndTriggerRefetch();
         } catch (error) {
             console.log('Error during uploading images: ', error);
@@ -79,9 +83,14 @@ export function UploadImageModal({
     };
 
     return (
-        <div className="center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white">
+        <div className={"center-of-page relative z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white"}>
+            {isLoading && (
+                <div className="absolute top-[50%] bg-white/50 left-[50%] h-full w-full flex justify-center text-center items-center -translate-x-1/2 -translate-y-1/2 transform">
+                    <BeatLoader color="#94bfff" size={50}></BeatLoader>
+                </div>
+            )}
             <IoIosClose
-                className="absolute right-2 top-2 cursor-pointer text-[2rem]"
+                className="absolute top-2 right-2 cursor-pointer text-[2rem]"
                 onClick={() =>
                     setShowUploadModalInfo({
                         documentId: '',
@@ -128,7 +137,7 @@ export function UploadImageModal({
             </div>
             <div
                 className={
-                    `w-[90%] items-center overflow-x-auto whitespace-nowrap pl-[0.5rem] text-[0px]` +
+                    `w-[90%] items-center overflow-x-auto pl-[0.5rem] text-[0px] whitespace-nowrap` +
                     (imagesToUpload && imagesToUpload.length ? ' h-[30%]' : ' hidden')
                 }
             >
@@ -138,7 +147,7 @@ export function UploadImageModal({
                             <div className="flex h-full items-center justify-center text-center">
                                 <div className="relative h-[75%] transform transition-transform duration-300 ease-in-out hover:scale-110">
                                     <AiTwotoneCloseCircle
-                                        className="absolute right-[-0.8rem] top-[-0.8rem] cursor-pointer text-[1.6rem]"
+                                        className="absolute top-[-0.8rem] right-[-0.8rem] cursor-pointer text-[1.6rem]"
                                         onClick={() => {
                                             setImagesToUpload(
                                                 imagesToUpload.filter((_, i) => i !== index)
@@ -160,7 +169,7 @@ export function UploadImageModal({
                 onClick={async () => {
                     await uploadImages();
                 }}
-                disabled = {!imagesToUpload.length}
+                disabled={!imagesToUpload.length}
             />
         </div>
     );
