@@ -18,6 +18,7 @@ export function GenericFormButton({
     displayMessage,
     onClick,
     type,
+    disabled,
     styles,
     bold = false,
     backgroundColor,
@@ -30,6 +31,7 @@ export function GenericFormButton({
         <button
             onClick={onClick}
             type={type ? type : undefined}
+            disabled={disabled}
             className={
                 `mt-4 flex items-center justify-center text-center ${styles} ` +
                 (rounded ? 'rounded-[3rem]' : '') +
@@ -41,7 +43,9 @@ export function GenericFormButton({
                 (bold ? 'font-bold' : '') +
                 (fontSize ? fontSize : ' text-[1rem]') +
                 ' ' +
-                (padding ? padding : 'p-[1rem]')
+                (padding ? padding : 'p-[1rem]') +
+                ' ' +
+                (disabled ? 'cursor-not-allowed' : '')
             }
         >
             {displayMessage}
