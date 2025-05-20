@@ -160,6 +160,7 @@ export function UploadImageModal({
                 onClick={async () => {
                     await uploadImages();
                 }}
+                disabled = {!imagesToUpload.length}
             />
         </div>
     );
