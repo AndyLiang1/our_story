@@ -15,6 +15,19 @@ button {
     @apply cursor-pointer border-0 bg-transparent;
 }
 
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(230, 230, 230);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(204, 204, 204);
+    border-radius: 25px;
+}
+
 @layer components {
     code {
         font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
@@ -54,7 +67,7 @@ button {
     .front {
         z-index: 1;
         backface-visibility: hidden;
-        border-left: 3px solid powderblue;
+        border-left: 3px solid rgb(230 , 230 , 230 );
     }
 
     .back {

@@ -196,7 +196,7 @@ const Editor = ({
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     <EditorContent
-                        className="editor__content box-border h-[95%] w-full overflow-auto px-[1.5rem]"
+                        className="editor__content box-border h-[95%] w-full overflow-y-auto px-[1.5rem]"
                         editor={editor}
                     />
                 </div>
