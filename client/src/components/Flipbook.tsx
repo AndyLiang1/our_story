@@ -605,7 +605,7 @@ export function Flipbook({
                     </button>
                 )}
             <div className="relative flex h-[95%] w-[90%] items-center justify-center overflow-y-hidden border-black">
-                <div className={`book flex h-[85%] w-[35%] translate-x-[50%] items-center`}>
+                <div className={`book flex h-[84%] w-[35%] translate-x-[50%] items-center`}>
                     {pageStylesState && pageStylesState.styles.length > 0 && !displayCreateDocPrompt && renderedPapers()}
                     {displayCreateDocPrompt && createDocumentPrompt}
                 </div>
