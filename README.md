@@ -9,7 +9,7 @@ React, TypeScript, Vite, Node, Express, AWS S3, AWS Cognito, Sequelize, Github a
 ![image](https://github.com/user-attachments/assets/f594fbed-7c81-419c-aaf3-c5f773243f92)
 
 ## Demo 
-[![our_story_demo](https://github.com/user-attachments/assets/f99b5508-91eb-4743-847d-811217912c06)](https://www.youtube.com/watch?v=ttlGVR0JQ0c)
+[![our_story_demo](https://github.com/user-attachments/assets/bdfd81a5-c8c9-4fe8-8f41-74b9c1e9f6cf)](https://www.youtube.com/watch?v=ttlGVR0JQ0c)
 
 ## Components of our application 
 
