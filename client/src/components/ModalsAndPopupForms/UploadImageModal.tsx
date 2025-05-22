@@ -83,7 +83,7 @@ export function UploadImageModal({
     };
 
     return (
-        <div className={"center-of-page relative z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white"}>
+        <div className={"center-of-page z-10 flex h-[85%] w-[50%] flex-col items-center justify-evenly bg-white"}>
             {isLoading && (
                 <div className="absolute top-[50%] bg-white/50 left-[50%] h-full w-full flex justify-center text-center items-center -translate-x-1/2 -translate-y-1/2 transform">
                     <BeatLoader color="#94bfff" size={50}></BeatLoader>
