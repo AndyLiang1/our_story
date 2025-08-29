@@ -1,8 +1,7 @@
-import { TiptapCollabProvider } from '@hocuspocus/provider';
+import { HocuspocusProvider } from '@hocuspocus/provider';
 import * as Y from 'yjs';
 
 import { useEffect, useState } from 'react';
-import { config } from '../config/config';
 import { useUserContext } from '../context/userContext';
 import {
     DeleteDocumentConfirmationModalInfo,
@@ -36,33 +35,19 @@ export function TipTapCollab({
     const user = useUserContext();
     const { collabToken } = user;
     const [providerAndDoc, setProviderAndDoc] = useState<{
-        doc: Y.Doc | null
-        provider: TiptapCollabProvider | null
+        doc: Y.Doc | null;
+        provider: HocuspocusProvider | null;
     } | null>(null);
 
     useEffect(() => {
-        const debug = false;
         const doc = collabFlag ? new Y.Doc() : null;
-        let provider: TiptapCollabProvider | null = null;
+        let provider: HocuspocusProvider | null = null;
         if (collabFlag && doc) {
-            provider = new TiptapCollabProvider({
+            provider = new HocuspocusProvider({
+                url: 'ws://127.0.0.1:1234',
                 name: documentId,
-                appId: `${config.tiptapProvider.appId}`,
-                token: collabToken,
                 document: doc,
-                // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
-                onOpen() {
-                    if (debug) console.log('WebSocket connection opened');
-                },
-                onConnect() {
-                    if (debug) console.log('Connected to the server.');
-                },
-                onAuthenticated() {
-                    if (debug) console.log('Authenticated');
-                },
-                onAuthenticationFailed() {
-                    if (debug) console.log('Auth failed.');
-                }
+                token: collabToken
             });
         }
 

@@ -3,6 +3,7 @@ import express, { Express } from 'express';
 import { config } from './config/config';
 import { initDb } from './db';
 
+import { Server } from '@hocuspocus/server';
 import 'express-async-errors';
 import { DocumentController } from './controllers/DocumentController';
 import { DocumentOwnerController } from './controllers/DocumentOwnerController';
@@ -20,12 +21,16 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-const port = config.server.port || 3000;
-
 const init = async () => {
     await initDb();
-    app.listen(port, async () => {
-        console.log(`Server is running at http://localhost:${port}`);
+    
+    const hocuspocusServer = new Server();
+    hocuspocusServer.listen(config.hocuspocusServer.port, () => {
+        console.log('Hocus pocus server is listening!')
+    });
+
+    app.listen(config.webServer.port, () => {
+        console.log('Web server is listening!');
     });
 
     app.get('/api/auth/collabTokens', JwtVerifier.verifyAwsCognitoJwt, JwtVerifier.generateTipTapCollabToken);
