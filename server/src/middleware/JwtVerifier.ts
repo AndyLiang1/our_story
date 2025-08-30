@@ -71,8 +71,7 @@ export class JwtVerifier {
             if (!token) {
                 throw new Error('No token found.');
             }
-            const decoded = jwt.verify(token, JwtVerifier.tiptapSecret) as DecodedFields;
-            (req as CustomRequest).collabToken = decoded;
+            const decoded = await JwtVerifier.verifyCollabTokenHelper(token);
             (req as CustomRequest).userId = decoded.userId;
             console.log('Verified.');
         } catch (err) {
@@ -82,5 +81,18 @@ export class JwtVerifier {
             });
         }
         next();
+    }
+
+    static async verifyCollabTokenHelper(token: string) {
+        try {
+            if (!token) {
+                throw new Error('No token found.');
+            }
+            const decoded = jwt.verify(token, JwtVerifier.tiptapSecret) as DecodedFields;
+            return decoded
+        } catch (err) {
+            console.log('hereeeee: ', err)
+            throw (err)
+        }   
     }
 }
