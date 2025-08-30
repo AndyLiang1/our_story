@@ -265,7 +265,7 @@ export class DocumentRepo {
         if (documentRaw === null) {
             throw new NotFoundError(documentNotFoundMessage(documentId));
         }
-        await documentRaw.update({ ...documentData });
+        await documentRaw.update(documentData);
         await documentRaw.save();
         await documentRaw.reload();
         const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);

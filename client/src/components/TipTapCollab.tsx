@@ -8,6 +8,7 @@ import {
     ShareDocumentFormInfo
 } from '../types/ModalInfoTypes';
 import Editor from './Editor';
+import { config } from '../config/config';
 
 export interface ITipTapCollabProps {
     documentIdBefore: string;
@@ -44,7 +45,7 @@ export function TipTapCollab({
         let provider: HocuspocusProvider | null = null;
         if (collabFlag && doc) {
             provider = new HocuspocusProvider({
-                url: 'ws://127.0.0.1:1234',
+                url: config.hocuspocusUrl,
                 name: documentId,
                 document: doc,
                 token: collabToken
