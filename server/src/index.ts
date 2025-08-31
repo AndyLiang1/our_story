@@ -27,6 +27,7 @@ const init = async () => {
     const hocuspocus = await initHocuspocusWebsocketServer();
     app.ws('/collaboration', async (ws, req) => {
         try {
+            console.log(`${hocuspocus.getConnectionsCount()} total active connections | ${hocuspocus.getDocumentsCount()} total active documents.`) 
             hocuspocus.handleConnection(ws, req, {});
         } catch (err) {
             ws.close(1008, "Invalid or expired token");

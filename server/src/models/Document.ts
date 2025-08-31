@@ -15,6 +15,10 @@ Document.init(
         title: {
             type: DataTypes.TEXT
         },
+        ydoc: {
+            type: DataTypes.BLOB,
+            allowNull: true
+        },
         documentContent: {
             type: DataTypes.JSONB
         },
