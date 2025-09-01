@@ -95,7 +95,6 @@ export class DocumentController {
         const reqBody = req.body;
         const documentData: PartialDocumentUpdateAttributes = {
             title: reqBody?.title,
-            documentContent: reqBody?.documentContent,
             hasUpdatedInTipTap: reqBody?.hasUpdatedInTipTap,
             images: reqBody?.newImageNamesWithGuid
         };

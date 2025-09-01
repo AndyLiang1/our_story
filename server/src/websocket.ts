@@ -33,12 +33,15 @@ export const initHocuspocusWebsocketServer = async () => {
                     where: { documentId: documentName },
                     defaults: {
                         documentId: documentName,
-                        ydoc: Buffer.from(state)
+                        ydoc: Buffer.from(state),
+                        hasUpdatedInTipTap: true
                     }
                 });
 
                 if (!created) {
-                    await doc.update({ ydoc: Buffer.from(state) });
+                    await doc.update({ ydoc: Buffer.from(state), hasUpdatedInTipTap: true });    
+                    await doc.save();
+                    await doc.reload();
                 }
 
                 console.log(`Document ${documentName} stored successfully.`);
