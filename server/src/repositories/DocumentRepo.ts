@@ -42,6 +42,7 @@ export class DocumentRepo {
     }
 
     async getDocumentsToSync() {
+        const forCollab = true
         const documentsRaw: Document[] = await Document.findAll({
             include: [
                 {
@@ -59,7 +60,7 @@ export class DocumentRepo {
                 ['createdAt', 'DESC']
             ]
         });
-        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw);
+        const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw, forCollab);
         return documents;
     }
 
@@ -114,7 +115,7 @@ export class DocumentRepo {
         return documents;
     }
 
-    async getDocument(userId: string, documentId: string) {
+    async getDocument(userId: string, documentId: string, forCollab: boolean = false) {
         const documentRaw: Document | null = await Document.findOne({
             where: {
                 documentId
@@ -238,7 +239,7 @@ export class DocumentRepo {
         if (documentRaw === null) {
             throw new NotFoundError(documentNotFoundMessage(documentId));
         }
-        await documentRaw.update({ ...documentData });
+        await documentRaw.update(documentData);
         await documentRaw.save();
         await documentRaw.reload();
         const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);
@@ -281,18 +282,18 @@ export class DocumentRepo {
         });
     }
 
-    convertRawDocumentModelsToDocumentDataArray = (rawDocuments: Document[]) => {
+    convertRawDocumentModelsToDocumentDataArray = (rawDocuments: Document[], forCollab: boolean = false) => {
         const documents: DocumentData[] = [];
         for (const rawDocument of rawDocuments) {
             const document: DocumentData = {
                 documentId: rawDocument.getDataValue('documentId'),
                 title: rawDocument.getDataValue('title'),
-                documentContent: rawDocument.getDataValue('documentContent'),
                 eventDate: rawDocument.getDataValue('eventDate'),
                 createdAt: rawDocument.getDataValue('createdAt'),
                 images: rawDocument.getDataValue('images'),
                 hasUpdatedInTipTap: rawDocument.getDataValue('hasUpdatedInTipTap')
             };
+            if(forCollab) document.ydoc = rawDocument.getDataValue('ydoc')
             documents.push(document);
         }
         return documents;

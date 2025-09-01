@@ -1,4 +1,6 @@
 import sequelize from '../db';
+import { TiptapTransformer }  from "@hocuspocus/transformer"
+import * as Y from 'yjs';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -57,14 +59,12 @@ export class DocumentService {
         return docs;
     }
 
-    async getDocument(userId: string, documentId: string) {
+    async getDocument(userId: string, documentId: string, forCollab: boolean = false) {
         let documentData = null;
-        const docFromDB: DocumentData = (await this.documentRepo.getDocument(userId, documentId)) as DocumentData;
-        const docFromTipTap = await services.tiptapDocumentService.getDocument(docFromDB.documentId);
+        const docFromDB: DocumentData = (await this.documentRepo.getDocument(userId, documentId, forCollab)) as DocumentData;
         documentData = {
             documentId: docFromDB.documentId,
             title: docFromDB.title,
-            documentContent: docFromTipTap,
             createdAt: docFromDB.createdAt,
             eventDate: new Date(docFromDB.eventDate),
             images: docFromDB.images
@@ -90,7 +90,6 @@ export class DocumentService {
             const userPartnerId = await services.partnerService.getPartnerId(userId);
             const partnerHasYouAsPartner = await services.partnerService.partnerUserHasYouAsPartner(userId, userPartnerId);
             if (partnerHasYouAsPartner) await services.documentOwnerService.createDocumentOwner(newDocId, userPartnerId, transaction);
-            await services.tiptapDocumentService.createDocument(newDocId, documentData);
             return newDocId;
         });
     }
@@ -104,19 +103,19 @@ export class DocumentService {
         await sequelize.transaction(async (t) => {
             const document: DocumentData = await this.getDocument(userId, documentId);
             await this.documentRepo.deleteDocument(documentId, t);
-            await services.tiptapDocumentService.deleteDocument(documentId);
         });
     }
 
     async syncDocuments() {
         const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSync();
         for (const docThatNeedsUpdating of docsThatNeedUpdating) {
-            const docFromTipTap = await services.tiptapDocumentService.getDocument(docThatNeedsUpdating.documentId);
+            if(!docThatNeedsUpdating.ydoc) continue
+            const ydoc = new Y.Doc();
+            Y.applyUpdate(ydoc, docThatNeedsUpdating.ydoc);
+            const jsonFromYdoc = TiptapTransformer.fromYdoc(ydoc, "default")
             this.documentRepo.syncDocument(docThatNeedsUpdating.documentId, {
-                title: docThatNeedsUpdating.title,
-                documentContent: docFromTipTap.content,
+                documentContent: jsonFromYdoc, 
                 hasUpdatedInTipTap: false,
-                images: docThatNeedsUpdating.images
             });
         }
         return docsThatNeedUpdating.length;
@@ -126,7 +125,6 @@ export class DocumentService {
         const docInfo: DocumentData = await this.getDocument(userId, documentId);
         const documentData: PartialDocumentUpdateAttributes = {
             title: docInfo.title,
-            documentContent: docInfo.documentContent,
             hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
             images: [...docInfo.images, ...newImageNamesWithGuid]
         };
@@ -139,7 +137,6 @@ export class DocumentService {
         const filteredImages = docInfo.images.filter((imageNameWithGuid) => imageNameWithGuid !== imageNameWithGuidToDelete);
         const documentData: PartialDocumentUpdateAttributes = {
             title: docInfo.title,
-            documentContent: docInfo.documentContent,
             hasUpdatedInTipTap: docInfo.hasUpdatedInTipTap,
             images: filteredImages
         };
