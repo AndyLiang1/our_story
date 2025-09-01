@@ -42,7 +42,7 @@ export class DocumentRepo {
     }
 
     async getDocumentsToSync() {
-        const forCollab = true
+        const forCollab = true;
         const documentsRaw: Document[] = await Document.findAll({
             include: [
                 {
@@ -133,7 +133,7 @@ export class DocumentRepo {
             ]
         });
         if (documentRaw) {
-            const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw]);
+            const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw], forCollab);
             return documents[0];
         }
         throw new NotFoundError(documentNotFoundMessage(documentId));
@@ -293,7 +293,7 @@ export class DocumentRepo {
                 images: rawDocument.getDataValue('images'),
                 hasUpdatedInTipTap: rawDocument.getDataValue('hasUpdatedInTipTap')
             };
-            if(forCollab) document.ydoc = rawDocument.getDataValue('ydoc')
+            if (forCollab) document.ydoc = rawDocument.getDataValue('ydoc');
             documents.push(document);
         }
         return documents;
