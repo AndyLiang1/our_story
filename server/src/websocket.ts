@@ -1,10 +1,10 @@
 import { Hocuspocus } from '@hocuspocus/server';
 import * as Y from 'yjs';
 import { JwtVerifier } from './middleware/JwtVerifier';
-import { Document } from './models/Document'; // your Sequelize model
+import { services } from './services/services';
 
 export const initHocuspocusWebsocketServer = async () => {
-    const hocuspocusServer = new Hocuspocus({
+    const hocuspocus = new Hocuspocus({
         async onAuthenticate({ token, context }) {
             try {
                 const decoded = await JwtVerifier.verifyCollabTokenHelper(token);
@@ -15,40 +15,26 @@ export const initHocuspocusWebsocketServer = async () => {
                 throw new Error('Not authorized!');
             }
         },
-        async onLoadDocument({ documentName }) {
+        async onLoadDocument({ documentName, context }) {
             const ydoc = new Y.Doc();
-            const dbDoc = await Document.findOne({ where: { documentId: documentName } });
-            
-            if (dbDoc && dbDoc.getDataValue('ydoc')) {
-                const update = new Uint8Array(dbDoc.getDataValue('ydoc') as Buffer); 
+            const forCollab = true;
+            const documentData = await services.documentService.getDocument(context.userId, documentName, forCollab);
+            if (documentData && documentData.ydoc) {
+                const update = new Uint8Array(documentData.ydoc as Buffer);
                 Y.applyUpdate(ydoc, update);
             }
-            
             return ydoc;
         },
         async onStoreDocument({ documentName, document, context }) {
             try {
                 const state = Y.encodeStateAsUpdate(document);
-                const [doc, created] = await Document.findOrCreate({
-                    where: { documentId: documentName },
-                    defaults: {
-                        documentId: documentName,
-                        ydoc: Buffer.from(state),
-                        hasUpdatedInTipTap: true
-                    }
-                });
-
-                if (!created) {
-                    await doc.update({ ydoc: Buffer.from(state), hasUpdatedInTipTap: true });    
-                    await doc.save();
-                    await doc.reload();
-                }
-
+                const documentData = { ydoc: Buffer.from(state) as Uint8Array, hasUpdatedInTipTap: true };
+                await services.documentService.updateDocument(context.userId, documentName, documentData);
                 console.log(`Document ${documentName} stored successfully.`);
             } catch (err) {
                 console.error('Error storing document:', err);
             }
         }
     });
-    return hocuspocusServer;
+    return hocuspocus;
 };

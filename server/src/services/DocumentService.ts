@@ -1,6 +1,6 @@
-import sequelize from '../db';
-import { TiptapTransformer }  from "@hocuspocus/transformer"
+import { TiptapTransformer } from '@hocuspocus/transformer';
 import * as Y from 'yjs';
+import sequelize from '../db';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
@@ -60,21 +60,13 @@ export class DocumentService {
     }
 
     async getDocument(userId: string, documentId: string, forCollab: boolean = false) {
-        let documentData = null;
-        const docFromDB: DocumentData = (await this.documentRepo.getDocument(userId, documentId, forCollab)) as DocumentData;
-        documentData = {
-            documentId: docFromDB.documentId,
-            title: docFromDB.title,
-            createdAt: docFromDB.createdAt,
-            eventDate: new Date(docFromDB.eventDate),
-            images: docFromDB.images
-        };
-        return documentData as DocumentData;
+        const documentData: DocumentData = (await this.documentRepo.getDocument(userId, documentId, forCollab)) as DocumentData;
+        return documentData;
     }
 
     async getNeighbouringDocuments(userId: string, documentId: string | null) {
-        let currDocument = null
-        if(documentId) {
+        let currDocument = null;
+        if (documentId) {
             currDocument = await this.getDocument(userId, documentId as string);
         }
         const eventDate = currDocument ? currDocument.eventDate : new Date();
@@ -109,13 +101,13 @@ export class DocumentService {
     async syncDocuments() {
         const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSync();
         for (const docThatNeedsUpdating of docsThatNeedUpdating) {
-            if(!docThatNeedsUpdating.ydoc) continue
+            if (!docThatNeedsUpdating.ydoc) continue;
             const ydoc = new Y.Doc();
             Y.applyUpdate(ydoc, docThatNeedsUpdating.ydoc);
-            const jsonFromYdoc = TiptapTransformer.fromYdoc(ydoc, "default")
+            const jsonFromYdoc = TiptapTransformer.fromYdoc(ydoc, 'default');
             this.documentRepo.syncDocument(docThatNeedsUpdating.documentId, {
-                documentContent: jsonFromYdoc, 
-                hasUpdatedInTipTap: false,
+                documentContent: jsonFromYdoc,
+                hasUpdatedInTipTap: false
             });
         }
         return docsThatNeedUpdating.length;
