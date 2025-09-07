@@ -3,7 +3,7 @@ import BulletList from '@tiptap/extension-bullet-list';
 import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block';
 import Collaboration from '@tiptap/extension-collaboration';
-import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
+import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Heading from '@tiptap/extension-heading';
@@ -117,7 +117,7 @@ const Editor = ({
                           Collaboration.configure({
                               document: ydoc
                           }),
-                          CollaborationCursor.configure({
+                          CollaborationCaret.configure({
                               provider: provider,
                               user: {
                                   name: user.firstName,
