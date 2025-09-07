@@ -16,13 +16,14 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Strike from '@tiptap/extension-strike';
 import Text from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
+import { AnyExtension } from '@tiptap/core';
+
 import * as Y from 'yjs';
 import sequelize from '../db';
 import { DocumentRepo } from '../repositories/DocumentRepo';
 import { GET_DOCUMENTS_QUERY_OBJECT_TYPE } from '../types/ApiTypes';
 import { DocumentCreationAttributes, DocumentData, DocumentsWithCount, DocumentsWithFlags, PartialDocumentUpdateAttributes } from '../types/DocumentTypes';
 import { services } from './services';
-import { AnyExtension } from '@tiptap/core';
 export class DocumentService {
     documentRepo: DocumentRepo;
 
@@ -161,30 +162,10 @@ export class DocumentService {
     async syncDocumentJsonToYdocBinaryData(documentId: string) {
         try {
             const docThatNeedsYdocGenerated = await this.documentRepo.getDocumentToSyncJsonToYdocBinaryData(documentId);
-            console.log('here1');
-            const extensions: AnyExtension[] = [Document, Paragraph, Text, Bold, Italic, Strike, Highlight, Heading, TextAlign, BulletList, OrderedList, ListItem, Code, CodeBlock, HardBreak];
-            const ydoc = TiptapTransformer.toYdoc({ type: 'doc', content: docThatNeedsYdocGenerated.documentContent }, 'default', extensions);
-            console.log(ydoc);
-            // const ydoc = TiptapTransformer.toYdoc({ type: 'doc', content: docThatNeedsYdocGenerated.documentContent }, 'default', [
-            //     // Document as any,
-            //     // Paragraph as any,
-            //     // Text as any,
-            //     // Bold as any,
-            //     // Italic as any,
-            //     // Strike as any,
-            //     // Highlight as any,
-            //     // Heading as any,
-            //     // TextAlign as any,
-            //     // BulletList as any,
-            //     // OrderedList as any,
-            //     // ListItem as any,
-            //     // Code as any,
-            //     // CodeBlock as any,
-            //     // HardBreak as any
-            // ]);
-            console.log('here2');
+            const extensions: any = [Document, Paragraph, Text, Bold, Italic, Strike, Highlight, Heading, TextAlign, BulletList, OrderedList, ListItem, Code, CodeBlock, HardBreak];
+            const ydoc: Y.Doc = TiptapTransformer.toYdoc({ type: 'doc', content: docThatNeedsYdocGenerated.documentContent }, 'default', extensions); // this does not seem to work properly yet. 
             const ydocBinaryData = Y.encodeStateAsUpdate(ydoc);
-            await this.documentRepo.syncDocumentJsonAndYdocBinaryData(docThatNeedsYdocGenerated.documentId, { ydoc: ydocBinaryData });
+            await this.documentRepo.syncDocumentJsonAndYdocBinaryData(docThatNeedsYdocGenerated.documentId, { ydoc: Buffer.from(ydocBinaryData) });
         } catch (err) {
             console.log('Something went wrong with creating Ydoc binary data from JSON: ', err);
         }
