@@ -6,6 +6,7 @@ export interface DocumentData {
     createdAt: Date; // needed in get neighbouring docs
     hasUpdatedInTipTap: boolean;
     ydoc?: Uint8Array;
+    documentContent?: DocumentContent
     // updatedAt: Date;
     firstImageWSignedUrl?: string | null; // only needed by all story page, and is set in the service layer as it requires the image service as well
 }
