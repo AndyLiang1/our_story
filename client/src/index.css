@@ -67,7 +67,7 @@ button {
     .front {
         z-index: 1;
         backface-visibility: hidden;
-        border-left: 3px solid rgb(230 , 230 , 230 );
+        border-left: 3px solid rgb(230, 230, 230);
     }
 
     .back {
@@ -101,7 +101,9 @@ button {
         @apply font-['Handlee'];
     }
 
-    .editor__content .collaboration-cursor__caret {
+    /* Give a remote user a caret */
+    /* src: https://tiptap.dev/docs/editor/extensions/functionality/collaboration-caret */ 
+    .editor__content .collaboration-carets__caret {
         border-left: 1px solid #0d0d0d;
         border-right: 1px solid #0d0d0d;
         margin-left: -1px;
@@ -111,12 +113,9 @@ button {
         word-break: normal;
     }
 
-    .editor__content .tiptap.ProseMirror:focus {
-        outline: none;
-    }
-
     /* Render the username above the caret */
-    .editor__content .collaboration-cursor__label {
+    /* src: https://tiptap.dev/docs/editor/extensions/functionality/collaboration-caret */ 
+    .editor__content .collaboration-carets__label {
         border-radius: 3px 3px 3px 0;
         color: #0d0d0d;
         font-size: 12px;
@@ -130,6 +129,10 @@ button {
         top: -1.4em;
         user-select: none;
         white-space: nowrap;
+    }
+
+    .editor__content .tiptap.ProseMirror:focus {
+        outline: none;
     }
 
     .bg-pogo {

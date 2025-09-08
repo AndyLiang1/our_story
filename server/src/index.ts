@@ -12,8 +12,9 @@ import { PartnerController } from './controllers/PartnerController';
 import { UserController } from './controllers/UserController';
 import { errorHandler } from './middleware/errorHandler';
 import { JwtVerifier } from './middleware/JwtVerifier';
-import { syncDocuments } from './scheduled-jobs/syncDocuments';
+import { syncDocumentsYdocBinaryDataToJson } from './scheduled-jobs/syncDocumentsYdocBinaryDataToJson';
 import { initHocuspocusWebsocketServer } from './websocket';
+import { syncDocumentJsonToYdocBinaryData } from './scripts/syncDocumentsJsonToYdocBinaryData';
 
 const { app } = expressWebsockets(express());
 app.use(cors());
@@ -44,7 +45,8 @@ const init = async () => {
     new DocumentOwnerController().initRoutes(app);
     app.use(errorHandler);
 
-    syncDocuments();
+    syncDocumentsYdocBinaryDataToJson();
+    // syncDocumentJsonToYdocBinaryData();
 };
 
 init();

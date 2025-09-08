@@ -1,4 +1,23 @@
 import { TiptapTransformer } from '@hocuspocus/transformer';
+import { type Extensions } from '@tiptap/core';
+
+import Bold from '@tiptap/extension-bold';
+import BulletList from '@tiptap/extension-bullet-list';
+import Code from '@tiptap/extension-code';
+import CodeBlock from '@tiptap/extension-code-block';
+import Document from '@tiptap/extension-document';
+import HardBreak from '@tiptap/extension-hard-break';
+import Heading from '@tiptap/extension-heading';
+import Highlight from '@tiptap/extension-highlight';
+import Italic from '@tiptap/extension-italic';
+import ListItem from '@tiptap/extension-list-item';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Paragraph from '@tiptap/extension-paragraph';
+import Strike from '@tiptap/extension-strike';
+import Text from '@tiptap/extension-text';
+import TextAlign from '@tiptap/extension-text-align';
+import { AnyExtension } from '@tiptap/core';
+
 import * as Y from 'yjs';
 import sequelize from '../db';
 import { DocumentRepo } from '../repositories/DocumentRepo';
@@ -98,21 +117,6 @@ export class DocumentService {
         });
     }
 
-    async syncDocuments() {
-        const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSync();
-        for (const docThatNeedsUpdating of docsThatNeedUpdating) {
-            if (!docThatNeedsUpdating.ydoc) continue;
-            const ydoc = new Y.Doc();
-            Y.applyUpdate(ydoc, docThatNeedsUpdating.ydoc);
-            const jsonFromYdoc = TiptapTransformer.fromYdoc(ydoc, 'default');
-            this.documentRepo.syncDocument(docThatNeedsUpdating.documentId, {
-                documentContent: jsonFromYdoc,
-                hasUpdatedInTipTap: false
-            });
-        }
-        return docsThatNeedUpdating.length;
-    }
-
     async addImages(userId: string, documentId: string, newImageNamesWithGuid: string[]) {
         const docInfo: DocumentData = await this.getDocument(userId, documentId);
         const documentData: PartialDocumentUpdateAttributes = {
@@ -134,5 +138,36 @@ export class DocumentService {
         };
         const data = await this.documentRepo.updateDocument(userId, documentId, documentData);
         return data;
+    }
+
+    async syncDocumentsYdocBinaryDataToJson() {
+        try {
+            const docsThatNeedUpdating = await this.documentRepo.getDocumentsToSyncYdocBinaryDataToJson();
+            for (const docThatNeedsUpdating of docsThatNeedUpdating) {
+                if (!docThatNeedsUpdating.ydoc) continue;
+                const ydoc = new Y.Doc();
+                Y.applyUpdate(ydoc, docThatNeedsUpdating.ydoc);
+                const jsonFromYdoc = TiptapTransformer.fromYdoc(ydoc, 'default');
+                this.documentRepo.syncDocumentJsonAndYdocBinaryData(docThatNeedsUpdating.documentId, {
+                    documentContent: jsonFromYdoc,
+                    hasUpdatedInTipTap: false
+                });
+            }
+            return docsThatNeedUpdating.length;
+        } catch (err) {
+            console.log('Something went wrong with creating JSON from Ydoc binary data: ', err);
+        }
+    }
+
+    async syncDocumentJsonToYdocBinaryData(documentId: string) {
+        try {
+            const docThatNeedsYdocGenerated = await this.documentRepo.getDocumentToSyncJsonToYdocBinaryData(documentId);
+            const extensions: any = [Document, Paragraph, Text, Bold, Italic, Strike, Highlight, Heading, TextAlign, BulletList, OrderedList, ListItem, Code, CodeBlock, HardBreak];
+            const ydoc: Y.Doc = TiptapTransformer.toYdoc({ type: 'doc', content: docThatNeedsYdocGenerated.documentContent }, 'default', extensions); // this does not seem to work properly yet. 
+            const ydocBinaryData = Y.encodeStateAsUpdate(ydoc);
+            await this.documentRepo.syncDocumentJsonAndYdocBinaryData(docThatNeedsYdocGenerated.documentId, { ydoc: Buffer.from(ydocBinaryData) });
+        } catch (err) {
+            console.log('Something went wrong with creating Ydoc binary data from JSON: ', err);
+        }
     }
 }

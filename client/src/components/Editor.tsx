@@ -1,16 +1,14 @@
 import Bold from '@tiptap/extension-bold';
-import BulletList from '@tiptap/extension-bullet-list';
 import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block';
 import Collaboration from '@tiptap/extension-collaboration';
-import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
+import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Heading from '@tiptap/extension-heading';
 import Highlight from '@tiptap/extension-highlight';
+import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list';
 import Italic from '@tiptap/extension-italic';
-import ListItem from '@tiptap/extension-list-item';
-import OrderedList from '@tiptap/extension-ordered-list';
 import Paragraph from '@tiptap/extension-paragraph';
 import Strike from '@tiptap/extension-strike';
 import Text from '@tiptap/extension-text';
@@ -86,7 +84,6 @@ const Editor = ({
             updateDocumentTitle();
         }
     }, [debouncedValue]);
-
     const editor = useEditor(
         {
             extensions:
@@ -116,8 +113,31 @@ const Editor = ({
                           HardBreak,
                           Collaboration.configure({
                               document: ydoc
+                              //   document: TiptapTransformer.toYdoc(
+                              //       JSON.parse(
+                              //         '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "Test", "type": "text", "marks": [{"type": "highlight", "attrs": {"color": "rgba(224, 246, 255, 0.7)"}}]}]}]}'
+                              //       ),
+                              //       'default',
+                              //       [
+                              //           Document,
+                              //           Paragraph,
+                              //           Text,
+                              //           Bold,
+                              //           Italic,
+                              //           Strike,
+                              //           Highlight,
+                              //           Heading,
+                              //           TextAlign,
+                              //           BulletList,
+                              //           OrderedList,
+                              //           ListItem,
+                              //           Code,
+                              //           CodeBlock,
+                              //           HardBreak
+                              //       ]
+                              //   )
                           }),
-                          CollaborationCursor.configure({
+                          CollaborationCaret.configure({
                               provider: provider,
                               user: {
                                   name: user.firstName,
@@ -166,14 +186,6 @@ const Editor = ({
                 .toggleHighlight({ color: user.textColor ? user.textColor : '' })
                 .run();
     }, [editor]);
-
-    // useEffect(() => {
-    //     if (editor) console.log(documentId, 'triggered', editor.isActive('highlight'));
-    //     if (editor && !editor.isActive('highlight')) {
-    //         console.log('Triggered2');
-    //         editor.chain().focus().toggleHighlight({ color: 'rgba(224, 246, 255, 0.7)' }).run();
-    //     }
-    // }, [editor?.isActive('highlight')]);
 
     return (
         <div className="h-full w-full">

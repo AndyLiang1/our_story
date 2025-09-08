@@ -41,7 +41,7 @@ export class DocumentRepo {
         };
     }
 
-    async getDocumentsToSync() {
+    async getDocumentsToSyncYdocBinaryDataToJson() {
         const forCollab = true;
         const documentsRaw: Document[] = await Document.findAll({
             include: [
@@ -62,6 +62,20 @@ export class DocumentRepo {
         });
         const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray(documentsRaw, forCollab);
         return documents;
+    }
+
+    async getDocumentToSyncJsonToYdocBinaryData(documentId: string) {
+        const forCollab = true
+        const documentRaw: Document | null = await Document.findOne({
+            where: {
+                documentId
+            }
+        });
+        if (documentRaw) {
+            const documents: DocumentData[] = this.convertRawDocumentModelsToDocumentDataArray([documentRaw], forCollab);
+            return documents[0];
+        }
+        throw new NotFoundError(documentNotFoundMessage(documentId));
     }
 
     async getDocumentsBetweenDates(userId: string, startDate: Date, endDate: Date) {
@@ -233,7 +247,7 @@ export class DocumentRepo {
     }
 
     // similar to updateDocument, but no userId check
-    async syncDocument(documentId: string, documentData: PartialDocumentUpdateAttributes) {
+    async syncDocumentJsonAndYdocBinaryData(documentId: string, documentData: PartialDocumentUpdateAttributes) {
         const documentRaw = await Document.findByPk(documentId);
 
         if (documentRaw === null) {
@@ -294,6 +308,7 @@ export class DocumentRepo {
                 hasUpdatedInTipTap: rawDocument.getDataValue('hasUpdatedInTipTap')
             };
             if (forCollab) document.ydoc = rawDocument.getDataValue('ydoc');
+            if (forCollab) document.documentContent = rawDocument.getDataValue('documentContent')
             documents.push(document);
         }
         return documents;
