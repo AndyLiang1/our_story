@@ -10,10 +10,6 @@ export class DocumentController {
     constructor() {
         this.router = express.Router();
         this.router.use(JwtVerifier.verifyCollabToken);
-        // the this.login.bind(this) is basically saying
-        // when I hit /api/users in a get request, I am going
-        // to call the login function
-        // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
         this.router.get('/', this.getDocuments.bind(this));
         this.router.get('/:documentId', this.getDocument.bind(this));
         this.router.post('/', this.createDocument.bind(this));
