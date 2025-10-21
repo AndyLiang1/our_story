@@ -7,8 +7,8 @@ import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Heading from '@tiptap/extension-heading';
 import Highlight from '@tiptap/extension-highlight';
-import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list';
 import Italic from '@tiptap/extension-italic';
+import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list';
 import Paragraph from '@tiptap/extension-paragraph';
 import Strike from '@tiptap/extension-strike';
 import Text from '@tiptap/extension-text';
@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { editDocumentHasUpdatedInTipTapFlag, editDocumentTitle } from '../apis/documentApi';
 import { useUserContext } from '../context/userContext';
 import { useEditor } from '../hooks/useEditor';
+
 import {
     DeleteDocumentConfirmationModalInfo,
     ShareDocumentFormInfo
@@ -113,29 +114,32 @@ const Editor = ({
                           HardBreak,
                           Collaboration.configure({
                               document: ydoc
-                              //   document: TiptapTransformer.toYdoc(
-                              //       JSON.parse(
-                              //         '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "Test", "type": "text", "marks": [{"type": "highlight", "attrs": {"color": "rgba(224, 246, 255, 0.7)"}}]}]}]}'
-                              //       ),
-                              //       'default',
-                              //       [
-                              //           Document,
-                              //           Paragraph,
-                              //           Text,
-                              //           Bold,
-                              //           Italic,
-                              //           Strike,
-                              //           Highlight,
-                              //           Heading,
-                              //           TextAlign,
-                              //           BulletList,
-                              //           OrderedList,
-                              //           ListItem,
-                              //           Code,
-                              //           CodeBlock,
-                              //           HardBreak
-                              //       ]
-                              //   )
+                              /**
+                               * Useful snippet to test that we can transform JSON into ydoc
+                               */
+                              // document: TiptapTransformer.toYdoc(
+                              //     JSON.parse(
+                              //       '{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "Arya", "type": "text", "marks": [{"type": "highlight", "attrs": {"color": "rgba(224, 246, 255, 0.7)"}}]}]}]}'
+                              //     ),
+                              //     'default',
+                              //     [
+                              //         Document,
+                              //         Paragraph,
+                              //         Text,
+                              //         Bold,
+                              //         Italic,
+                              //         Strike,
+                              //         Highlight.configure({multicolor: true}),
+                              //         Heading,
+                              //         TextAlign,
+                              //         BulletList,
+                              //         OrderedList,
+                              //         ListItem,
+                              //         Code,
+                              //         CodeBlock,
+                              //         HardBreak
+                              //     ]
+                              // )
                           }),
                           CollaborationCaret.configure({
                               provider: provider,

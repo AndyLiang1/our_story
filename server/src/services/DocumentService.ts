@@ -146,7 +146,7 @@ export class DocumentService {
             for (const docThatNeedsUpdating of docsThatNeedUpdating) {
                 if (!docThatNeedsUpdating.ydoc) continue;
                 const ydoc = new Y.Doc();
-                Y.applyUpdate(ydoc, docThatNeedsUpdating.ydoc);
+                Y.applyUpdate(ydoc, docThatNeedsUpdating.ydoc as Uint8Array);
                 const jsonFromYdoc = TiptapTransformer.fromYdoc(ydoc, 'default');
                 this.documentRepo.syncDocumentJsonAndYdocBinaryData(docThatNeedsUpdating.documentId, {
                     documentContent: jsonFromYdoc,

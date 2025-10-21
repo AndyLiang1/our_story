@@ -13,10 +13,6 @@ export class UserController {
     });
     constructor() {
         this.router = express.Router();
-        // the this.login.bind(this) is basically saying
-        // when I hit /api/users in a get request, I am going
-        // to call the login function
-        // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
         // this.router.post('/', this.createUser.bind(this));
         this.router.get('/', JwtVerifier.verifyCollabToken, this.getUserByCollabToken.bind(this));
         // this.router.get('/email/:email', JwtVerifier.verifyCollabToken, this.getUserByEmail.bind(this));

@@ -41,6 +41,10 @@ export const initHocuspocusWebsocketServer = async () => {
                 Y.applyUpdate(ydoc, update);
             }
             return ydoc;
+            /**
+             * Useful snippet to test transforming ydoc to JSON. Although this is more easier tested
+             * in Editor.tsx in the FE!
+             */
             // const ydoc = new Y.Doc();
             // const forCollab = true;
             // const documentData = await services.documentService.getDocument(context.userId, documentName, forCollab);
