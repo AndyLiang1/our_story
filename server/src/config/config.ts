@@ -23,8 +23,6 @@ export const config = {
         port: HOCUSPOCUS_SERVER_PORT
     },
     tiptap: {
-        restApiUrl: `https://${process.env.TIPTAP_APP_ID}.collab.tiptap.cloud/api/documents`,
-        apiSecret: process.env.TIPTAP_API_SECRET,
         appSecret: process.env.TIPTAP_APP_SECRET
     },
     awsUser: {
