@@ -1,0 +1,10 @@
+---
+description: Never read .env files (security)
+alwaysApply: true
+---
+
+# Do Not Read .env Files
+
+- **Do not** read, open, or include the contents of `.env` files or any file matching `.env*` (e.g. `.env.local`, `.env.production`).
+- These files often contain secrets (API keys, passwords, tokens). Reading them risks leaking credentials in conversation or logs.
+- If you need to know what variables exist, refer to `.env.example` or documentation, or ask the user to describe the required variables without sharing values.
