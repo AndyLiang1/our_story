@@ -1,0 +1,10 @@
+{
+  "name": "our_story",
+  "private": true,
+  "scripts": {
+    "screenshot-diagram": "node scripts/screenshot-architecture-diagram.cjs"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}
