@@ -9,33 +9,8 @@ React, TypeScript, Vite, Node, Express, AWS S3, AWS Cognito, Sequelize, Github a
 
 ![Architecture diagram with logos](docs/architecture-diagram.png)
 
-*To update the image: run `npm run screenshot-diagram` from the repo root (generates the PNG from the HTML so it stays consistent).*
 
-```mermaid
-flowchart TB
-  subgraph netlify [Netlify]
-    Frontend[Web app frontend]
-  end
-  subgraph flyio [Fly.io]
-    subgraph apiServer [API Server]
-      Backend[Backend API]
-      HocusPocus[Hocus Pocus self-hosted]
-    end
-    subgraph dbServer [DB Server]
-      SQLDB[(SQL DB)]
-    end
-  end
-  S3[AWS S3]
-  Cognito[AWS Cognito]
-  Frontend -->|Sign in| Cognito
-  Frontend <-->|REST| Backend
-  Frontend <-->|WebSocket real-time edit| HocusPocus
-  Backend <--> SQLDB
-  HocusPocus <-->|load and store docs| SQLDB
-  Frontend <-->|Upload / Download via signed URLs| S3
-  Backend -->|S3 API: presign, delete| S3
-  SQLDB -->|DB backups via GitHub Actions| S3
-```
+
 
 ![image](https://github.com/user-attachments/assets/f594fbed-7c81-419c-aaf3-c5f773243f92)
 
