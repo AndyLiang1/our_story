@@ -1,6 +1,6 @@
 # Our Story
 
-An application made by Andy and Arya so that they can record every memory they make together. Arya likes to re-read dates and Andy likes to build web apps <3. 
+An application made by Andy and Arya so that they can record every memory they make together. Arya likes to re-read dates and Andy likes to build web apps <3. https://our-story-application.netlify.app/
 
 ## Technologies Involved 
 React, TypeScript, Vite, Node, Express, AWS S3, AWS Cognito, Sequelize, Github actions, Alembic
